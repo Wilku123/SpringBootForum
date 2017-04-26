@@ -1,0 +1,37 @@
+<!DOCTYPE HTML>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head th:include="fragments/header :: header">
+</head>
+<body>
+<div th:include="fragments/navbar"></div>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-2">
+            <div th:include="fragments/sideMenu::sideMenu">
+
+            </div>
+        </div>
+        <div class="col-md-8">
+            <p th:text="'Hello, ' + ${name} + '!'"/>
+            <div><!--th:each="item : ${product}"-->
+                <div class="panel panel-info">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">
+                            Panel title
+                        </h3>
+                    </div>
+                    <div class="panel-body">
+                        Panel content
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        <div class="col-md-2">
+        </div>
+    </div>
+</div>
+
+<footer th:include="fragments/footer::footer"></footer>
+</body>
+</html>

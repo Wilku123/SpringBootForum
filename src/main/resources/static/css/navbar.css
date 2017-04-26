@@ -1,0 +1,55 @@
+@font-face {
+    font-family: fallout;
+    /*src: url('../fonts/fallout-webfont.woff');*/
+}
+
+body {
+    min-height: 2000px;
+    font-family: fallout;
+    font-size: 18px;
+}
+
+.navbar {
+    background-color: #171717;
+    color: #acacac;
+    border: 1px solid black;
+    text-shadow: 1px 1px #131313;
+}
+
+.navbar .nav > li > a {
+    color: #acacac;
+    font-family: fallout;
+    text-shadow: 1px 1px #131313;
+}
+
+.navbar .nav > li > a:hover {
+    color: #fff;
+    background: #171717;
+}
+
+.navbar .nav > li > a:focus {
+    color: #fff;
+}
+
+.navbar .navbar-header > a {
+    color: #acacac;
+    font-family: fallout;
+    text-shadow: 1px 1px #131313;
+}
+
+.navbar .navbar-header > a:hover {
+    color: #fff;
+
+}
+
+.navbar .navbar-header > a:focus {
+    color: #fff;
+}
+.navbar-default .navbar-nav>.open>a, .navbar-default .navbar-nav>.open>a:focus, .navbar-default .navbar-nav>.open>a:hover{
+    color: #fff;
+    background-color: #131313;
+}
+.dropdown-menu
+{
+    background-color: #131313;
+}
