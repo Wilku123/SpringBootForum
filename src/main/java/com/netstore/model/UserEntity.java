@@ -3,12 +3,12 @@ package com.netstore.model;
 import javax.persistence.*;
 
 /**
- * Created by Master on 2017-04-26.
+ * Created by Master on 2017-04-27.
  */
 @Entity
-@Table(name = "USER", schema = "mydb")
+@Table(name = "USER", schema = "mydb", catalog = "")
 public class UserEntity {
-    private int idUser;
+    private Integer idUser;
     private String name;
     private String lastName;
     private String avatar;
@@ -16,11 +16,11 @@ public class UserEntity {
 
     @Id
     @Column(name = "ID_User")
-    public int getIdUser() {
+    public Integer getIdUser() {
         return idUser;
     }
 
-    public void setIdUser(int idUser) {
+    public void setIdUser(Integer idUser) {
         this.idUser = idUser;
     }
 
@@ -71,7 +71,7 @@ public class UserEntity {
 
         UserEntity that = (UserEntity) o;
 
-        if (idUser != that.idUser) return false;
+        if (idUser != null ? !idUser.equals(that.idUser) : that.idUser != null) return false;
         if (name != null ? !name.equals(that.name) : that.name != null) return false;
         if (lastName != null ? !lastName.equals(that.lastName) : that.lastName != null) return false;
         if (avatar != null ? !avatar.equals(that.avatar) : that.avatar != null) return false;
@@ -82,7 +82,7 @@ public class UserEntity {
 
     @Override
     public int hashCode() {
-        int result = idUser;
+        int result = idUser != null ? idUser.hashCode() : 0;
         result = 31 * result + (name != null ? name.hashCode() : 0);
         result = 31 * result + (lastName != null ? lastName.hashCode() : 0);
         result = 31 * result + (avatar != null ? avatar.hashCode() : 0);

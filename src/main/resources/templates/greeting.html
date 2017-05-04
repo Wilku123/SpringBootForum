@@ -13,15 +13,16 @@
         </div>
         <div class="col-md-8">
             <p th:text="'Hello, ' + ${name} + '!'"/>
-            <div><!--th:each="item : ${product}"-->
+            <div th:each="item,iter : ${circleName}">
                 <div class="panel panel-info">
                     <div class="panel-heading">
                         <h3 class="panel-title">
-                            Panel title
+                            <th:block th:text="${circleName[iter.index]}"></th:block>
+                            <span style="float:right"> <th:block th:text="${circlePublishDate[iter.index]}"></th:block></span>
                         </h3>
                     </div>
                     <div class="panel-body">
-                        Panel content
+                        <th:block th:text="${circleDescription[iter.index]}"></th:block>
                     </div>
 
                 </div>

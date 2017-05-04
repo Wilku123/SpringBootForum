@@ -4,22 +4,23 @@ import javax.persistence.*;
 import java.sql.Date;
 
 /**
- * Created by Master on 2017-04-26.
+ * Created by Master on 2017-04-27.
  */
 @Entity
-@Table(name = "TOPIC", schema = "mydb")
+@Table(name = "TOPIC", schema = "mydb", catalog = "")
 public class TopicEntity {
-    private int idTopic;
+    private Integer idTopic;
     private String name;
     private Date publishDate;
+    private CircleEntity circleByCircleIdCircle;
 
     @Id
     @Column(name = "ID_Topic")
-    public int getIdTopic() {
+    public Integer getIdTopic() {
         return idTopic;
     }
 
-    public void setIdTopic(int idTopic) {
+    public void setIdTopic(Integer idTopic) {
         this.idTopic = idTopic;
     }
 
@@ -50,7 +51,7 @@ public class TopicEntity {
 
         TopicEntity that = (TopicEntity) o;
 
-        if (idTopic != that.idTopic) return false;
+        if (idTopic != null ? !idTopic.equals(that.idTopic) : that.idTopic != null) return false;
         if (name != null ? !name.equals(that.name) : that.name != null) return false;
         if (publishDate != null ? !publishDate.equals(that.publishDate) : that.publishDate != null) return false;
 
@@ -59,9 +60,19 @@ public class TopicEntity {
 
     @Override
     public int hashCode() {
-        int result = idTopic;
+        int result = idTopic != null ? idTopic.hashCode() : 0;
         result = 31 * result + (name != null ? name.hashCode() : 0);
         result = 31 * result + (publishDate != null ? publishDate.hashCode() : 0);
         return result;
+    }
+
+    @ManyToOne
+    @JoinColumn(name = "CIRCLE_ID_Circle", referencedColumnName = "ID_Circle", nullable = false)
+    public CircleEntity getCircleByCircleIdCircle() {
+        return circleByCircleIdCircle;
+    }
+
+    public void setCircleByCircleIdCircle(CircleEntity circleByCircleIdCircle) {
+        this.circleByCircleIdCircle = circleByCircleIdCircle;
     }
 }

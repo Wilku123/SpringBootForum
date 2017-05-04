@@ -5,29 +5,29 @@ import javax.persistence.Id;
 import java.io.Serializable;
 
 /**
- * Created by Master on 2017-04-26.
+ * Created by Master on 2017-04-27.
  */
 public class UserHasCircleEntityPK implements Serializable {
-    private int circleIdCircle;
-    private int userIdUser;
+    private Integer circleIdCircle;
+    private Integer userIdUser;
 
     @Column(name = "CIRCLE_ID_Circle")
     @Id
-    public int getCircleIdCircle() {
+    public Integer getCircleIdCircle() {
         return circleIdCircle;
     }
 
-    public void setCircleIdCircle(int circleIdCircle) {
+    public void setCircleIdCircle(Integer circleIdCircle) {
         this.circleIdCircle = circleIdCircle;
     }
 
     @Column(name = "USER_ID_User")
     @Id
-    public int getUserIdUser() {
+    public Integer getUserIdUser() {
         return userIdUser;
     }
 
-    public void setUserIdUser(int userIdUser) {
+    public void setUserIdUser(Integer userIdUser) {
         this.userIdUser = userIdUser;
     }
 
@@ -38,16 +38,17 @@ public class UserHasCircleEntityPK implements Serializable {
 
         UserHasCircleEntityPK that = (UserHasCircleEntityPK) o;
 
-        if (circleIdCircle != that.circleIdCircle) return false;
-        if (userIdUser != that.userIdUser) return false;
+        if (circleIdCircle != null ? !circleIdCircle.equals(that.circleIdCircle) : that.circleIdCircle != null)
+            return false;
+        if (userIdUser != null ? !userIdUser.equals(that.userIdUser) : that.userIdUser != null) return false;
 
         return true;
     }
 
     @Override
     public int hashCode() {
-        int result = circleIdCircle;
-        result = 31 * result + userIdUser;
+        int result = circleIdCircle != null ? circleIdCircle.hashCode() : 0;
+        result = 31 * result + (userIdUser != null ? userIdUser.hashCode() : 0);
         return result;
     }
 }

@@ -4,23 +4,25 @@ import javax.persistence.*;
 import java.sql.Date;
 
 /**
- * Created by Master on 2017-04-26.
+ * Created by Master on 2017-04-27.
  */
 @Entity
-@Table(name = "CIRCLE", schema = "mydb")
+@Table(name = "CIRCLE", schema = "mydb", catalog = "")
 public class CircleEntity {
-    private int idCircle;
+
+    private Integer idCircle;
     private String name;
     private String description;
     private Date publishDate;
 
     @Id
+    @GeneratedValue
     @Column(name = "ID_Circle")
-    public int getIdCircle() {
+    public Integer getIdCircle() {
         return idCircle;
     }
 
-    public void setIdCircle(int idCircle) {
+    public void setIdCircle(Integer idCircle) {
         this.idCircle = idCircle;
     }
 
@@ -61,7 +63,7 @@ public class CircleEntity {
 
         CircleEntity that = (CircleEntity) o;
 
-        if (idCircle != that.idCircle) return false;
+        if (idCircle != null ? !idCircle.equals(that.idCircle) : that.idCircle != null) return false;
         if (name != null ? !name.equals(that.name) : that.name != null) return false;
         if (description != null ? !description.equals(that.description) : that.description != null) return false;
         if (publishDate != null ? !publishDate.equals(that.publishDate) : that.publishDate != null) return false;
@@ -71,7 +73,7 @@ public class CircleEntity {
 
     @Override
     public int hashCode() {
-        int result = idCircle;
+        int result = idCircle != null ? idCircle.hashCode() : 0;
         result = 31 * result + (name != null ? name.hashCode() : 0);
         result = 31 * result + (description != null ? description.hashCode() : 0);
         result = 31 * result + (publishDate != null ? publishDate.hashCode() : 0);

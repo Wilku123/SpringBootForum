@@ -5,29 +5,29 @@ import javax.persistence.Id;
 import java.io.Serializable;
 
 /**
- * Created by Master on 2017-04-26.
+ * Created by Master on 2017-04-27.
  */
 public class UserHasTopicEntityPK implements Serializable {
-    private int topicIdTopic;
-    private int userIdUser;
+    private Integer topicIdTopic;
+    private Integer userIdUser;
 
     @Column(name = "TOPIC_ID_Topic")
     @Id
-    public int getTopicIdTopic() {
+    public Integer getTopicIdTopic() {
         return topicIdTopic;
     }
 
-    public void setTopicIdTopic(int topicIdTopic) {
+    public void setTopicIdTopic(Integer topicIdTopic) {
         this.topicIdTopic = topicIdTopic;
     }
 
     @Column(name = "USER_ID_User")
     @Id
-    public int getUserIdUser() {
+    public Integer getUserIdUser() {
         return userIdUser;
     }
 
-    public void setUserIdUser(int userIdUser) {
+    public void setUserIdUser(Integer userIdUser) {
         this.userIdUser = userIdUser;
     }
 
@@ -38,16 +38,16 @@ public class UserHasTopicEntityPK implements Serializable {
 
         UserHasTopicEntityPK that = (UserHasTopicEntityPK) o;
 
-        if (topicIdTopic != that.topicIdTopic) return false;
-        if (userIdUser != that.userIdUser) return false;
+        if (topicIdTopic != null ? !topicIdTopic.equals(that.topicIdTopic) : that.topicIdTopic != null) return false;
+        if (userIdUser != null ? !userIdUser.equals(that.userIdUser) : that.userIdUser != null) return false;
 
         return true;
     }
 
     @Override
     public int hashCode() {
-        int result = topicIdTopic;
-        result = 31 * result + userIdUser;
+        int result = topicIdTopic != null ? topicIdTopic.hashCode() : 0;
+        result = 31 * result + (userIdUser != null ? userIdUser.hashCode() : 0);
         return result;
     }
 }

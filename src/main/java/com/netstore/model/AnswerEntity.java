@@ -4,22 +4,22 @@ import javax.persistence.*;
 import java.sql.Date;
 
 /**
- * Created by Master on 2017-04-26.
+ * Created by Master on 2017-04-27.
  */
 @Entity
-@Table(name = "ANSWER", schema = "mydb")
+@Table(name = "ANSWER", schema = "mydb", catalog = "")
 public class AnswerEntity {
-    private int idAnswer;
+    private Integer idAnswer;
     private String content;
     private Date publishDate;
 
     @Id
     @Column(name = "ID_Answer")
-    public int getIdAnswer() {
+    public Integer getIdAnswer() {
         return idAnswer;
     }
 
-    public void setIdAnswer(int idAnswer) {
+    public void setIdAnswer(Integer idAnswer) {
         this.idAnswer = idAnswer;
     }
 
@@ -50,7 +50,7 @@ public class AnswerEntity {
 
         AnswerEntity that = (AnswerEntity) o;
 
-        if (idAnswer != that.idAnswer) return false;
+        if (idAnswer != null ? !idAnswer.equals(that.idAnswer) : that.idAnswer != null) return false;
         if (content != null ? !content.equals(that.content) : that.content != null) return false;
         if (publishDate != null ? !publishDate.equals(that.publishDate) : that.publishDate != null) return false;
 
@@ -59,7 +59,7 @@ public class AnswerEntity {
 
     @Override
     public int hashCode() {
-        int result = idAnswer;
+        int result = idAnswer != null ? idAnswer.hashCode() : 0;
         result = 31 * result + (content != null ? content.hashCode() : 0);
         result = 31 * result + (publishDate != null ? publishDate.hashCode() : 0);
         return result;

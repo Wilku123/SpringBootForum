@@ -1,4 +1,4 @@
-package com.netstore.controller;
+package com.netstore.api;
 
 /**
  * Created by Master on 2017-04-22.
