@@ -1,5 +1,5 @@
 <!DOCTYPE HTML>
-<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<html xmlns:th="http://www.thymeleaf.org">
 <head th:include="fragments/header :: header">
 </head>
 <body>
@@ -12,20 +12,20 @@
             <div th:include="fragments/sideMenu"></div>
         </div>
         <div class="col-md-8">
-            <form role="form" action="#" th:action="@{/processAddCircleForm}" th:object="${circleForm}" method="post">
+            <form role="form" action="#" th:action="@{/proccessAdding}" th:object="${circleEntity}" method="post">
                 <div class="form-group">
 
-                    <label for="circleName">
+                    <label>
                         Nazwa Kręgu
                     </label>
-                    <input type="text" class="form-control" id="circleName" name="circleName" th:value="${circleName}"/>
+                    <input type="text" class="form-control" maxlength="255"  th:field="*{name}"/>
                 </div>
                 <div class="form-group">
 
-                    <label for="description">
+                    <label >
                         Opis Kręgu
                     </label>
-                    <textarea class="form-control" name="descriptionText" id="description" cols="20" rows="5" th:value="${descriptionText}">
+                    <textarea class="form-control" cols="20" rows="5" th:field="*{description}">
                     </textarea>
                 </div>
                 <div class="checkbox">

@@ -24,15 +24,16 @@ public interface CircleRepository extends JpaRepository<CircleEntity,Integer>, J
     @Override
     CircleEntity findOne(Integer integer);
 
-    @Query(value = "SELECT CIRCLE.ID_Circle, COUNT(TOPIC.CIRCLE_ID_Circle) FROM CIRCLE,TOPIC WHERE TOPIC.CIRCLE_ID_Circle = CIRCLE.ID_Circle group by CIRCLE.ID_Circle",nativeQuery = true)
-    public int countHowManyTopicsInCircle();
+//    @Query(value = "SELECT CIRCLE.ID_Circle, COUNT(TOPIC.CIRCLE_ID_Circle) FROM CIRCLE,TOPIC WHERE TOPIC.CIRCLE_ID_Circle = CIRCLE.ID_Circle group by CIRCLE.ID_Circle",nativeQuery = true)
+//    public int countHowManyTopicsInCircle();
 
-    @Query(value = "SELECT CIRCLE.Name FROM CIRCLE",nativeQuery = true)
-    public List<String> getByName();
-    @Query(value = "SELECT CIRCLE.Publish_Date FROM CIRCLE",nativeQuery = true)
-    List<String> getByPublishDate();
-    @Query(value = "SELECT CIRCLE.Description FROM CIRCLE",nativeQuery = true)
-    List<String> getByDescription();
+
+//    @Query(value = "SELECT CIRCLE.Name FROM CIRCLE",nativeQuery = true)
+//    List<String> getByName();
+//    @Query(value = "SELECT CIRCLE.Publish_Date FROM CIRCLE",nativeQuery = true)
+//    List<String> getByPublishDate();
+//    @Query(value = "SELECT CIRCLE.Description FROM CIRCLE",nativeQuery = true)
+//    List<String> getByDescription();
 
 
 

@@ -2,6 +2,7 @@ package com.netstore.model.repository;
 
 import com.netstore.model.CircleEntity;
 import com.netstore.model.TopicEntity;
+import com.sun.org.apache.xpath.internal.operations.String;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
@@ -22,8 +23,6 @@ public interface TopicRepository extends JpaRepository<TopicEntity,Integer>, Jpa
 
     @Override
     List<TopicEntity> findAll();
-
-    @Override
-    TopicEntity findOne(Integer integer);
-
+    List<TopicEntity> findAllByCircleByCircleIdCircle(CircleEntity circleEntity);
+    TopicEntity findByIdTopic(Integer i);
 }

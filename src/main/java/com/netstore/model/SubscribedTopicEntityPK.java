@@ -5,13 +5,13 @@ import javax.persistence.Id;
 import java.io.Serializable;
 
 /**
- * Created by Master on 2017-04-27.
+ * Created by Master on 2017-07-10.
  */
-public class UserSubscribedTopicEntityPK implements Serializable {
+public class SubscribedTopicEntityPK implements Serializable {
     private Integer userIdUser;
     private Integer topicIdTopic;
 
-    @Column(name = "USER_ID_User")
+    @Column(name = "USER_idUSER", nullable = false)
     @Id
     public Integer getUserIdUser() {
         return userIdUser;
@@ -21,7 +21,7 @@ public class UserSubscribedTopicEntityPK implements Serializable {
         this.userIdUser = userIdUser;
     }
 
-    @Column(name = "TOPIC_ID_Topic")
+    @Column(name = "TOPIC_idTOPIC", nullable = false)
     @Id
     public Integer getTopicIdTopic() {
         return topicIdTopic;
@@ -36,7 +36,7 @@ public class UserSubscribedTopicEntityPK implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        UserSubscribedTopicEntityPK that = (UserSubscribedTopicEntityPK) o;
+        SubscribedTopicEntityPK that = (SubscribedTopicEntityPK) o;
 
         if (userIdUser != null ? !userIdUser.equals(that.userIdUser) : that.userIdUser != null) return false;
         if (topicIdTopic != null ? !topicIdTopic.equals(that.topicIdTopic) : that.topicIdTopic != null) return false;

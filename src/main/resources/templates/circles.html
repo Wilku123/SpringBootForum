@@ -1,0 +1,64 @@
+<!DOCTYPE HTML>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head th:include="fragments/header :: header">
+    <!--<link rel="stylesheet" th:href="@{/css/style.css}" href="../../css/style.css"/>-->
+</head>
+<body>
+<div th:include="fragments/navbar"></div>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-2">
+            <div th:include="fragments/sideMenu::sideMenu">
+
+            </div>
+        </div>
+        <div class="col-md-8">
+            <!--<p th:text="'Hello, ' + ${name} + '!'"/>-->
+            <div class="panel panel-info">
+                <div class="panel-heading">
+                    <h3 class="panel-title">Aktualne Koła</h3>
+                </div>
+            </div>
+            <div class="panel-body">
+                <div th:each="item,iter : ${circleName}">
+                    <div class="jumbotron">
+                        <div class="glyphyconsPosition">
+                            <span style="float:right">
+                            <!--<th:block th:inline="title" th:text="${circlePublishDate[iter.index]}"th:remove="tag"></th:block>-->
+                                <!--<img th:src="/qrcode/${circleId[iter.index]}"/>-->
+                                <span class="pointer glyphicon glyphicon-qrcode"
+                                      th:attr="title='/qrcode/'+${circleId[iter.index]}"
+                                ></span>
+                            <span class="pointer glyphicon glyphicon-info-sign"
+                                  th:attr="title='Data utworzenia: '
+                                 +${circlePublishDate[iter.index]}
+                                 +'&lt;br /&gt;'
+                                 +'Twórca: '
+                                 +${circleCreatorName[iter.index]}+' '
+                                 +${circleCreatorLastName[iter.index]}"
+                            ></span>
+                            </span>
+                        </div>
+                        <h2>
+                            <a th:href="@{topic/{id}(id=${circleId[iter.index]})}">
+                                <th:block th:text="${circleName[iter.index]}"></th:block>
+                            </a>
+
+                        </h2>
+                        <p>
+                            <th:block th:text="${circleDescription[iter.index]}"></th:block>
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <div class="col-md-2">
+        </div>
+    </div>
+</div>
+
+<footer th:include="fragments/footer::footer"></footer>
+
+</body>
+</html>

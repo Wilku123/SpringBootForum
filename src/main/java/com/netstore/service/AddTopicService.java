@@ -1,12 +1,13 @@
-package com.netstore.model.repository.service;
+package com.netstore.service;
 
 import com.netstore.model.CircleEntity;
+import com.netstore.model.TopicEntity;
 import com.netstore.model.repository.CircleRepository;
+import com.netstore.model.repository.TopicRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.PostConstruct;
 import javax.transaction.Transactional;
 
 /**
@@ -14,13 +15,13 @@ import javax.transaction.Transactional;
  */
 @Service
 @Repository
-public class AddCircleService {
+public class AddTopicService {
     @Autowired
-    CircleRepository circleRepository;
+    TopicRepository topicRepository;
 
     @Transactional
-    public CircleEntity saveAndFlush(CircleEntity circleEntity){
-        circleEntity = circleRepository.saveAndFlush(circleEntity);
-        return circleEntity;
+    public TopicEntity saveAndFlush(TopicEntity topicEntity){
+        topicEntity = topicRepository.saveAndFlush(topicEntity);
+        return topicEntity;
     }
 }

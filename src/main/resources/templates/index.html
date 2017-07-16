@@ -3,7 +3,7 @@
 <head th:include="fragments/header :: header">
 </head>
 <body>
-<p>Get your greeting <a href="/greeting">here</a></p>
+<p>Get your greeting <a href="/circles">here</a></p>
 <div sec:authorize="isAnonymous()">
 <p>LogIn here <a href="/login" th:href="@{/login}" class="btn">here</a></p>
 </div>

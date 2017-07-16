@@ -1,21 +1,28 @@
 package com.netstore.model;
 
 import javax.persistence.*;
+import java.util.Collection;
 
 /**
- * Created by Master on 2017-04-27.
+ * Created by Master on 2017-07-10.
  */
 @Entity
-@Table(name = "USER", schema = "mydb", catalog = "")
+@Table(name = "USER", schema = "ii301952", catalog = "")
 public class UserEntity {
     private Integer idUser;
     private String name;
     private String lastName;
-    private String avatar;
     private String token;
+    private Collection<AnswerEntity> answersByIdUser;
+    private Collection<CircleEntity> circlesByIdUser;
+    private Collection<RoleEntity> rolesByIdUser;
+    private Collection<SubscribedCircleEntity> subscribedCirclesByIdUser;
+    private Collection<SubscribedTopicEntity> subscribedTopicsByIdUser;
+    private Collection<TopicEntity> topicsByIdUser;
 
     @Id
-    @Column(name = "ID_User")
+    @GeneratedValue
+    @Column(name = "idUSER", nullable = false)
     public Integer getIdUser() {
         return idUser;
     }
@@ -25,7 +32,7 @@ public class UserEntity {
     }
 
     @Basic
-    @Column(name = "Name")
+    @Column(name = "Name", nullable = false, length = 45)
     public String getName() {
         return name;
     }
@@ -35,7 +42,7 @@ public class UserEntity {
     }
 
     @Basic
-    @Column(name = "Last_name")
+    @Column(name = "LastName", nullable = false, length = 85)
     public String getLastName() {
         return lastName;
     }
@@ -45,17 +52,7 @@ public class UserEntity {
     }
 
     @Basic
-    @Column(name = "Avatar")
-    public String getAvatar() {
-        return avatar;
-    }
-
-    public void setAvatar(String avatar) {
-        this.avatar = avatar;
-    }
-
-    @Basic
-    @Column(name = "Token")
+    @Column(name = "Token", nullable = true, length = -1)
     public String getToken() {
         return token;
     }
@@ -74,7 +71,6 @@ public class UserEntity {
         if (idUser != null ? !idUser.equals(that.idUser) : that.idUser != null) return false;
         if (name != null ? !name.equals(that.name) : that.name != null) return false;
         if (lastName != null ? !lastName.equals(that.lastName) : that.lastName != null) return false;
-        if (avatar != null ? !avatar.equals(that.avatar) : that.avatar != null) return false;
         if (token != null ? !token.equals(that.token) : that.token != null) return false;
 
         return true;
@@ -85,8 +81,61 @@ public class UserEntity {
         int result = idUser != null ? idUser.hashCode() : 0;
         result = 31 * result + (name != null ? name.hashCode() : 0);
         result = 31 * result + (lastName != null ? lastName.hashCode() : 0);
-        result = 31 * result + (avatar != null ? avatar.hashCode() : 0);
         result = 31 * result + (token != null ? token.hashCode() : 0);
         return result;
+    }
+
+    @OneToMany(mappedBy = "userByUserIdUser")
+    public Collection<AnswerEntity> getAnswersByIdUser() {
+        return answersByIdUser;
+    }
+
+    public void setAnswersByIdUser(Collection<AnswerEntity> answersByIdUser) {
+        this.answersByIdUser = answersByIdUser;
+    }
+
+    @OneToMany(mappedBy = "userByUserIdUser")
+    public Collection<CircleEntity> getCirclesByIdUser() {
+        return circlesByIdUser;
+    }
+
+    public void setCirclesByIdUser(Collection<CircleEntity> circlesByIdUser) {
+        this.circlesByIdUser = circlesByIdUser;
+    }
+
+    @OneToMany(mappedBy = "userByUserIdUser")
+    public Collection<RoleEntity> getRolesByIdUser() {
+        return rolesByIdUser;
+    }
+
+    public void setRolesByIdUser(Collection<RoleEntity> rolesByIdUser) {
+        this.rolesByIdUser = rolesByIdUser;
+    }
+
+    @OneToMany(mappedBy = "userByUserIdUser")
+    public Collection<SubscribedCircleEntity> getSubscribedCirclesByIdUser() {
+        return subscribedCirclesByIdUser;
+    }
+
+    public void setSubscribedCirclesByIdUser(Collection<SubscribedCircleEntity> subscribedCirclesByIdUser) {
+        this.subscribedCirclesByIdUser = subscribedCirclesByIdUser;
+    }
+
+    @OneToMany(mappedBy = "userByUserIdUser")
+    public Collection<SubscribedTopicEntity> getSubscribedTopicsByIdUser() {
+        return subscribedTopicsByIdUser;
+    }
+
+    public void setSubscribedTopicsByIdUser(Collection<SubscribedTopicEntity> subscribedTopicsByIdUser) {
+        this.subscribedTopicsByIdUser = subscribedTopicsByIdUser;
+    }
+
+    @OneToMany(mappedBy = "userByUserIdUser")
+    public Collection<TopicEntity> getTopicsByIdUser() {
+        return topicsByIdUser;
+    }
+
+    public void setTopicsByIdUser(Collection<TopicEntity> topicsByIdUser) {
+        this.topicsByIdUser = topicsByIdUser;
     }
 }

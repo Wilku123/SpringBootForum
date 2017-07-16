@@ -2,3 +2,71 @@
 {
     margin-top: 80px;
 }
+body
+{
+    background-color: #475057;
+    color: #fff;
+}
+@media screen and (min-width: 768px)
+{
+    .container .jumbotron, .container-fluid .jumbotron {
+         padding-right: 10px;
+         padding-left: 10px;
+    }
+}
+.jumbotron {
+
+    margin-top: 0px;
+    /*padding-right: 5px; !important;*/
+    /*padding-left: 5px;!important;*/
+    padding-top: 0px;
+    padding-bottom: 5px;
+    /*padding: 5px 5px 5px 5px;*/
+    margin-bottom: 6px;
+    color: #fff;
+    background-color: #A1A6AA;
+    border-color: #f26037;
+    border-style: solid;
+    border-width: 1px;
+}
+h3
+{
+    color: #FFFFFF;
+}
+.panel-body
+{
+    padding: 0px;
+}
+.panel
+{
+    background-color: #475057;
+    margin-bottom: 5px;
+}
+.jumbotron p
+{
+    font-size: 14px;
+}
+.jumbotron h2
+{
+    font-size: 21px;
+}
+.jumbotron h2 span
+{
+    font-size: 18px;
+}
+.jumbotron a
+{
+    color: #000;
+}
+.jumbotron img
+{
+    padding-top: 5px;
+}
+.pointer
+{
+    cursor: pointer;
+}
+.glyphyconsPosition
+{
+    padding-top: 5px;
+}

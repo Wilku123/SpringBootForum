@@ -2,11 +2,12 @@
 <html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
       th:fragment="sideMenu">
 <head>
+    <link rel="stylesheet" th:href="@{/css/sidebar.css}" href="../../css/sidebar.css"/>
 </head>
 <body>
 <ul class="nav nav-pills nav-stacked">
     <li class="active">
-        <a href="/greeting">Strona Główna</a>
+        <a href="/circles">Strona Główna</a>
     </li>
     <li  class="">
         <a href="/addCircle">Dodaj Krąg</a>

@@ -22,6 +22,39 @@ $(function () {
     fjs.parentNode.insertBefore(js, fjs);
 }(document, 'script', 'facebook-jssdk'));
 
+$(document).ready(function()
+{
+    // Show tooltip on all <a/> elements with title attributes, but only when
+    // clicked. Clicking anywhere else on the document will hide the tooltip
+    $('span[title]').qtip({
+        show: {
+            event:'click',
+            //show:'click',
+            effect: function () {
+                $(this).slideDown();
+            }
+        },
+        hide: {
+            event:'click',
+            //hide:'unfocus',
+            effect:function () {
+                $(this).slideUp();
+
+            }
+        },
+        position:{
+            my:'top right',
+            at:'bottom left'
+        },
+        style:{
+            classes:'qtip-jtools'
+        }
+
+
+
+
+    })
+});
 
 
 

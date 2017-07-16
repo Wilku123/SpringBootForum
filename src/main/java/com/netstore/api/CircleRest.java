@@ -15,7 +15,7 @@ import java.util.List;
  * Created by Master on 2017-04-27.
  */
 @org.springframework.web.bind.annotation.RestController
-@RequestMapping("/circlerest")
+@RequestMapping("/api")
 public class CircleRest {
 
     @Autowired

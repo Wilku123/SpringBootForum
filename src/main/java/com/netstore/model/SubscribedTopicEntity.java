@@ -3,19 +3,19 @@ package com.netstore.model;
 import javax.persistence.*;
 
 /**
- * Created by Master on 2017-04-27.
+ * Created by Master on 2017-07-10.
  */
 @Entity
-@Table(name = "USER_SUBSCRIBED_TOPIC", schema = "mydb", catalog = "")
-@IdClass(UserSubscribedTopicEntityPK.class)
-public class UserSubscribedTopicEntity {
+@Table(name = "SUBSCRIBED_TOPIC", schema = "ii301952", catalog = "")
+@IdClass(SubscribedTopicEntityPK.class)
+public class SubscribedTopicEntity {
     private Integer userIdUser;
     private Integer topicIdTopic;
     private UserEntity userByUserIdUser;
     private TopicEntity topicByTopicIdTopic;
 
     @Id
-    @Column(name = "USER_ID_User")
+    @Column(name = "USER_idUSER", nullable = false)
     public Integer getUserIdUser() {
         return userIdUser;
     }
@@ -25,7 +25,7 @@ public class UserSubscribedTopicEntity {
     }
 
     @Id
-    @Column(name = "TOPIC_ID_Topic")
+    @Column(name = "TOPIC_idTOPIC", nullable = false)
     public Integer getTopicIdTopic() {
         return topicIdTopic;
     }
@@ -39,7 +39,7 @@ public class UserSubscribedTopicEntity {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        UserSubscribedTopicEntity that = (UserSubscribedTopicEntity) o;
+        SubscribedTopicEntity that = (SubscribedTopicEntity) o;
 
         if (userIdUser != null ? !userIdUser.equals(that.userIdUser) : that.userIdUser != null) return false;
         if (topicIdTopic != null ? !topicIdTopic.equals(that.topicIdTopic) : that.topicIdTopic != null) return false;
@@ -55,7 +55,7 @@ public class UserSubscribedTopicEntity {
     }
 
     @ManyToOne
-    @JoinColumn(name = "USER_ID_User", referencedColumnName = "ID_User",insertable = false,updatable = false, nullable = false)
+    @JoinColumn(name = "USER_idUSER", referencedColumnName = "idUSER", nullable = false,insertable = false, updatable = false)
     public UserEntity getUserByUserIdUser() {
         return userByUserIdUser;
     }
@@ -65,7 +65,7 @@ public class UserSubscribedTopicEntity {
     }
 
     @ManyToOne
-    @JoinColumn(name = "TOPIC_ID_Topic", referencedColumnName = "ID_Topic",insertable = false,updatable = false, nullable = false)
+    @JoinColumn(name = "TOPIC_idTOPIC", referencedColumnName = "idTOPIC", nullable = false,insertable = false, updatable = false)
     public TopicEntity getTopicByTopicIdTopic() {
         return topicByTopicIdTopic;
     }
