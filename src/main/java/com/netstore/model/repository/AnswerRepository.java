@@ -13,4 +13,5 @@ import java.util.List;
  */
 public interface AnswerRepository extends JpaRepository<AnswerEntity,Integer>, JpaSpecificationExecutor<AnswerEntity> {
     List<AnswerEntity> findAllByTopicByTopicIdTopic(TopicEntity topicEntity);
+    List<AnswerEntity> findAllByTopicIdTopic(Integer id);
 }

@@ -11,4 +11,5 @@ import java.util.List;
  */
 public interface UserRepository extends JpaRepository<UserEntity,Integer>, JpaSpecificationExecutor<UserEntity> {
     UserEntity findAllByIdUser(Integer id);
+    UserEntity findByToken(String token);
 }

@@ -22,6 +22,7 @@ $(function () {
     fjs.parentNode.insertBefore(js, fjs);
 }(document, 'script', 'facebook-jssdk'));
 
+//Info about
 $(document).ready(function()
 {
     // Show tooltip on all <a/> elements with title attributes, but only when
@@ -43,8 +44,8 @@ $(document).ready(function()
             }
         },
         position:{
-            my:'top right',
-            at:'bottom left'
+            my:'top center',
+            at:'bottom center'
         },
         style:{
             classes:'qtip-jtools'
@@ -55,6 +56,143 @@ $(document).ready(function()
 
     })
 });
+//Redirect QRcode
+$(document).ready(function()
+{
+
+    $('.qrcode').each(function () {
+        $(this).qtip({
+            content:{
+                title:"Przekierowanie",
+                text:'<img src="'+$(this).attr('title')+'" width="100" height="100"/>'
+
+            },
+            show: {
+                event:'click',
+                //show:'click',
+                effect: function () {
+                    $(this).slideDown();
+                }
+            },
+            hide: {
+                event:'click',
+                //hide:'unfocus',
+                effect:function () {
+                    $(this).slideUp();
+
+                }
+            },
+            position:{
+                my:'top right',
+                at:'bottom left'
+            },
+            style:{
+                classes:'qtip-jtools'
+            }
 
 
 
+
+        })
+    });
+
+    });
+
+//Subscribe
+$(document).ready(function()
+{
+
+    $('.subscribe').each(function () {
+        $(this).qtip({
+            content:{
+                title:"Subskrypcja",
+                text:'<img src="'+$(this).attr('title')+'" width="100" height="100"/>' +
+                ''
+
+            },
+            show: {
+                event:'click',
+                //show:'click',
+                ready:true,
+                modal:{
+                    on:click,
+                    blur:false
+                },
+                effect: function () {
+                    $(this).slideDown();
+                }
+            },
+            hide: {
+                event:'click',
+                //hide:'unfocus',
+                effect:function () {
+                    $(this).slideUp();
+
+                }
+            },
+            position:{
+                my:'top left',
+                at:'bottom right'
+            },
+            style:{
+                classes:'qtip-jtools'
+            }
+
+
+
+
+        })
+    });
+
+});
+
+function dialogue(content, title) {
+    $('.subscribe').qtip({
+        content: {
+            text: content,
+            title: title
+        },
+        position: {
+            my: 'center', at: 'center',
+            target: $(window)
+        },
+        show: {
+            ready: true,
+            modal: {
+                on: true,
+                blur: false
+            }
+        },
+        hide: {
+            event:'false',
+            //hide:'unfocus',
+            effect:function () {
+                $(this).slideUp();
+
+            }
+        },
+        style:{
+            classes:'qtip-jtools'
+        },
+        events: {
+            render: function(event, api) {
+                $('button', api.elements.content).click(function(e) {
+                    api.hide(e);
+                });
+            },
+            hide: function(event, api) { api.destroy(); }
+        }
+    });
+}
+window.Prompt = function() {
+    var message = $('<p />', { text: 'What do you think about these custom dialogues?' }),
+        input = $('<input />', { val: 'Fantastic!' }),
+        ok = $('<button />', {
+            text: 'Ok'
+        }),
+        cancel = $('<button />', {
+            text: 'Cancel'
+        });
+
+    dialogue( message.add(input).add(ok).add(cancel), 'Attention!' );
+}

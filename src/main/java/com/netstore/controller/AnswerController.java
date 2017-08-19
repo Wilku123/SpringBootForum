@@ -69,6 +69,7 @@ public class AnswerController {
     @PostMapping("{name}/{id}/proccessAddingAnswer")
     public String proccess(@PathVariable Integer id, @ModelAttribute AnswerEntity answerEntity, BindingResult result){
         answerEntity.setTopicIdTopic(id);
+//        answerEntity.setTopicByTopicIdTopic();
         answerEntity.setPublishDate(timestamp);
         answerEntity.setUserIdUser(1);
         this.addAnswersService.saveAndFlush(answerEntity);

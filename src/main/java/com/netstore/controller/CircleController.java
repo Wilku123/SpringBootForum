@@ -1,8 +1,11 @@
 package com.netstore.controller;
 
 import com.netstore.model.CircleEntity;
+import com.netstore.model.CircleRestViewEntity;
 import com.netstore.model.UserEntity;
 import com.netstore.model.repository.CircleRepository;
+import com.netstore.model.repository.CircleRestViewRepository;
+import com.netstore.model.repository.UserRepository;
 import com.netstore.service.AddCircleService;
 import net.glxn.qrgen.javase.QRCode;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +33,9 @@ import java.util.List;
 public class CircleController {
 
     @Autowired
-    private CircleRepository circleRepository;
+    private UserRepository userRepository;
+    @Autowired
+    private CircleRestViewRepository circleRepository;
     @Autowired
     private AddCircleService addCircleService;
 
@@ -44,22 +49,28 @@ public class CircleController {
     @RequestMapping("/circles")
     public String greeting(Model model) {
 
-        List<CircleEntity> circleEntityList = circleRepository.findAll();
+        List<CircleRestViewEntity> circleEntityList = circleRepository.findAll();
         List<String> descList = new ArrayList<>();
         List<String> nameList = new ArrayList<>();
         List<Integer> idList = new ArrayList<>();
         List<String> publishDateList = new ArrayList<>();
         List<String> userNameList = new ArrayList<>();
         List<String> userLastNameList = new ArrayList<>();
+        List<String> isSubbedList = new ArrayList<>();
+        List<Long> countSubbedList = new ArrayList<>();
+        List<Long> countTopicList = new ArrayList<>();
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH:mm yyyy.MM.dd");
 
-        for (CircleEntity i:circleEntityList) {
+        for (CircleRestViewEntity i:circleEntityList) {
             idList.add(i.getIdCircle());
             descList.add(i.getDescription());
             nameList.add(i.getName());
             publishDateList.add(simpleDateFormat.format(new Date(i.getPublishDate().getTime())));
-            userNameList.add(i.getUserByUserIdUser().getName());
-            userLastNameList.add(i.getUserByUserIdUser().getLastName());
+            userNameList.add(userRepository.findOne(i.getUserIdUser()).getName());
+            userLastNameList.add(userRepository.findOne(i.getUserIdUser()).getLastName());
+            isSubbedList.add("true"); //TODO Modify to Session variable
+            countSubbedList.add(i.getCountSubbed());
+            countTopicList.add(i.getCountTopic());
         }
 
         model.addAttribute("circleDescription",descList);
@@ -68,6 +79,9 @@ public class CircleController {
         model.addAttribute("circleId",idList);
         model.addAttribute("circleCreatorName",userNameList);
         model.addAttribute("circleCreatorLastName",userLastNameList);
+        model.addAttribute("circleIsSubbed",isSubbedList);
+        model.addAttribute("circleCountSubbed",countSubbedList);
+        model.addAttribute("circleTopicCount",countTopicList);
         //model.addAttribute("qrCodeCircle",);
 
         return "circles";

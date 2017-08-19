@@ -59,7 +59,7 @@ public class AnswerEntity {
     }
 
     @Basic
-    @Column(name = "TOPIC_idTOPIC", nullable = false ,insertable = false, updatable = false)
+    @Column(name = "TOPIC_idTOPIC", nullable = false)
     public Integer getTopicIdTopic() {
         return topicIdTopic;
     }

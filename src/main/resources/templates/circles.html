@@ -26,17 +26,33 @@
                             <span style="float:right">
                             <!--<th:block th:inline="title" th:text="${circlePublishDate[iter.index]}"th:remove="tag"></th:block>-->
                                 <!--<img th:src="/qrcode/${circleId[iter.index]}"/>-->
-                                <span class="pointer glyphicon glyphicon-qrcode"
-                                      th:attr="title='/qrcode/'+${circleId[iter.index]}"
-                                ></span>
-                            <span class="pointer glyphicon glyphicon-info-sign"
-                                  th:attr="title='Data utworzenia: '
-                                 +${circlePublishDate[iter.index]}
-                                 +'&lt;br /&gt;'
-                                 +'Twórca: '
-                                 +${circleCreatorName[iter.index]}+' '
-                                 +${circleCreatorLastName[iter.index]}"
-                            ></span>
+                                <span th:title="'/qrcode/circle/'+${circleId[iter.index]}+'/RED'" alt="topkek"
+                                      class="pointer glyphicon glyphicon-qrcode qrcode">
+                                <!--<img th:id="qrcode+${circleId[iter.index]}" style="display: none" th:attr="src='/qrcode/circle/'+${circleId[iter.index]}+'/RED'"/>-->
+                                </span>
+
+                                <span class="pointer glyphicon glyphicon-info-sign"
+                                      th:attr="title='Data utworzenia: '
+                                    +${circlePublishDate[iter.index]}
+                                    +'&lt;br /&gt;'
+                                    +'Twórca: '
+                                    +${circleCreatorName[iter.index]}
+                                    +' '
+                                    +${circleCreatorLastName[iter.index]}
+                                    +'&lt;br /&gt; Ilość Subskrypcji: '
+                                    +${circleCountSubbed[iter.index]}
+                                    +'&lt;br /&gt; Ilość Tematów w Kręgu: '
+                                    +${circleTopicCount[iter.index]}
+                                    +'&lt;br /&gt; Subskrybujesz?: '
+                                    +${circleIsSubbed[iter.index]}
+
+                                    ">
+                                </span>
+                                <!--TODO Change star from glyphicon to full and vice versa if topic is subbed-->
+                                <span class="pointer glyphicon glyphicon-star-empty subscribe" onclick="Prompt()"
+                                      th:title="'/qrcode/circle/'+${circleId[iter.index]}+'/SUB'">
+
+                                </span>
                             </span>
                         </div>
                         <h2>
