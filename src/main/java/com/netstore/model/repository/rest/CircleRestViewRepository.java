@@ -1,9 +1,10 @@
-package com.netstore.model.repository;
+package com.netstore.model.repository.rest;
 
 import com.netstore.model.CircleRestViewEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.sql.Timestamp;
 import java.util.List;
 
 /**
@@ -13,6 +14,7 @@ import java.util.List;
 @javax.transaction.Transactional
 public interface CircleRestViewRepository extends JpaRepository<CircleRestViewEntity,Integer> {
     CircleRestViewEntity findByUserIdUser(Integer id);
+    List<CircleRestViewEntity> findAllByPublishDateIsLessThanEqualOrderByPublishDateDesc(Timestamp date);
 
 }
 

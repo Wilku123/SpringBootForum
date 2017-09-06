@@ -2,23 +2,15 @@ package com.netstore.controller;
 
 import com.netstore.model.CircleEntity;
 import com.netstore.model.CircleRestViewEntity;
-import com.netstore.model.UserEntity;
-import com.netstore.model.repository.CircleRepository;
-import com.netstore.model.repository.CircleRestViewRepository;
+import com.netstore.model.repository.rest.CircleRestViewRepository;
 import com.netstore.model.repository.UserRepository;
 import com.netstore.service.AddCircleService;
-import net.glxn.qrgen.javase.QRCode;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
-import org.springframework.stereotype.*;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.io.*;
 import java.sql.Date;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;

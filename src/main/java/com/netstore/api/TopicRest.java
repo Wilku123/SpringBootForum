@@ -1,20 +1,25 @@
 package com.netstore.api;
 
+import com.netstore.model.API.SchemaRest;
+import com.netstore.model.API.SchemaRestList;
+import com.netstore.model.API.topic.LimitTopicModel;
+import com.netstore.model.API.topic.NewTopicModel;
+import com.netstore.model.API.topic.TopicIdModel;
+import com.netstore.model.API.topic.TopicSubbedModel;
 import com.netstore.model.SubscribedTopicEntity;
 import com.netstore.model.TopicEntity;
 import com.netstore.model.TopicRestViewEntity;
+import com.netstore.model.repository.rest.CircleRestViewRepository;
 import com.netstore.model.repository.SubscribedTopicRepository;
-import com.netstore.model.repository.TopicRestViewRepository;
+import com.netstore.model.repository.rest.TopicRestViewRepository;
 import com.netstore.model.repository.UserRepository;
 import com.netstore.service.AddTopicService;
 import com.netstore.service.AddTopicSubscriptionService;
+import com.netstore.utility.LimitedListGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -37,6 +42,9 @@ public class TopicRest {
     private AddTopicService addTopicService;
     @Autowired
     private AddTopicSubscriptionService addTopicSubscriptionService;
+    @Autowired
+    private CircleRestViewRepository circleRestViewRepository;
+
 
     private TopicRestViewEntity generateTopicList(int sub, TopicRestViewEntity i) {
 
@@ -61,84 +69,118 @@ public class TopicRest {
 
 
     @RequestMapping(value = "/one", method = RequestMethod.POST)
-    public ResponseEntity<List<TopicRestViewEntity>> getOneTopic(@RequestHeader(value = "Token") String token, @RequestParam(value = "id") Integer id) {
+    public ResponseEntity<SchemaRest> getOneTopic(@RequestHeader(value = "Token") String token, @RequestBody TopicIdModel topicIdModel) {
 
-        TopicRestViewEntity topicEntity = topicRestViewRepository.findOne(id);
-        List<TopicRestViewEntity> topicRestViewEntityList = new ArrayList<>();
+        if (topicRestViewRepository.exists(topicIdModel.getId())) {
+            TopicRestViewEntity topicEntity = topicRestViewRepository.findOne(topicIdModel.getId());
+            TopicRestViewEntity topicRestViewEntity;
 
 
-        if ((subscribedTopicRepository.findByUserIdUserAndTopicIdTopic(userRepository.findByToken(token).getIdUser(), topicEntity.getIdTopic())) != null) {
-            topicRestViewEntityList.add(generateTopicList(1, topicEntity));
+            if ((subscribedTopicRepository.findByUserIdUserAndTopicIdTopic(userRepository.findByToken(token).getIdUser(), topicEntity.getIdTopic())) != null) {
+                topicRestViewEntity = (generateTopicList(1, topicEntity));
+            } else {
+                topicRestViewEntity = (generateTopicList(0, topicEntity));
+            }
+            SchemaRest<TopicRestViewEntity> schemaRest = new SchemaRest<>(true, "git gut", 1337, topicRestViewEntity);
+
+            return new ResponseEntity<>(schemaRest, HttpStatus.OK);
         } else {
-            topicRestViewEntityList.add(generateTopicList(0, topicEntity));
-        }
+            SchemaRest<TopicRestViewEntity> schemaRest = new SchemaRest<>(false, "zjebalo sie", 100, null);
 
-        return new ResponseEntity<>(topicRestViewEntityList, HttpStatus.OK);
+            return new ResponseEntity<>(schemaRest, HttpStatus.BAD_REQUEST);
+        }
     }
 
     @RequestMapping(value = "/add", method = RequestMethod.POST)
-    public ResponseEntity<String> addTopic(@RequestHeader(value = "Token") String token, @RequestParam(value = "name") String name, @RequestParam(value = "circleId") Integer circleId) {
+    public ResponseEntity<SchemaRest> addTopic(@RequestHeader(value = "Token") String token, @RequestBody NewTopicModel newTopicModel) {
 
-        TopicEntity topicEntity = new TopicEntity();
-        topicEntity.setCircleIdCircle(circleId);
-        topicEntity.setName(name);
-        topicEntity.setUserIdUser(userRepository.findByToken(token).getIdUser());
-        topicEntity.setPublishDate(new Timestamp(System.currentTimeMillis()));
-        this.addTopicService.saveAndFlush(topicEntity);
 
-        return new ResponseEntity<>("Added Topic", HttpStatus.OK);
+        if (circleRestViewRepository.exists(newTopicModel.getId()) && newTopicModel.getName().length() > 2) {
+            TopicEntity topicEntity = new TopicEntity();
+            topicEntity.setCircleIdCircle(newTopicModel.getId());
+            topicEntity.setName(newTopicModel.getName());
+            topicEntity.setUserIdUser(userRepository.findByToken(token).getIdUser());
+            topicEntity.setPublishDate(new Timestamp(System.currentTimeMillis()));
+            this.addTopicService.saveAndFlush(topicEntity);
+
+            SubscribedTopicEntity subscribedTopicEntity = new SubscribedTopicEntity();
+            subscribedTopicEntity.setUserIdUser(userRepository.findByToken(token).getIdUser());
+            subscribedTopicEntity.setTopicIdTopic(topicEntity.getIdTopic());
+            this.addTopicSubscriptionService.saveAndFlush(subscribedTopicEntity);
+
+            TopicRestViewEntity topicRestViewEntity = topicRestViewRepository.findOne(topicEntity.getIdTopic());
+            topicRestViewEntity.setIsSub(1);
+
+            SchemaRest<TopicRestViewEntity> schemaRest = new SchemaRest<>(true, "topic added and subscribed successfully", 1337, topicRestViewEntity);
+
+            return new ResponseEntity<>(schemaRest, HttpStatus.OK);
+        } else {
+            SchemaRest<TopicRestViewEntity> schemaRest = new SchemaRest<>(false, "ERROR wrong ID or name have less than 3 chars", 101, null);
+
+            return new ResponseEntity<>(schemaRest, HttpStatus.BAD_REQUEST);
+        }
     }
 
     @RequestMapping(value = "/limit", method = RequestMethod.POST)
-    public ResponseEntity<List<TopicRestViewEntity>> getLimitedTopic(@RequestHeader(value = "Token") String token, @RequestParam(value = "limit") Integer limit, @RequestParam(value = "circleId") Integer circleId) {
+    public ResponseEntity<SchemaRestList> getLimitedTopic(@RequestHeader(value = "Token") String token, @RequestBody LimitTopicModel limitTopicModel) {
 
-        List<TopicRestViewEntity> topicEntityList = topicRestViewRepository.findAllByCircleIdCircle(circleId);
-        List<TopicRestViewEntity> topicRestList = new ArrayList<>();
+        if (circleRestViewRepository.exists(limitTopicModel.getId()) && limitTopicModel.getHowMany() > 0) {
+            List<TopicRestViewEntity> topicEntityList = topicRestViewRepository.findAllByCircleIdCircleAndPublishDateIsLessThanEqualOrderByPublishDateDesc(limitTopicModel.getId(), limitTopicModel.getDate());
+            List<TopicRestViewEntity> topicRestList = new ArrayList<>();
 
-        for (TopicRestViewEntity i : topicEntityList) {
-            if ((subscribedTopicRepository.findByUserIdUserAndTopicIdTopic(userRepository.findByToken(token).getIdUser(), i.getIdTopic())) != null) {
-                topicRestList.add(generateTopicList(1, i));
-            } else {
-                topicRestList.add(generateTopicList(0, i));
+
+            for (TopicRestViewEntity i : topicEntityList) {
+                if ((subscribedTopicRepository.findByUserIdUserAndTopicIdTopic(userRepository.findByToken(token).getIdUser(), i.getIdTopic())) != null) {
+                    topicRestList.add(generateTopicList(1, i));
+                } else {
+                    topicRestList.add(generateTopicList(0, i));
+                }
             }
+
+            LimitedListGenerator<TopicRestViewEntity> topicRestViewEntityLimitedListGenerator = new LimitedListGenerator<>();
+
+            SchemaRestList<TopicRestViewEntity> schemaRest = new SchemaRestList<>(true, "should work not sure tho", 1337, topicRestViewEntityLimitedListGenerator.limitedList(topicRestList, limitTopicModel.getHowMany()));
+
+            return new ResponseEntity<>(schemaRest, HttpStatus.OK);
+
+        } else {
+
+            SchemaRestList<TopicRestViewEntity> schemaRest = new SchemaRestList<>(false, "Circle dosnt exist or howMany is less than 1", 101, null);
+
+            return new ResponseEntity<>(schemaRest, HttpStatus.BAD_REQUEST);
         }
 
-        if (topicRestList.size() < limit)
-        {
-            return new ResponseEntity<>(topicRestList.subList(topicRestList.size(), topicRestList.size()), HttpStatus.OK);
-        }
-//        else if (limit < 0)
-//        {
-//            return new ResponseEntity<>(topicRestList.subList(0, 0), HttpStatus.OK);
-//        }
-        else if (topicRestList.size() < limit + 10)
-        {
-            return new ResponseEntity<>(topicRestList.subList(limit, topicRestList.size()), HttpStatus.OK);
-        }
-        else
-        {
-            return new ResponseEntity<>(topicRestList.subList(limit, limit + 10), HttpStatus.OK);
-        }
     }
 
     @RequestMapping(value = "/sub", method = RequestMethod.POST)
-    public ResponseEntity<String> subscribeTopic(@RequestHeader(value = "Token") String token, @RequestParam(value = "id") Integer id) {
+    public ResponseEntity<SchemaRest> subscribeTopic(@RequestHeader(value = "Token") String token, @RequestBody TopicSubbedModel topicSubbedModel) {
 
-        SubscribedTopicEntity subscribedTopicEntity = new SubscribedTopicEntity();
-        subscribedTopicEntity.setUserIdUser(userRepository.findByToken(token).getIdUser());
-        subscribedTopicEntity.setTopicIdTopic(id);
-        this.addTopicSubscriptionService.saveAndFlush(subscribedTopicEntity);
+        if (circleRestViewRepository.exists(topicSubbedModel.getId())) {
+            if (topicSubbedModel.isStatus()) {
+                SubscribedTopicEntity subscribedTopicEntity = new SubscribedTopicEntity();
+                subscribedTopicEntity.setUserIdUser(userRepository.findByToken(token).getIdUser());
+                subscribedTopicEntity.setTopicIdTopic(topicSubbedModel.getId());
+                this.addTopicSubscriptionService.saveAndFlush(subscribedTopicEntity);
+
+                SchemaRest<SubscribedTopicEntity> schemaRest = new SchemaRest<>(true, "Subbed topic", 1337, subscribedTopicEntity);
+
+                return new ResponseEntity<>(schemaRest, HttpStatus.OK);
+            } else {
+                SubscribedTopicEntity subscribedTopicEntity = new SubscribedTopicEntity();
+                subscribedTopicEntity.setUserIdUser(userRepository.findByToken(token).getIdUser());
+                subscribedTopicEntity.setTopicIdTopic(topicSubbedModel.getId());
+                subscribedTopicRepository.delete(subscribedTopicEntity);
+
+                SchemaRest<SubscribedTopicEntity> schemaRest = new SchemaRest<>(true, "UnSubbed topic", 1337, subscribedTopicEntity);
 
 
-        return new ResponseEntity<>("Subbded", HttpStatus.OK);
-    }
-    @RequestMapping(value = "/unsub", method = RequestMethod.POST)
-    public ResponseEntity<String> unsubscribeCircle(@RequestHeader(value = "Token") String token, @RequestParam(value = "id") Integer id) {
+                return new ResponseEntity<>(schemaRest, HttpStatus.OK);
+            }
+        } else {
+            SchemaRest<TopicRestViewEntity> schemaRest = new SchemaRest<>(false, "zjebalo sie", 100, null);
+            return new ResponseEntity<>(schemaRest, HttpStatus.BAD_REQUEST);
 
-        SubscribedTopicEntity subscribedTopicEntity = new SubscribedTopicEntity();
-        subscribedTopicEntity.setUserIdUser(userRepository.findByToken(token).getIdUser());
-        subscribedTopicEntity.setTopicIdTopic(id);
-        subscribedTopicRepository.delete(subscribedTopicEntity);
-        return new ResponseEntity<>("UnSubbded", HttpStatus.OK);
+        }
+
     }
 }

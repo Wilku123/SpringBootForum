@@ -64,7 +64,7 @@ $(document).ready(function()
         $(this).qtip({
             content:{
                 title:"Przekierowanie",
-                text:'<img src="'+$(this).attr('title')+'" width="100" height="100"/>'
+                text:'<img src="'+$(this).attr('title')+'" width="250" height="250"/>'
 
             },
             show: {
@@ -106,7 +106,7 @@ $(document).ready(function()
         $(this).qtip({
             content:{
                 title:"Subskrypcja",
-                text:'<img src="'+$(this).attr('title')+'" width="100" height="100"/>' +
+                text:'<img src="'+$(this).attr('title')+'" width="250" height="250"/>' +
                 ''
 
             },

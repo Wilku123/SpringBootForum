@@ -1,9 +1,15 @@
 package com.netstore.api;
 
+import com.netstore.model.API.SchemaRest;
+import com.netstore.model.API.SchemaRestList;
+import com.netstore.model.API.circle.CircleIdModel;
+import com.netstore.model.API.circle.CircleSubbedModel;
+import com.netstore.model.API.circle.LimitCircleModel;
+import com.netstore.model.API.circle.NewCircleModel;
 import com.netstore.model.CircleEntity;
 import com.netstore.model.CircleRestViewEntity;
 import com.netstore.model.SubscribedCircleEntity;
-import com.netstore.model.repository.CircleRestViewRepository;
+import com.netstore.model.repository.rest.CircleRestViewRepository;
 import com.netstore.model.repository.SubscribedCircleRepository;
 import com.netstore.model.repository.UserRepository;
 import com.netstore.service.AddCircleService;
@@ -78,70 +84,96 @@ public class CircleRest {
 //
 //    }
 
-    @RequestMapping(value = "/add",method = RequestMethod.POST)
-    public ResponseEntity<String> addCircle(@RequestHeader(value = "Token") String token,@RequestParam(value = "name")String name,@RequestParam(value = "description")String description) {
+    @RequestMapping(value = "/add", method = RequestMethod.POST)
+    public ResponseEntity<SchemaRest> addCircle(@RequestHeader(value = "Token") String token, @RequestBody NewCircleModel newCircleModel) {
 
-        CircleEntity circleEntity = new CircleEntity();
-        circleEntity.setName(name);
-        circleEntity.setDescription(description);
-        circleEntity.setUserIdUser(userRepository.findByToken(token).getIdUser());
-        circleEntity.setPublishDate(new Timestamp(System.currentTimeMillis()));
-        this.addCircleService.saveAndFlush(circleEntity);
+        if (newCircleModel.getName().length()>2 && newCircleModel.getDescription().length()>10) {
+            CircleEntity circleEntity = new CircleEntity();
+            circleEntity.setName(newCircleModel.getName());
+            circleEntity.setDescription(newCircleModel.getDescription());
+            circleEntity.setUserIdUser(userRepository.findByToken(token).getIdUser());
+            circleEntity.setPublishDate(new Timestamp(System.currentTimeMillis()));
+            this.addCircleService.saveAndFlush(circleEntity);
 
-        return new ResponseEntity<>("Added Circle",HttpStatus.OK);
+            SubscribedCircleEntity subscribedCircleEntity = new SubscribedCircleEntity();
+            subscribedCircleEntity.setUserIdUser(userRepository.findByToken(token).getIdUser());
+            subscribedCircleEntity.setCircleIdCircle(circleEntity.getIdCircle());
+            this.addCircleSubscriptionService.saveAndFlush(subscribedCircleEntity);
+
+
+            CircleRestViewEntity circleRestViewEntity;
+            circleRestViewEntity= circleRestViewRepository.findOne(circleEntity.getIdCircle());
+            circleRestViewEntity.setIsSub(1);
+            SchemaRest<CircleRestViewEntity> schemaRest = new SchemaRest<>(true, "Added circle and subbed successfully", 1337, circleRestViewEntity);
+
+
+            return new ResponseEntity<>(schemaRest, HttpStatus.OK);
+        }
+        else
+        {
+            SchemaRest<CircleRestViewEntity> schemaRest = new SchemaRest<>(false, "name should be longer than 2chars and description than 10chars", 100, null);
+
+            return new ResponseEntity<>(schemaRest, HttpStatus.OK);
+        }
     }
 
     @RequestMapping(value = "/limit", method = RequestMethod.POST)
-    public ResponseEntity<List<CircleRestViewEntity>> getLimitedCircle(@RequestHeader(value = "Token") String token, @RequestParam(value = "limit") Integer limit) {
+    public ResponseEntity<SchemaRestList> getLimitedCircle(@RequestHeader(value = "Token") String token, @RequestBody LimitCircleModel limit) {
 
-        List<CircleRestViewEntity> circleEntityList = circleRestViewRepository.findAll();
-        List<CircleRestViewEntity> circleRestList = new ArrayList<>();
+        if (limit.getHowMany()>0) {
+            List<CircleRestViewEntity> circleEntityList = circleRestViewRepository.findAllByPublishDateIsLessThanEqualOrderByPublishDateDesc(limit.getDate());
+            List<CircleRestViewEntity> circleRestList = new ArrayList<>();
 
-        for (CircleRestViewEntity i : circleEntityList) {
-            if ((subscribedCircleRepository.findByUserIdUserAndCircleIdCircle(userRepository.findByToken(token).getIdUser(), i.getIdCircle())) != null) {
-                circleRestList.add(generateCircleList(1, i));
-            } else {
-                circleRestList.add(generateCircleList(0, i));
+            for (CircleRestViewEntity i : circleEntityList) {
+                if ((subscribedCircleRepository.findByUserIdUserAndCircleIdCircle(userRepository.findByToken(token).getIdUser(), i.getIdCircle())) != null) {
+                    circleRestList.add(generateCircleList(1, i));
+                } else {
+                    circleRestList.add(generateCircleList(0, i));
+                }
             }
+            SchemaRestList<CircleRestViewEntity> schemaRest = new SchemaRestList<>(true, "git gut", 1337, circleRestList);
+
+            return new ResponseEntity<>(schemaRest, HttpStatus.OK);
+
         }
-        //OutOfBound
-        if (circleRestList.size() < limit)
-        {
-            return new ResponseEntity<>(circleRestList.subList(circleRestList.size(), circleRestList.size()), HttpStatus.OK);
-        }
-        //show From Limit To Max
-        else if (circleRestList.size() < limit + 10)
-        {
-            return new ResponseEntity<>(circleRestList.subList(limit, circleRestList.size()), HttpStatus.OK);
-        }
-        //limit less than 0 fk that guy
-        else if (limit < 0)
-        {
-            return new ResponseEntity<>(circleRestList.subList(0, 0), HttpStatus.OK);
-        }
-        //Everything is git gut
         else
         {
-            return new ResponseEntity<>(circleRestList.subList(limit, limit + 10), HttpStatus.OK);
+            SchemaRestList<CircleRestViewEntity> schemaRest = new SchemaRestList<>(false, "zjebalo sie", 1337, null);
+            return new ResponseEntity<>(schemaRest, HttpStatus.BAD_REQUEST);
+
         }
+
     }
 
     @RequestMapping(value = "/one", method = RequestMethod.POST)
-    public ResponseEntity<List<CircleRestViewEntity>> getOneCircle(@RequestHeader(value = "Token") String token, @RequestParam(value = "id") Integer id) {
+    public ResponseEntity<SchemaRest> getOneCircle(@RequestHeader(value = "Token") String token, @RequestBody CircleIdModel oneById) {
 
-        CircleRestViewEntity circleEntity = circleRestViewRepository.findOne(id);
-        List<CircleRestViewEntity> circleRestList = new ArrayList<>();
+        if (circleRestViewRepository.exists(oneById.getId())) {
+
+            CircleRestViewEntity circleEntity = circleRestViewRepository.findOne(oneById.getId());
+            CircleRestViewEntity circleRest;
 
 
-        if ((subscribedCircleRepository.findByUserIdUserAndCircleIdCircle(userRepository.findByToken(token).getIdUser(), circleEntity.getIdCircle())) != null) {
-            circleRestList.add(generateCircleList(1, circleEntity));
+            if ((subscribedCircleRepository.findByUserIdUserAndCircleIdCircle(userRepository.findByToken(token).getIdUser(), circleEntity.getIdCircle())) != null) {
+                circleRest = (generateCircleList(1, circleEntity));
+            } else {
+                circleRest = (generateCircleList(0, circleEntity));
+            }
+
+            SchemaRest<CircleRestViewEntity> schemaRest = new SchemaRest<>(true, "git gut", 1337, circleRest);
+
+
+            return new ResponseEntity<>(schemaRest, HttpStatus.OK);
+
         } else {
-            circleRestList.add(generateCircleList(0, circleEntity));
+
+            SchemaRest<CircleRestViewEntity> schemaRest = new SchemaRest<>(false, "zjebalo sie", 1337, null);
+
+            return new ResponseEntity<>(schemaRest, HttpStatus.OK);
+
         }
-
-        return new ResponseEntity<>(circleRestList, HttpStatus.OK);
     }
-
+//-------------------------------------------------------------------------------------------------------------
     @RequestMapping(value = "/all", method = RequestMethod.POST)
     public ResponseEntity<List<CircleRestViewEntity>> getAllCircles(@RequestHeader(value = "Token") String token) {
 
@@ -157,22 +189,39 @@ public class CircleRest {
         }
         return new ResponseEntity<>(circleRestList, HttpStatus.OK);
     }
+//-------------------------------------------------------------------------------------------------------------
     @RequestMapping(value = "/sub", method = RequestMethod.POST)
-    public ResponseEntity<String> subscribeCircle(@RequestHeader(value = "Token") String token, @RequestParam(value = "id") Integer id) {
+    public ResponseEntity<SchemaRest> subscribeCircle(@RequestHeader(value = "Token") String token, @RequestBody CircleSubbedModel subById) {
 
-        SubscribedCircleEntity subscribedCircleEntity = new SubscribedCircleEntity();
-        subscribedCircleEntity.setUserIdUser(userRepository.findByToken(token).getIdUser());
-        subscribedCircleEntity.setCircleIdCircle(id);
-        this.addCircleSubscriptionService.saveAndFlush(subscribedCircleEntity);
-        return new ResponseEntity<>("Subbded", HttpStatus.OK);
-    }
-    @RequestMapping(value = "/unsub", method = RequestMethod.POST)
-    public ResponseEntity<String> unsubscribeCircle(@RequestHeader(value = "Token") String token, @RequestParam(value = "id") Integer id) {
+        if (circleRestViewRepository.exists(subById.getId())) {
 
-        SubscribedCircleEntity subscribedCircleEntity = new SubscribedCircleEntity();
-        subscribedCircleEntity.setUserIdUser(userRepository.findByToken(token).getIdUser());
-        subscribedCircleEntity.setCircleIdCircle(id);
-        subscribedCircleRepository.delete(subscribedCircleEntity);
-        return new ResponseEntity<>("UnSubbded", HttpStatus.OK);
+            if (subById.isStatus()) {
+                SubscribedCircleEntity subscribedCircleEntity = new SubscribedCircleEntity();
+                subscribedCircleEntity.setUserIdUser(userRepository.findByToken(token).getIdUser());
+                subscribedCircleEntity.setCircleIdCircle(subById.getId());
+                this.addCircleSubscriptionService.saveAndFlush(subscribedCircleEntity);
+
+                SchemaRest<SubscribedCircleEntity> schemaRest = new SchemaRest<>(true, "Subbed circle", 1337, subscribedCircleEntity);
+
+
+                return new ResponseEntity<>(schemaRest, HttpStatus.OK);
+
+            } else {
+                SubscribedCircleEntity subscribedCircleEntity = new SubscribedCircleEntity();
+                subscribedCircleEntity.setUserIdUser(userRepository.findByToken(token).getIdUser());
+                subscribedCircleEntity.setCircleIdCircle(subById.getId());
+                subscribedCircleRepository.delete(subscribedCircleEntity);
+
+                SchemaRest<SubscribedCircleEntity> schemaRest = new SchemaRest<>(true, "UnSubbed circle", 1337, subscribedCircleEntity);
+
+
+                return new ResponseEntity<>(schemaRest, HttpStatus.OK);
+            }
+        }else
+        {
+            SchemaRest<SubscribedCircleEntity> schemaRest = new SchemaRest<>(false, "Circle id dosnt exist", 101, null);
+            return new ResponseEntity<>(schemaRest, HttpStatus.OK);
+
+        }
     }
 }

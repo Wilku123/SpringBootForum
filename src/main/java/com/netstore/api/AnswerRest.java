@@ -1,17 +1,24 @@
 package com.netstore.api;
 
+import com.netstore.model.API.SchemaRest;
+import com.netstore.model.API.SchemaRestList;
+import com.netstore.model.API.answer.AnswerIdModel;
+import com.netstore.model.API.answer.LimitAnswerModel;
+import com.netstore.model.API.answer.NewAnswerModel;
 import com.netstore.model.AnswerEntity;
-import com.netstore.model.repository.AnswerRepository;
+import com.netstore.model.AnswerRestViewEntity;
+import com.netstore.model.repository.rest.AnswerRestRepository;
+import com.netstore.model.repository.rest.TopicRestViewRepository;
 import com.netstore.model.repository.UserRepository;
 import com.netstore.service.AddAnswersService;
+import com.netstore.utility.LimitedListGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 /**
  * Created by Master on 2017-07-28.
@@ -21,53 +28,96 @@ import java.util.List;
 public class AnswerRest {
 
     @Autowired
-    private AnswerRepository answerRepository;
+    private AnswerRestRepository answerRepository;
     @Autowired
     private UserRepository userRepository;
     @Autowired
     private AddAnswersService addAnswersService;
+    @Autowired
+    private TopicRestViewRepository topicRestViewRepository;
+
+    private AnswerRestViewEntity generateAnswerList(AnswerRestViewEntity i) {
+
+        Integer idAnswer = i.getIdAnswer();
+        String content = i.getContent();
+        Integer idTopic = i.getTopicIdTopic();
+        Integer author = i.getUserIdUser();
+        Timestamp publishDate = i.getPublishDate();
+
+        AnswerRestViewEntity answerEntity = new AnswerRestViewEntity();
+
+        answerEntity.setIdAnswer(idAnswer);
+        answerEntity.setTopicIdTopic(idTopic);
+        answerEntity.setContent(content);
+        answerEntity.setUserIdUser(author);
+        answerEntity.setPublishDate(publishDate);
+
+        return answerEntity;
+    }
+
 
     @RequestMapping(value = "/one", method = RequestMethod.POST)
-    public ResponseEntity<AnswerEntity> getOneAnswer(@RequestHeader(value = "Token") String token, @RequestParam(value = "id") Integer id) {
+    public ResponseEntity<SchemaRest> getOneAnswer(@RequestHeader(value = "Token") String token, @RequestBody AnswerIdModel answerIdModel) {
 
-        AnswerEntity answerEntity = answerRepository.findOne(id);
+        if (answerRepository.exists(answerIdModel.getId())) {
 
-        return new ResponseEntity<>(answerEntity, HttpStatus.OK);
+            AnswerRestViewEntity answerEntity = answerRepository.findOne(answerIdModel.getId());
+
+            SchemaRest<AnswerRestViewEntity> schemaRest = new SchemaRest<>(true,"git gut",1337,answerEntity);
+
+            return new ResponseEntity<>(schemaRest, HttpStatus.OK);
+        }else
+        {
+            SchemaRest<AnswerRest> schemaRest = new SchemaRest<>(false, "answer dosnt exist", 100, null);
+
+            return new ResponseEntity<>(schemaRest, HttpStatus.BAD_REQUEST);
+        }
     }
 
     @RequestMapping(value = "/add", method = RequestMethod.POST)
-    public ResponseEntity<String> addAnswer(@RequestHeader(value = "Token") String token, @RequestParam(value = "content") String content, @RequestParam(value = "topicId") Integer topicId) {
+    public ResponseEntity<SchemaRest> addAnswer(@RequestHeader(value = "Token") String token, @RequestBody NewAnswerModel newAnswerModel) {
 
-        AnswerEntity topicEntity = new AnswerEntity();
-        topicEntity.setTopicIdTopic(topicId);
-        topicEntity.setContent(content);
-        topicEntity.setUserIdUser(userRepository.findByToken(token).getIdUser());
-        topicEntity.setPublishDate(new Timestamp(System.currentTimeMillis()));
-        this.addAnswersService.saveAndFlush(topicEntity);
+        if (topicRestViewRepository.exists(newAnswerModel.getId()) && newAnswerModel.getContent().length() >5) {
+            AnswerEntity answerEntity = new AnswerEntity();
+            answerEntity.setTopicIdTopic(newAnswerModel.getId());
+            answerEntity.setContent(newAnswerModel.getContent());
+            answerEntity.setUserIdUser(userRepository.findByToken(token).getIdUser());
+            answerEntity.setPublishDate(new Timestamp(System.currentTimeMillis()));
+            this.addAnswersService.saveAndFlush(answerEntity);
 
-        return new ResponseEntity<>("Added Topic", HttpStatus.OK);
-    }
+            SchemaRest<AnswerRestViewEntity> schemaRest = new SchemaRest<>(true, "git gut", 1337, answerRepository.findOne(answerEntity.getIdAnswer()));
 
-    @RequestMapping(value = "/limit", method = RequestMethod.POST)
-    public ResponseEntity<List<AnswerEntity>> getLimitedAnswer(@RequestHeader(value = "Token") String token, @RequestParam(value = "limit") Integer limit, @RequestParam(value = "topicId") Integer topicId) {
-
-        List<AnswerEntity> answerEntityList = answerRepository.findAllByTopicIdTopic(topicId);
-
-        if (answerEntityList.size() < limit)
-        {
-            return new ResponseEntity<>(answerEntityList.subList(answerEntityList.size(), answerEntityList.size()), HttpStatus.OK);
-        }
-        else if (limit < 0)
-        {
-            return new ResponseEntity<>(answerEntityList.subList(0, 0), HttpStatus.OK);
-        }
-        else if (answerEntityList.size() < limit + 10)
-        {
-            return new ResponseEntity<>(answerEntityList.subList(limit, answerEntityList.size()), HttpStatus.OK);
+            return new ResponseEntity<>(schemaRest, HttpStatus.OK);
         }
         else
         {
-            return new ResponseEntity<>(answerEntityList.subList(limit, limit + 10), HttpStatus.OK);
+            SchemaRest<AnswerRestViewEntity> schemaRest = new SchemaRest<>(false, "ERROR wrong ID or content have less than 5 chars", 101, null);
+
+            return new ResponseEntity<>(schemaRest, HttpStatus.BAD_REQUEST);
         }
+    }
+
+    @RequestMapping(value = "/limit", method = RequestMethod.POST)
+    public ResponseEntity<SchemaRestList> getLimitedAnswer(@RequestHeader(value = "Token") String token, @RequestBody LimitAnswerModel limitAnswerModel) {
+
+        if (topicRestViewRepository.exists(limitAnswerModel.getId())) {
+            List<AnswerRestViewEntity> answerEntityList = answerRepository.findAllByTopicIdTopicAndPublishDateIsLessThanEqualOrderByPublishDateDesc(limitAnswerModel.getId(), limitAnswerModel.getDate());
+            List<AnswerRestViewEntity> answerRestList = new ArrayList<>();
+
+            for (AnswerRestViewEntity i : answerEntityList) {
+                answerRestList.add(generateAnswerList(i));
+            }
+
+            LimitedListGenerator<AnswerRestViewEntity> limitedListGenerator = new LimitedListGenerator<>();
+            SchemaRestList<AnswerRestViewEntity> schemaRestList = new SchemaRestList<>(true, "git gut", 1337, limitedListGenerator.limitedList(answerRestList, limitAnswerModel.getHowMany()));
+
+            return new ResponseEntity<>(schemaRestList, HttpStatus.OK);
+        }
+        else
+        {
+            SchemaRestList<AnswerRestViewEntity> schemaRest = new SchemaRestList<>(false, "Topic dosnt exist or howMany is less than 1", 101, null);
+            return new ResponseEntity<>(schemaRest, HttpStatus.BAD_REQUEST);
+        }
+
     }
 }
