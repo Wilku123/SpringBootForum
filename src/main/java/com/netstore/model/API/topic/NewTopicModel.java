@@ -6,6 +6,16 @@ package com.netstore.model.API.topic;
 public class NewTopicModel {
     private Integer id;
     private String name;
+    private String description;
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
     private String uuid;
 
     public String getUuid() {

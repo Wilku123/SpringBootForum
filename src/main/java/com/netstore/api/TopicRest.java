@@ -92,10 +92,11 @@ public class TopicRest {
     public ResponseEntity<SchemaRest> addTopic(@RequestHeader(value = "Token") String token, @RequestBody NewTopicModel newTopicModel) {
 
 
-        if (circleRestViewRepository.exists(newTopicModel.getId()) && newTopicModel.getName().length() > 2) {
+        if (circleRestViewRepository.exists(newTopicModel.getId()) && newTopicModel.getName().length() > 2 && newTopicModel.getDescription().length()>5) {
             TopicEntity topicEntity = new TopicEntity();
             topicEntity.setCircleIdCircle(newTopicModel.getId());
             topicEntity.setName(newTopicModel.getName());
+            topicEntity.setDescription(newTopicModel.getDescription());
             topicEntity.setUserIdUser(userRepository.findByToken(token).getIdUser());
             topicEntity.setPublishDate(new Timestamp(System.currentTimeMillis()));
             topicEntity.setUuid(newTopicModel.getUuid());
@@ -113,7 +114,7 @@ public class TopicRest {
 
             return new ResponseEntity<>(schemaRest, HttpStatus.OK);
         } else {
-            SchemaRest<TopicRestViewEntity> schemaRest = new SchemaRest<>(false, "ERROR wrong ID or name have less than 3 chars", 101, null);
+            SchemaRest<TopicRestViewEntity> schemaRest = new SchemaRest<>(false, "ERROR wrong ID or name have less than 3 chars,description have less than 5 chars", 101, null);
 
             return new ResponseEntity<>(schemaRest, HttpStatus.BAD_REQUEST);
         }

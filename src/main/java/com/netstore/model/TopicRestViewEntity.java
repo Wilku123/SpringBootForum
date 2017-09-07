@@ -16,6 +16,7 @@ public class TopicRestViewEntity {
     private Integer isSub;
     private Integer circleIdCircle;
     private String uuid;
+    private String description;
 
     @Basic
     @Id
@@ -115,5 +116,15 @@ public class TopicRestViewEntity {
 
     public void setUuid(String uuid) {
         this.uuid = uuid;
+    }
+
+    @Basic
+    @Column(name = "description", nullable = false, length = 1000)
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 }

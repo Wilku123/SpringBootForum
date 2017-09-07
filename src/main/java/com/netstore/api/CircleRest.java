@@ -204,27 +204,19 @@ public class CircleRest {
                 subscribedCircleEntity.setUserIdUser(userRepository.findByToken(token).getIdUser());
                 subscribedCircleEntity.setCircleIdCircle(subById.getId());
                 this.addCircleSubscriptionService.saveAndFlush(subscribedCircleEntity);
-
                 SchemaRest<SubscribedCircleEntity> schemaRest = new SchemaRest<>(true, "Subbed circle", 1337, subscribedCircleEntity);
-
-
                 return new ResponseEntity<>(schemaRest, HttpStatus.OK);
-
             } else {
                 SubscribedCircleEntity subscribedCircleEntity = new SubscribedCircleEntity();
                 subscribedCircleEntity.setUserIdUser(userRepository.findByToken(token).getIdUser());
                 subscribedCircleEntity.setCircleIdCircle(subById.getId());
                 subscribedCircleRepository.delete(subscribedCircleEntity);
-
                 SchemaRest<SubscribedCircleEntity> schemaRest = new SchemaRest<>(true, "UnSubbed circle", 1337, subscribedCircleEntity);
-
-
                 return new ResponseEntity<>(schemaRest, HttpStatus.OK);
             }
         } else {
             SchemaRest<SubscribedCircleEntity> schemaRest = new SchemaRest<>(false, "Circle id dosnt exist", 101, null);
             return new ResponseEntity<>(schemaRest, HttpStatus.OK);
-
         }
     }
 
@@ -249,7 +241,5 @@ public class CircleRest {
             schemaRestList.setErrorCode(101);
             return new ResponseEntity<>(schemaRestList, HttpStatus.OK);
         }
-
-
     }
 }

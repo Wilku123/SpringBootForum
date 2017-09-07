@@ -21,6 +21,7 @@ public class TopicEntity {
     private CircleEntity circleByCircleIdCircle;
     private String uuid;
     private CircleEntity circleByCircleIdCircle_0;
+    private String description;
 
     @Id
     @GeneratedValue
@@ -148,4 +149,13 @@ public class TopicEntity {
         this.uuid = uuid;
     }
 
+    @Basic
+    @Column(name = "Description", nullable = false, length = 1000)
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
 }
