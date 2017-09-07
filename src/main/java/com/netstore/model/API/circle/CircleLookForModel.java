@@ -1,20 +1,12 @@
 package com.netstore.model.API.circle;
 
 /**
- * Created by Master on 2017-09-01.
+ * Created by Master on 2017-09-07.
  */
-public class NewCircleModel {
-    private String description;
+public class CircleLookForModel {
     private String name;
-    private String uuid;
-
-    public String getUuid() {
-        return uuid;
-    }
-
-    public void setUuid(String uuid) {
-        this.uuid = uuid;
-    }
+    private int howMany;
+    private String description;
 
     public String getDescription() {
         return description;
@@ -22,6 +14,14 @@ public class NewCircleModel {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public int getHowMany() {
+        return howMany;
+    }
+
+    public void setHowMany(int howMany) {
+        this.howMany = howMany;
     }
 
     public String getName() {

@@ -15,7 +15,9 @@ public class TopicRestViewEntity {
     private Integer userIdUser;
     private Integer isSub;
     private Integer circleIdCircle;
+    private String uuid;
 
+    @Basic
     @Id
     @Column(name = "idTopic", nullable = false)
     public Integer getIdTopic() {
@@ -103,5 +105,15 @@ public class TopicRestViewEntity {
         result = 31 * result + (isSub != null ? isSub.hashCode() : 0);
         result = 31 * result + (circleIdCircle != null ? circleIdCircle.hashCode() : 0);
         return result;
+    }
+
+    @Basic
+    @Column(name = "uuid", nullable = false, length = 100)
+    public String getUuid() {
+        return uuid;
+    }
+
+    public void setUuid(String uuid) {
+        this.uuid = uuid;
     }
 }

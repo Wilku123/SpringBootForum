@@ -13,6 +13,7 @@ public class UserRestViewEntity {
     private String lastName;
     private String email;
 
+    @Basic
     @Id
     @Column(name = "idUser", nullable = false)
     public Integer getIdUser() {

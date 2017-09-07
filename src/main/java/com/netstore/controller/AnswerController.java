@@ -17,6 +17,7 @@ import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * Created by Master on 2017-05-21.
@@ -71,7 +72,8 @@ public class AnswerController {
         answerEntity.setTopicIdTopic(id);
 //        answerEntity.setTopicByTopicIdTopic();
         answerEntity.setPublishDate(timestamp);
-        answerEntity.setUserIdUser(1);
+        answerEntity.setUuid(UUID.randomUUID().toString());
+        answerEntity.setUserIdUser(1); // TODO userId should come from session
         this.addAnswersService.saveAndFlush(answerEntity);
         return "redirect:/topic/{name}/{id}";
     }

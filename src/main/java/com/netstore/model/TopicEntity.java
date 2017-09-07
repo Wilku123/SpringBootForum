@@ -19,6 +19,8 @@ public class TopicEntity {
     private Collection<SubscribedTopicEntity> subscribedTopicsByIdTopic;
     private UserEntity userByUserIdUser;
     private CircleEntity circleByCircleIdCircle;
+    private String uuid;
+    private CircleEntity circleByCircleIdCircle_0;
 
     @Id
     @GeneratedValue
@@ -127,7 +129,7 @@ public class TopicEntity {
     }
 
     @ManyToOne
-    @JoinColumn(name = "CIRCLE_idCIRCLE", referencedColumnName = "idCIRCLE", nullable = false,insertable = false, updatable = false)
+    @JoinColumn(name = "CIRCLE_idCIRCLE", referencedColumnName = "idCIRCLE", nullable = false, insertable = false, updatable = false)
     public CircleEntity getCircleByCircleIdCircle() {
         return circleByCircleIdCircle;
     }
@@ -135,4 +137,15 @@ public class TopicEntity {
     public void setCircleByCircleIdCircle(CircleEntity circleByCircleIdCircle) {
         this.circleByCircleIdCircle = circleByCircleIdCircle;
     }
+
+    @Basic
+    @Column(name = "Uuid", nullable = false, length = 100)
+    public String getUuid() {
+        return uuid;
+    }
+
+    public void setUuid(String uuid) {
+        this.uuid = uuid;
+    }
+
 }

@@ -14,7 +14,9 @@ public class AnswerRestViewEntity {
     private Timestamp publishDate;
     private Integer userIdUser;
     private Integer topicIdTopic;
+    private String uuid;
 
+    @Basic
     @Id
     @Column(name = "idAnswer", nullable = false)
     public Integer getIdAnswer() {
@@ -36,7 +38,7 @@ public class AnswerRestViewEntity {
     }
 
     @Basic
-    @Column(name = "publish_date", nullable = true)
+    @Column(name = "Publish_date", nullable = true)
     public Timestamp getPublishDate() {
         return publishDate;
     }
@@ -89,5 +91,15 @@ public class AnswerRestViewEntity {
         result = 31 * result + (userIdUser != null ? userIdUser.hashCode() : 0);
         result = 31 * result + (topicIdTopic != null ? topicIdTopic.hashCode() : 0);
         return result;
+    }
+
+    @Basic
+    @Column(name = "uuid", nullable = false, length = 100)
+    public String getUuid() {
+        return uuid;
+    }
+
+    public void setUuid(String uuid) {
+        this.uuid = uuid;
     }
 }

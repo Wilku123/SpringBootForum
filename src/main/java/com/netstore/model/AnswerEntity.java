@@ -16,6 +16,7 @@ public class AnswerEntity {
     private Integer topicIdTopic;
     private UserEntity userByUserIdUser;
     private TopicEntity topicByTopicIdTopic;
+    private String uuid;
 
     @Id
     @GeneratedValue
@@ -112,5 +113,15 @@ public class AnswerEntity {
 
     public void setTopicByTopicIdTopic(TopicEntity topicByTopicIdTopic) {
         this.topicByTopicIdTopic = topicByTopicIdTopic;
+    }
+
+    @Basic
+    @Column(name = "Uuid", nullable = false, length = 100)
+    public String getUuid() {
+        return uuid;
+    }
+
+    public void setUuid(String uuid) {
+        this.uuid = uuid;
     }
 }

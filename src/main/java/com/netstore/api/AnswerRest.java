@@ -3,6 +3,7 @@ package com.netstore.api;
 import com.netstore.model.API.SchemaRest;
 import com.netstore.model.API.SchemaRestList;
 import com.netstore.model.API.answer.AnswerIdModel;
+import com.netstore.model.API.answer.AnswerLookForModel;
 import com.netstore.model.API.answer.LimitAnswerModel;
 import com.netstore.model.API.answer.NewAnswerModel;
 import com.netstore.model.AnswerEntity;
@@ -63,11 +64,10 @@ public class AnswerRest {
 
             AnswerRestViewEntity answerEntity = answerRepository.findOne(answerIdModel.getId());
 
-            SchemaRest<AnswerRestViewEntity> schemaRest = new SchemaRest<>(true,"git gut",1337,answerEntity);
+            SchemaRest<AnswerRestViewEntity> schemaRest = new SchemaRest<>(true, "git gut", 1337, answerEntity);
 
             return new ResponseEntity<>(schemaRest, HttpStatus.OK);
-        }else
-        {
+        } else {
             SchemaRest<AnswerRest> schemaRest = new SchemaRest<>(false, "answer dosnt exist", 100, null);
 
             return new ResponseEntity<>(schemaRest, HttpStatus.BAD_REQUEST);
@@ -77,20 +77,19 @@ public class AnswerRest {
     @RequestMapping(value = "/add", method = RequestMethod.POST)
     public ResponseEntity<SchemaRest> addAnswer(@RequestHeader(value = "Token") String token, @RequestBody NewAnswerModel newAnswerModel) {
 
-        if (topicRestViewRepository.exists(newAnswerModel.getId()) && newAnswerModel.getContent().length() >5) {
+        if (topicRestViewRepository.exists(newAnswerModel.getId()) && newAnswerModel.getContent().length() > 5) {
             AnswerEntity answerEntity = new AnswerEntity();
             answerEntity.setTopicIdTopic(newAnswerModel.getId());
             answerEntity.setContent(newAnswerModel.getContent());
             answerEntity.setUserIdUser(userRepository.findByToken(token).getIdUser());
             answerEntity.setPublishDate(new Timestamp(System.currentTimeMillis()));
+            answerEntity.setUuid(newAnswerModel.getUuid());
             this.addAnswersService.saveAndFlush(answerEntity);
 
             SchemaRest<AnswerRestViewEntity> schemaRest = new SchemaRest<>(true, "git gut", 1337, answerRepository.findOne(answerEntity.getIdAnswer()));
 
             return new ResponseEntity<>(schemaRest, HttpStatus.OK);
-        }
-        else
-        {
+        } else {
             SchemaRest<AnswerRestViewEntity> schemaRest = new SchemaRest<>(false, "ERROR wrong ID or content have less than 5 chars", 101, null);
 
             return new ResponseEntity<>(schemaRest, HttpStatus.BAD_REQUEST);
@@ -111,13 +110,39 @@ public class AnswerRest {
             LimitedListGenerator<AnswerRestViewEntity> limitedListGenerator = new LimitedListGenerator<>();
             SchemaRestList<AnswerRestViewEntity> schemaRestList = new SchemaRestList<>(true, "git gut", 1337, limitedListGenerator.limitedList(answerRestList, limitAnswerModel.getHowMany()));
 
-            return new ResponseEntity<>(schemaRestList, HttpStatus.OK);
-        }
-        else
-        {
+            if (!schemaRestList.getData().isEmpty())
+                return new ResponseEntity<>(schemaRestList, HttpStatus.OK);
+            else {
+                schemaRestList.setErrorCode(101);
+                schemaRestList.setMessage("List Is empty");
+                return new ResponseEntity<>(schemaRestList, HttpStatus.OK);
+            }
+
+        } else {
             SchemaRestList<AnswerRestViewEntity> schemaRest = new SchemaRestList<>(false, "Topic dosnt exist or howMany is less than 1", 101, null);
             return new ResponseEntity<>(schemaRest, HttpStatus.BAD_REQUEST);
         }
+
+    }
+
+    @RequestMapping(value = "/search", method = RequestMethod.POST)
+    public ResponseEntity<SchemaRestList> searchCircle(@RequestHeader(value = "Token") String token, @RequestBody(required = false) AnswerLookForModel lookForModel) {
+
+        SchemaRestList<AnswerRestViewEntity> schemaRestList;
+        LimitedListGenerator<AnswerRestViewEntity> listGenerator = new LimitedListGenerator<>();
+        if (!lookForModel.getContent().isEmpty())
+            schemaRestList = new SchemaRestList<>(true, "", 1337, listGenerator.limitedList(answerRepository.findAllByContentContaining(lookForModel.getContent()), lookForModel.getHowMany()));
+         else
+            schemaRestList = new SchemaRestList<>(false, "String is empty fix pl0x", 100, null);
+
+         if (!schemaRestList.getData().isEmpty())
+        return new ResponseEntity<>(schemaRestList, HttpStatus.OK);
+         else {
+             schemaRestList.setMessage("List empty");
+             schemaRestList.setErrorCode(101);
+             return new ResponseEntity<>(schemaRestList, HttpStatus.OK);
+
+         }
 
     }
 }

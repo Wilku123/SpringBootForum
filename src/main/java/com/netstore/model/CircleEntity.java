@@ -18,6 +18,7 @@ public class CircleEntity {
     private UserEntity userByUserIdUser;
     private Collection<SubscribedCircleEntity> subscribedCirclesByIdCircle;
     private Collection<TopicEntity> topicsByIdCircle;
+    private String uuid;
 
     @Id
     @GeneratedValue
@@ -122,5 +123,15 @@ public class CircleEntity {
 
     public void setTopicsByIdCircle(Collection<TopicEntity> topicsByIdCircle) {
         this.topicsByIdCircle = topicsByIdCircle;
+    }
+
+    @Basic
+    @Column(name = "Uuid", nullable = false, length = 100)
+    public String getUuid() {
+        return uuid;
+    }
+
+    public void setUuid(String uuid) {
+        this.uuid = uuid;
     }
 }

@@ -17,7 +17,9 @@ public class CircleRestViewEntity {
     private Integer isSub;
     private Long countTopic;
     private Timestamp publishDate;
+    private String uuid;
 
+    @Basic
     @Id
     @Column(name = "idCIRCLE", nullable = false)
     public Integer getIdCircle() {
@@ -128,5 +130,15 @@ public class CircleRestViewEntity {
         result = 31 * result + (countTopic != null ? countTopic.hashCode() : 0);
         result = 31 * result + (publishDate != null ? publishDate.hashCode() : 0);
         return result;
+    }
+
+    @Basic
+    @Column(name = "uuid", nullable = false, length = 100)
+    public String getUuid() {
+        return uuid;
+    }
+
+    public void setUuid(String uuid) {
+        this.uuid = uuid;
     }
 }

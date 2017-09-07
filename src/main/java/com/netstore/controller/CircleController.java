@@ -17,6 +17,7 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * Created by Master on 2017-04-27.
@@ -86,6 +87,7 @@ public class CircleController {
     @PostMapping("/proccessAdding")
     public String proccess(@Valid @ModelAttribute CircleEntity circleEntity, BindingResult result){
         circleEntity.setPublishDate(timestamp);
+        circleEntity.setUuid(UUID.randomUUID().toString());
         circleEntity.setUserIdUser(1); // TODO current user from session
         this.addCircleService.saveAndFlush(circleEntity);
         return "redirect:/circles";

@@ -6,6 +6,15 @@ package com.netstore.model.API.answer;
 public class NewAnswerModel {
     private Integer id;
     private String content;
+    private String uuid;
+
+    public String getUuid() {
+        return uuid;
+    }
+
+    public void setUuid(String uuid) {
+        this.uuid = uuid;
+    }
 
     public Integer getId() {
         return id;

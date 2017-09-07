@@ -2,10 +2,7 @@ package com.netstore.api;
 
 import com.netstore.model.API.SchemaRest;
 import com.netstore.model.API.SchemaRestList;
-import com.netstore.model.API.topic.LimitTopicModel;
-import com.netstore.model.API.topic.NewTopicModel;
-import com.netstore.model.API.topic.TopicIdModel;
-import com.netstore.model.API.topic.TopicSubbedModel;
+import com.netstore.model.API.topic.*;
 import com.netstore.model.SubscribedTopicEntity;
 import com.netstore.model.TopicEntity;
 import com.netstore.model.TopicRestViewEntity;
@@ -101,6 +98,7 @@ public class TopicRest {
             topicEntity.setName(newTopicModel.getName());
             topicEntity.setUserIdUser(userRepository.findByToken(token).getIdUser());
             topicEntity.setPublishDate(new Timestamp(System.currentTimeMillis()));
+            topicEntity.setUuid(newTopicModel.getUuid());
             this.addTopicService.saveAndFlush(topicEntity);
 
             SubscribedTopicEntity subscribedTopicEntity = new SubscribedTopicEntity();
@@ -141,7 +139,14 @@ public class TopicRest {
 
             SchemaRestList<TopicRestViewEntity> schemaRest = new SchemaRestList<>(true, "should work not sure tho", 1337, topicRestViewEntityLimitedListGenerator.limitedList(topicRestList, limitTopicModel.getHowMany()));
 
-            return new ResponseEntity<>(schemaRest, HttpStatus.OK);
+            if (!schemaRest.getData().isEmpty())
+                return new ResponseEntity<>(schemaRest, HttpStatus.OK);
+            else {
+                schemaRest.setErrorCode(101);
+                schemaRest.setMessage("list is empty");
+                return new ResponseEntity<>(schemaRest, HttpStatus.OK);
+            }
+
 
         } else {
 
@@ -182,5 +187,25 @@ public class TopicRest {
 
         }
 
+    }
+
+    @RequestMapping(value = "/search", method = RequestMethod.POST)
+    public ResponseEntity<SchemaRestList> searchCircle(@RequestHeader(value = "Token") String token, @RequestBody(required = false) TopicLookForModel lookForModel) {
+
+        SchemaRestList<TopicRestViewEntity> schemaRestList;
+        LimitedListGenerator<TopicRestViewEntity> listGenerator = new LimitedListGenerator<>();
+        if (!lookForModel.getName().isEmpty())
+            schemaRestList = new SchemaRestList<>(true, "", 1337, listGenerator.limitedList(topicRestViewRepository.findAllByNameContaining(lookForModel.getName()), lookForModel.getHowMany()));
+        else
+            schemaRestList = new SchemaRestList<>(false, "String is empty fix pl0x", 100, null);
+
+        if (!schemaRestList.getData().isEmpty())
+            return new ResponseEntity<>(schemaRestList, HttpStatus.OK);
+        else {
+            schemaRestList.setErrorCode(101);
+            schemaRestList.setMessage("List is empty");
+            return new ResponseEntity<>(schemaRestList, HttpStatus.OK);
+
+        }
     }
 }

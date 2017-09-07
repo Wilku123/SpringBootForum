@@ -16,6 +16,7 @@ import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * Created by Master on 2017-05-20.
@@ -57,6 +58,7 @@ public class TopicController {
     public String proccess(@PathVariable Integer id, @ModelAttribute TopicEntity topicEntity, BindingResult result){
         topicEntity.setCircleIdCircle(id);
         topicEntity.setPublishDate(timestamp);
+        topicEntity.setUuid(UUID.randomUUID().toString());
         topicEntity.setUserIdUser(1); //TODO set to current user from session
         this.addTopicService.saveAndFlush(topicEntity);
         return "redirect:/topic/{id}";
