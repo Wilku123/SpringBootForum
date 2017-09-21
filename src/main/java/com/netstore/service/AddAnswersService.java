@@ -1,6 +1,6 @@
 package com.netstore.service;
 
-import com.netstore.model.AnswerEntity;
+import com.netstore.model.entity.AnswerEntity;
 import com.netstore.model.repository.AnswerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;

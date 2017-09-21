@@ -1,8 +1,8 @@
 package com.netstore.controller;
 
 
-import com.netstore.model.CircleEntity;
-import com.netstore.model.TopicEntity;
+import com.netstore.model.entity.CircleEntity;
+import com.netstore.model.entity.TopicEntity;
 import com.netstore.model.repository.TopicRepository;
 import com.netstore.service.AddTopicService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,8 +10,6 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
-import java.sql.Date;
 import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -25,13 +23,13 @@ import java.util.UUID;
 @RequestMapping("/topic")
 public class TopicController {
 
-    LocalDate todayLocalDate = LocalDate.now();
-    java.sql.Date sqlDate = java.sql.Date.valueOf( todayLocalDate );
-    Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+    private LocalDate todayLocalDate = LocalDate.now();
+    private java.sql.Date sqlDate = java.sql.Date.valueOf( todayLocalDate );
+    private Timestamp timestamp = new Timestamp(System.currentTimeMillis());
     @Autowired
     private TopicRepository topicRepository;
     @Autowired
-    AddTopicService addTopicService;
+    private AddTopicService addTopicService;
     @GetMapping("/{id}")
     public String getForm(@PathVariable Integer id,Model model) {
         model.addAttribute("topicEntity",new TopicEntity());

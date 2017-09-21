@@ -1,6 +1,6 @@
 package com.netstore.model.repository.rest;
 
-import com.netstore.model.UserRestViewEntity;
+import com.netstore.model.view.UserRestViewEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 

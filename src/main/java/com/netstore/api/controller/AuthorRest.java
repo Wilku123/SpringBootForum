@@ -1,8 +1,8 @@
-package com.netstore.api;
+package com.netstore.api.controller;
 
 import com.netstore.model.API.SchemaRest;
 import com.netstore.model.API.user.UserIdModel;
-import com.netstore.model.UserRestViewEntity;
+import com.netstore.model.view.UserRestViewEntity;
 import com.netstore.model.repository.rest.UserRestRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

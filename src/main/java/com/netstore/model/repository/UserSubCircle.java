@@ -1,15 +1,10 @@
 package com.netstore.model.repository;
 
-import com.netstore.model.CircleEntity;
-import com.netstore.model.TopicEntity;
-import org.springframework.data.jpa.domain.Specification;
+import com.netstore.model.entity.TopicEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
-
-
-import java.util.List;
 
 
 /**

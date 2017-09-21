@@ -1,4 +1,4 @@
-package com.netstore.api;
+package com.netstore.api.security;
 
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.www.BasicAuthenticationEntryPoint;
@@ -11,18 +11,18 @@ import java.io.IOException;
 import java.io.PrintWriter;
 
 /**
- * Created by Master on 2017-04-26.
+ * Created by Master on 2017-09-19.
  */
 @Component
-public class AuthenticationEntryPoint extends BasicAuthenticationEntryPoint{
+public class BasicAuthPoint extends BasicAuthenticationEntryPoint {
 
     @Override
-    public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
+    public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authEx)
+            throws IOException, ServletException {
         response.addHeader("WWW-Authenticate", "Basic realm=" +getRealmName());
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         PrintWriter writer = response.getWriter();
-        writer.println("HTTP Status 401 -"+authException.getMessage());
-
+        writer.println("HTTP Status 401 - " + authEx.getMessage());
     }
 
     @Override

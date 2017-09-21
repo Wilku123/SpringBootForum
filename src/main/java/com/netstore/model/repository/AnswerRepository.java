@@ -1,8 +1,7 @@
 package com.netstore.model.repository;
 
-import com.netstore.model.AnswerEntity;
-import com.netstore.model.CircleEntity;
-import com.netstore.model.TopicEntity;
+import com.netstore.model.entity.AnswerEntity;
+import com.netstore.model.entity.TopicEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 

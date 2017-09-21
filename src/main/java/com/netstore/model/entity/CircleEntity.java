@@ -1,4 +1,4 @@
-package com.netstore.model;
+package com.netstore.model.entity;
 
 import javax.persistence.*;
 import java.sql.Timestamp;

@@ -5,7 +5,8 @@
 <body>
 <p>Get your greeting <a href="/circles">here</a></p>
 <div sec:authorize="isAnonymous()">
-<p>LogIn here <a href="/login" th:href="@{/login}" class="btn">here</a></p>
+    <p>LogIn here <a href="/login" th:href="@{/login}" class="btn">here</a></p>
+    <p>Register <a href="/register" th:href="@{/register}" class="btn">here</a></p>
 </div>
 </body>
 <footer th:include="fragments/footer::footer"></footer>

@@ -1,7 +1,7 @@
 package com.netstore.controller;
 
-import com.netstore.model.CircleEntity;
-import com.netstore.model.CircleRestViewEntity;
+import com.netstore.model.entity.CircleEntity;
+import com.netstore.model.view.CircleRestViewEntity;
 import com.netstore.model.repository.rest.CircleRestViewRepository;
 import com.netstore.model.repository.UserRepository;
 import com.netstore.service.AddCircleService;

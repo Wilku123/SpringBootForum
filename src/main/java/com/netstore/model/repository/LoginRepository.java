@@ -1,6 +1,6 @@
 package com.netstore.model.repository;
 
-        import com.netstore.model.UserEntity;
+        import com.netstore.model.entity.UserEntity;
         import org.springframework.data.jpa.repository.JpaRepository;
         import org.springframework.stereotype.Repository;
 

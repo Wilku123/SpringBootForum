@@ -1,11 +1,12 @@
-package com.netstore.api;
+package com.netstore.api.controller;
 
 import com.netstore.model.API.SchemaRest;
 import com.netstore.model.API.SchemaRestList;
 import com.netstore.model.API.circle.*;
-import com.netstore.model.CircleEntity;
-import com.netstore.model.CircleRestViewEntity;
-import com.netstore.model.SubscribedCircleEntity;
+import com.netstore.model.entity.CircleEntity;
+import com.netstore.model.repository.CredentialsRepository;
+import com.netstore.model.view.CircleRestViewEntity;
+import com.netstore.model.entity.SubscribedCircleEntity;
 import com.netstore.model.repository.rest.CircleRestViewRepository;
 import com.netstore.model.repository.SubscribedCircleRepository;
 import com.netstore.model.repository.UserRepository;
@@ -33,7 +34,7 @@ public class CircleRest {
     @Autowired
     private SubscribedCircleRepository subscribedCircleRepository;
     @Autowired
-    private UserRepository userRepository;
+    private CredentialsRepository credentialsRepository;
     @Autowired
     private AddCircleService addCircleService;
     @Autowired
@@ -89,13 +90,13 @@ public class CircleRest {
             CircleEntity circleEntity = new CircleEntity();
             circleEntity.setName(newCircleModel.getName());
             circleEntity.setDescription(newCircleModel.getDescription());
-            circleEntity.setUserIdUser(userRepository.findByToken(token).getIdUser());
+            circleEntity.setUserIdUser(credentialsRepository.findByToken(token).getUserIdUser());
             circleEntity.setPublishDate(new Timestamp(System.currentTimeMillis()));
             circleEntity.setUuid(newCircleModel.getUuid());
             this.addCircleService.saveAndFlush(circleEntity);
 
             SubscribedCircleEntity subscribedCircleEntity = new SubscribedCircleEntity();
-            subscribedCircleEntity.setUserIdUser(userRepository.findByToken(token).getIdUser());
+            subscribedCircleEntity.setUserIdUser(credentialsRepository.findByToken(token).getUserIdUser());
             subscribedCircleEntity.setCircleIdCircle(circleEntity.getIdCircle());
             this.addCircleSubscriptionService.saveAndFlush(subscribedCircleEntity);
 
@@ -108,7 +109,7 @@ public class CircleRest {
 
             return new ResponseEntity<>(schemaRest, HttpStatus.OK);
         } else {
-            SchemaRest<CircleRestViewEntity> schemaRest = new SchemaRest<>(false, "name should be longer than 2chars and description than 10chars", 100, null);
+            SchemaRest<CircleRestViewEntity> schemaRest = new SchemaRest<>(false, "name should be longer than 2chars and description than 10chars", 102, null);
 
             return new ResponseEntity<>(schemaRest, HttpStatus.OK);
         }
@@ -122,25 +123,27 @@ public class CircleRest {
             List<CircleRestViewEntity> circleRestList = new ArrayList<>();
 
             for (CircleRestViewEntity i : circleEntityList) {
-                if ((subscribedCircleRepository.findByUserIdUserAndCircleIdCircle(userRepository.findByToken(token).getIdUser(), i.getIdCircle())) != null) {
+                if ((subscribedCircleRepository.findByUserIdUserAndCircleIdCircle(credentialsRepository.findByToken(token).getUserIdUser(), i.getIdCircle())) != null) {
                     circleRestList.add(generateCircleList(1, i));
                 } else {
                     circleRestList.add(generateCircleList(0, i));
                 }
             }
-            SchemaRestList<CircleRestViewEntity> schemaRest = new SchemaRestList<>(true, "git gut", 1337, circleRestList);
+            LimitedListGenerator<CircleRestViewEntity> listGenerator = new LimitedListGenerator<>();
 
-            if (schemaRest.getData().isEmpty())
+            SchemaRestList<CircleRestViewEntity> schemaRest = new SchemaRestList<>(true, "git gut", 1337, listGenerator.limitedList(circleRestList,limit.getHowMany()));
+
+            if (!schemaRest.getData().isEmpty())
                 return new ResponseEntity<>(schemaRest, HttpStatus.OK);
             else {
-                schemaRest.setErrorCode(101);
-                schemaRest.setMessage("List is empty");
+                schemaRest.setErrorCode(103);
+                schemaRest.setMessage("List empty");
                 return new ResponseEntity<>(schemaRest, HttpStatus.OK);
 
             }
 
         } else {
-            SchemaRestList<CircleRestViewEntity> schemaRest = new SchemaRestList<>(false, "zjebalo sie", 1337, null);
+            SchemaRestList<CircleRestViewEntity> schemaRest = new SchemaRestList<>(false, "howMany is less than 1", 102, null);
             return new ResponseEntity<>(schemaRest, HttpStatus.BAD_REQUEST);
 
         }
@@ -156,7 +159,7 @@ public class CircleRest {
             CircleRestViewEntity circleRest;
 
 
-            if ((subscribedCircleRepository.findByUserIdUserAndCircleIdCircle(userRepository.findByToken(token).getIdUser(), circleEntity.getIdCircle())) != null) {
+            if ((subscribedCircleRepository.findByUserIdUserAndCircleIdCircle(credentialsRepository.findByToken(token).getUserIdUser(), circleEntity.getIdCircle())) != null) {
                 circleRest = (generateCircleList(1, circleEntity));
             } else {
                 circleRest = (generateCircleList(0, circleEntity));
@@ -169,7 +172,7 @@ public class CircleRest {
 
         } else {
 
-            SchemaRest<CircleRestViewEntity> schemaRest = new SchemaRest<>(false, "zjebalo sie", 1337, null);
+            SchemaRest<CircleRestViewEntity> schemaRest = new SchemaRest<>(false, "ID dosnt exists in DB", 101, null);
 
             return new ResponseEntity<>(schemaRest, HttpStatus.OK);
 
@@ -184,7 +187,7 @@ public class CircleRest {
         List<CircleRestViewEntity> circleRestList = new ArrayList<>();
 
         for (CircleRestViewEntity i : circleEntityList) {
-            if ((subscribedCircleRepository.findByUserIdUserAndCircleIdCircle(userRepository.findByToken(token).getIdUser(), i.getIdCircle())) != null) {
+            if ((subscribedCircleRepository.findByUserIdUserAndCircleIdCircle(credentialsRepository.findByToken(token).getUserIdUser(), i.getIdCircle())) != null) {
                 circleRestList.add(generateCircleList(1, i));
             } else {
                 circleRestList.add(generateCircleList(0, i));
@@ -201,14 +204,14 @@ public class CircleRest {
 
             if (subById.isStatus()) {
                 SubscribedCircleEntity subscribedCircleEntity = new SubscribedCircleEntity();
-                subscribedCircleEntity.setUserIdUser(userRepository.findByToken(token).getIdUser());
+                subscribedCircleEntity.setUserIdUser(credentialsRepository.findByToken(token).getUserIdUser());
                 subscribedCircleEntity.setCircleIdCircle(subById.getId());
                 this.addCircleSubscriptionService.saveAndFlush(subscribedCircleEntity);
                 SchemaRest<SubscribedCircleEntity> schemaRest = new SchemaRest<>(true, "Subbed circle", 1337, subscribedCircleEntity);
                 return new ResponseEntity<>(schemaRest, HttpStatus.OK);
             } else {
                 SubscribedCircleEntity subscribedCircleEntity = new SubscribedCircleEntity();
-                subscribedCircleEntity.setUserIdUser(userRepository.findByToken(token).getIdUser());
+                subscribedCircleEntity.setUserIdUser(credentialsRepository.findByToken(token).getUserIdUser());
                 subscribedCircleEntity.setCircleIdCircle(subById.getId());
                 subscribedCircleRepository.delete(subscribedCircleEntity);
                 SchemaRest<SubscribedCircleEntity> schemaRest = new SchemaRest<>(true, "UnSubbed circle", 1337, subscribedCircleEntity);
@@ -232,13 +235,13 @@ public class CircleRest {
         else if (!lookForModel.getName().isEmpty() && !lookForModel.getDescription().isEmpty())
             schemaRestList = new SchemaRestList<>(true, "", 1337, listGenerator.limitedList(circleRestViewRepository.findAllByNameContainingAndDescriptionContaining(lookForModel.getName(), lookForModel.getDescription()), lookForModel.getHowMany()));
         else
-            schemaRestList = new SchemaRestList<>(false, "Strings are empty fix pl0x", 100, null);
+            schemaRestList = new SchemaRestList<>(false, "Strings are empty fix pl0x", 102, null);
 
         if (!schemaRestList.getData().isEmpty())
             return new ResponseEntity<>(schemaRestList, HttpStatus.OK);
         else {
             schemaRestList.setMessage("List is empty");
-            schemaRestList.setErrorCode(101);
+            schemaRestList.setErrorCode(103);
             return new ResponseEntity<>(schemaRestList, HttpStatus.OK);
         }
     }

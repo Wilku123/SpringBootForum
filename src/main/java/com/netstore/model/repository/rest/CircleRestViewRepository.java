@@ -1,6 +1,6 @@
 package com.netstore.model.repository.rest;
 
-import com.netstore.model.CircleRestViewEntity;
+import com.netstore.model.view.CircleRestViewEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

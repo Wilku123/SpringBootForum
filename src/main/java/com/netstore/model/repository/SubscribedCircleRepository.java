@@ -1,6 +1,6 @@
 package com.netstore.model.repository;
 
-import com.netstore.model.SubscribedCircleEntity;
+import com.netstore.model.entity.SubscribedCircleEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

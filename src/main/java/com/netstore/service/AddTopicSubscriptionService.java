@@ -1,6 +1,6 @@
 package com.netstore.service;
 
-import com.netstore.model.SubscribedTopicEntity;
+import com.netstore.model.entity.SubscribedTopicEntity;
 import com.netstore.model.repository.SubscribedTopicRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;

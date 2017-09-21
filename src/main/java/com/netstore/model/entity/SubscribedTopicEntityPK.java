@@ -1,4 +1,4 @@
-package com.netstore.model;
+package com.netstore.model.entity;
 
 import javax.persistence.Column;
 import javax.persistence.Id;

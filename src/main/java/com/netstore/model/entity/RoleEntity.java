@@ -1,4 +1,4 @@
-package com.netstore.model;
+package com.netstore.model.entity;
 
 import javax.persistence.*;
 
@@ -14,6 +14,7 @@ public class RoleEntity {
     private UserEntity userByUserIdUser;
 
     @Id
+    @GeneratedValue
     @Column(name = "idROLE", nullable = false)
     public Integer getIdRole() {
         return idRole;

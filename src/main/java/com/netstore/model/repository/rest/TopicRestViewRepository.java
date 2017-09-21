@@ -1,11 +1,9 @@
 package com.netstore.model.repository.rest;
 
-import com.netstore.model.CircleRestViewEntity;
-import com.netstore.model.TopicRestViewEntity;
+import com.netstore.model.view.TopicRestViewEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import java.sql.Date;
 import java.sql.Timestamp;
 import java.util.List;
 

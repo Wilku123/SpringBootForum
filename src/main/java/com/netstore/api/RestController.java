@@ -1,6 +1,6 @@
 package com.netstore.api;
 
-import com.netstore.model.UserEntity;
+import com.netstore.model.entity.UserEntity;
 import com.netstore.model.repository.LoginRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

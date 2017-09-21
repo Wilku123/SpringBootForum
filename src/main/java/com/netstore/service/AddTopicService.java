@@ -1,8 +1,6 @@
 package com.netstore.service;
 
-import com.netstore.model.CircleEntity;
-import com.netstore.model.TopicEntity;
-import com.netstore.model.repository.CircleRepository;
+import com.netstore.model.entity.TopicEntity;
 import com.netstore.model.repository.TopicRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;

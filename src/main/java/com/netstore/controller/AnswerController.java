@@ -1,8 +1,8 @@
 package com.netstore.controller;
 
-import com.netstore.model.AnswerEntity;
-import com.netstore.model.TopicEntity;
-import com.netstore.model.UserEntity;
+import com.netstore.model.entity.AnswerEntity;
+import com.netstore.model.entity.TopicEntity;
+import com.netstore.model.entity.UserEntity;
 import com.netstore.model.repository.AnswerRepository;
 import com.netstore.model.repository.TopicRepository;
 import com.netstore.model.repository.UserRepository;
@@ -12,7 +12,6 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
-import java.sql.Date;
 import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.util.ArrayList;
