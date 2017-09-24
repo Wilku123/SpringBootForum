@@ -1,11 +1,13 @@
 package com.netstore.controller;
 
 import com.netstore.model.entity.CircleEntity;
+import com.netstore.model.entity.UserEntity;
 import com.netstore.model.view.CircleRestViewEntity;
 import com.netstore.model.repository.rest.CircleRestViewRepository;
 import com.netstore.model.repository.UserRepository;
 import com.netstore.service.AddCircleService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
@@ -40,7 +42,7 @@ public class CircleController {
 
 
     @RequestMapping("/circles")
-    public String greeting(Model model) {
+    public String greeting(Model model,Authentication authentication) {
 
         List<CircleRestViewEntity> circleEntityList = circleRepository.findAll();
         List<String> descList = new ArrayList<>();
@@ -66,6 +68,8 @@ public class CircleController {
             countTopicList.add(i.getCountTopic());
         }
 
+//        UserEntity userEntity = userRepository.findFirstByEmail(authentication.getName());
+//        model.addAttribute("userInfo",userEntity.getName() +" "+ userEntity.getLastName());
         model.addAttribute("circleDescription",descList);
         model.addAttribute("circleName", nameList);
         model.addAttribute("circlePublishDate", publishDateList);
@@ -75,7 +79,19 @@ public class CircleController {
         model.addAttribute("circleIsSubbed",isSubbedList);
         model.addAttribute("circleCountSubbed",countSubbedList);
         model.addAttribute("circleTopicCount",countTopicList);
+
         //model.addAttribute("qrCodeCircle",);
+
+        //--------------------------------------
+        //TODO Zrobic cos z tym zeby bylo ladniej czy cos
+
+        String token = UUID.randomUUID().toString();
+        UserEntity user = userRepository.findFirstByEmail(authentication.getName());
+        model.addAttribute("userId",user.getIdUser());
+        model.addAttribute("token",token);
+
+        //--------------------------------------
+
 
         return "circles";
     }

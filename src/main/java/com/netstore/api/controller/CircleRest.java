@@ -16,6 +16,7 @@ import com.netstore.utility.LimitedListGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.sql.Timestamp;
@@ -84,19 +85,20 @@ public class CircleRest {
 //    }
 
     @RequestMapping(value = "/add", method = RequestMethod.POST)
-    public ResponseEntity<SchemaRest> addCircle(@RequestHeader(value = "Token") String token, @RequestBody NewCircleModel newCircleModel) {
+    public ResponseEntity<SchemaRest> addCircle(Authentication auth, @RequestBody NewCircleModel newCircleModel) {
+
 
         if (newCircleModel.getName().length() > 2 && newCircleModel.getDescription().length() > 10) {
             CircleEntity circleEntity = new CircleEntity();
             circleEntity.setName(newCircleModel.getName());
             circleEntity.setDescription(newCircleModel.getDescription());
-            circleEntity.setUserIdUser(credentialsRepository.findByToken(token).getUserIdUser());
+            circleEntity.setUserIdUser(credentialsRepository.findByToken(auth.getName()).getUserIdUser());
             circleEntity.setPublishDate(new Timestamp(System.currentTimeMillis()));
             circleEntity.setUuid(newCircleModel.getUuid());
             this.addCircleService.saveAndFlush(circleEntity);
 
             SubscribedCircleEntity subscribedCircleEntity = new SubscribedCircleEntity();
-            subscribedCircleEntity.setUserIdUser(credentialsRepository.findByToken(token).getUserIdUser());
+            subscribedCircleEntity.setUserIdUser(credentialsRepository.findByToken(auth.getName()).getUserIdUser());
             subscribedCircleEntity.setCircleIdCircle(circleEntity.getIdCircle());
             this.addCircleSubscriptionService.saveAndFlush(subscribedCircleEntity);
 
@@ -116,14 +118,14 @@ public class CircleRest {
     }
 
     @RequestMapping(value = "/limit", method = RequestMethod.POST)
-    public ResponseEntity<SchemaRestList> getLimitedCircle(@RequestHeader(value = "Token") String token, @RequestBody LimitCircleModel limit) {
+    public ResponseEntity<SchemaRestList> getLimitedCircle(Authentication auth , @RequestBody LimitCircleModel limit) {
 
         if (limit.getHowMany() > 0) {
             List<CircleRestViewEntity> circleEntityList = circleRestViewRepository.findAllByPublishDateIsLessThanEqualOrderByPublishDateDesc(limit.getDate());
             List<CircleRestViewEntity> circleRestList = new ArrayList<>();
 
             for (CircleRestViewEntity i : circleEntityList) {
-                if ((subscribedCircleRepository.findByUserIdUserAndCircleIdCircle(credentialsRepository.findByToken(token).getUserIdUser(), i.getIdCircle())) != null) {
+                if ((subscribedCircleRepository.findByUserIdUserAndCircleIdCircle(credentialsRepository.findByToken(auth.getName()).getUserIdUser(), i.getIdCircle())) != null) {
                     circleRestList.add(generateCircleList(1, i));
                 } else {
                     circleRestList.add(generateCircleList(0, i));
@@ -151,7 +153,7 @@ public class CircleRest {
     }
 
     @RequestMapping(value = "/one", method = RequestMethod.POST)
-    public ResponseEntity<SchemaRest> getOneCircle(@RequestHeader(value = "Token") String token, @RequestBody CircleIdModel oneById) {
+    public ResponseEntity<SchemaRest> getOneCircle(Authentication auth, @RequestBody CircleIdModel oneById) {
 
         if (circleRestViewRepository.exists(oneById.getId())) {
 
@@ -159,7 +161,7 @@ public class CircleRest {
             CircleRestViewEntity circleRest;
 
 
-            if ((subscribedCircleRepository.findByUserIdUserAndCircleIdCircle(credentialsRepository.findByToken(token).getUserIdUser(), circleEntity.getIdCircle())) != null) {
+            if ((subscribedCircleRepository.findByUserIdUserAndCircleIdCircle(credentialsRepository.findByToken(auth.getName()).getUserIdUser(), circleEntity.getIdCircle())) != null) {
                 circleRest = (generateCircleList(1, circleEntity));
             } else {
                 circleRest = (generateCircleList(0, circleEntity));
@@ -198,20 +200,20 @@ public class CircleRest {
 
     //-------------------------------------------------------------------------------------------------------------
     @RequestMapping(value = "/sub", method = RequestMethod.POST)
-    public ResponseEntity<SchemaRest> subscribeCircle(@RequestHeader(value = "Token") String token, @RequestBody CircleSubbedModel subById) {
+    public ResponseEntity<SchemaRest> subscribeCircle(Authentication auth, @RequestBody CircleSubbedModel subById) {
 
         if (circleRestViewRepository.exists(subById.getId())) {
 
             if (subById.isStatus()) {
                 SubscribedCircleEntity subscribedCircleEntity = new SubscribedCircleEntity();
-                subscribedCircleEntity.setUserIdUser(credentialsRepository.findByToken(token).getUserIdUser());
+                subscribedCircleEntity.setUserIdUser(credentialsRepository.findByToken(auth.getName()).getUserIdUser());
                 subscribedCircleEntity.setCircleIdCircle(subById.getId());
                 this.addCircleSubscriptionService.saveAndFlush(subscribedCircleEntity);
                 SchemaRest<SubscribedCircleEntity> schemaRest = new SchemaRest<>(true, "Subbed circle", 1337, subscribedCircleEntity);
                 return new ResponseEntity<>(schemaRest, HttpStatus.OK);
             } else {
                 SubscribedCircleEntity subscribedCircleEntity = new SubscribedCircleEntity();
-                subscribedCircleEntity.setUserIdUser(credentialsRepository.findByToken(token).getUserIdUser());
+                subscribedCircleEntity.setUserIdUser(credentialsRepository.findByToken(auth.getName()).getUserIdUser());
                 subscribedCircleEntity.setCircleIdCircle(subById.getId());
                 subscribedCircleRepository.delete(subscribedCircleEntity);
                 SchemaRest<SubscribedCircleEntity> schemaRest = new SchemaRest<>(true, "UnSubbed circle", 1337, subscribedCircleEntity);
@@ -224,7 +226,7 @@ public class CircleRest {
     }
 
     @RequestMapping(value = "/search", method = RequestMethod.POST)
-    public ResponseEntity<SchemaRestList> searchCircle(@RequestHeader(value = "Token") String token, @RequestBody(required = false) CircleLookForModel lookForModel) {
+    public ResponseEntity<SchemaRestList> searchCircle(Authentication auth, @RequestBody(required = false) CircleLookForModel lookForModel) {
 
         SchemaRestList<CircleRestViewEntity> schemaRestList;
         LimitedListGenerator<CircleRestViewEntity> listGenerator = new LimitedListGenerator<>();

@@ -29,4 +29,15 @@ public class QrGenerator {
 
         return new ResponseEntity<byte[]> (bytes, headers, HttpStatus.CREATED);
     }
+    @RequestMapping(value = "/qrcode/{token}/{id}",method = RequestMethod.GET)
+    public ResponseEntity<byte[]> registerQr(@PathVariable String token, @PathVariable int id){
+        ByteArrayOutputStream stream = QRCode.from(token+";"+id).stream();
+
+        byte[] bytes = stream.toByteArray();
+
+        final HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.IMAGE_PNG);
+
+        return new ResponseEntity<byte[]> (bytes, headers, HttpStatus.CREATED);
+    }
 }

@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -40,6 +41,12 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Value("${spring.queries.roles-query}")
     private String rolesQuery;
 
+    @Value("${spring.queries.token-query}")
+    private String credentialsQuery;
+
+    @Value("${spring.queries.rest-roles-query}")
+    private String restRolesQuery;
+
     @Autowired
     private RestAuthenticationEntryPoint restAuthenticationEntryPoint;
 
@@ -58,34 +65,34 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 .antMatchers("/webjars/**","/css/**","/js/**","/icons/**", "/","/greeting").permitAll()
                 .antMatchers("/login").permitAll()
-                .antMatchers("/register").permitAll()
                 .antMatchers("/activate").permitAll()
-
+                .antMatchers("/api/**").authenticated()
+                .antMatchers("/registerrest").permitAll()
                 .antMatchers("/admin/**").hasAuthority("ADMIN").anyRequest()
                 .authenticated().and().csrf().disable().formLogin()
                 .loginPage("/login").failureUrl("/login?error=true")
                 .successHandler(successHandler())
                 .failureHandler(myFailureHandler())
-//                .defaultSuccessUrl("/admin/home")
+                .defaultSuccessUrl("/circles")
                 .usernameParameter("username")
                 .passwordParameter("password")
                 .and().logout()
                 .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
                 .logoutSuccessUrl("/").and().exceptionHandling()
-                .accessDeniedPage("/access-denied");
-//                .and()
-//                .httpBasic()
-//                .authenticationEntryPoint(basicAuthPoint);
-        http
-                .authorizeRequests()
-                .antMatchers("/api/**").authenticated()
-                .and().csrf().disable().formLogin()
-                .loginPage("/api/login")
-                .usernameParameter("token")
-                .passwordParameter("pin")
+                .accessDeniedPage("/access-denied")
                 .and()
                 .httpBasic()
                 .authenticationEntryPoint(basicAuthPoint);
+//        http
+//                .authorizeRequests()
+//                .antMatchers("/api/**").authenticated()
+//                .and().csrf().disable().formLogin()
+//                .loginPage("/api/login")
+//                .usernameParameter("token")
+//                .passwordParameter("pin")
+//                .and()
+//                .httpBasic()
+//                .authenticationEntryPoint(restAuthenticationEntryPoint);
 
 
 
@@ -137,10 +144,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     @Autowired
-    public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
+    public void configureGlobal(AuthenticationManagerBuilder auth, AuthenticationManagerBuilder rest) throws Exception {
 //        auth
 //                .inMemoryAuthentication()
 //                .withUser("1").password("1").roles("USER");
+
         auth
                 .jdbcAuthentication()
                 .usersByUsernameQuery(usersQuery)
@@ -148,7 +156,15 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .dataSource(dataSource)
                 .passwordEncoder(bCryptPasswordEncoder);
 
+        rest
+                .jdbcAuthentication()
+                .usersByUsernameQuery(credentialsQuery)
+                .authoritiesByUsernameQuery(restRolesQuery)
+                .dataSource(dataSource);
+
     }
+
+
     @Override
     @Bean
     public AuthenticationManager authenticationManagerBean()

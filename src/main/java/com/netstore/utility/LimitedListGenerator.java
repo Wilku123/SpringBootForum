@@ -27,7 +27,7 @@ public class LimitedListGenerator<T> {
         }
         //Everything is git gut
         else {
-            tList=list.subList(0, howMany-1);
+            tList=list.subList(0, howMany);
             return tList;
         }
     }

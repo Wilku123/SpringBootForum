@@ -17,6 +17,7 @@ import com.netstore.utility.LimitedListGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.sql.Timestamp;
@@ -60,7 +61,7 @@ public class AnswerRest {
 
 
     @RequestMapping(value = "/one", method = RequestMethod.POST)
-    public ResponseEntity<SchemaRest> getOneAnswer(@RequestHeader(value = "Token") String token, @RequestBody AnswerIdModel answerIdModel) {
+    public ResponseEntity<SchemaRest> getOneAnswer(Authentication auth, @RequestBody AnswerIdModel answerIdModel) {
 
         if (answerRepository.exists(answerIdModel.getId())) {
 
@@ -77,14 +78,14 @@ public class AnswerRest {
     }
 
     @RequestMapping(value = "/add", method = RequestMethod.POST)
-    public ResponseEntity<SchemaRest> addAnswer(@RequestHeader(value = "Token") String token, @RequestBody NewAnswerModel newAnswerModel) {
+    public ResponseEntity<SchemaRest> addAnswer(Authentication auth, @RequestBody NewAnswerModel newAnswerModel) {
 
         if (topicRestViewRepository.exists(newAnswerModel.getId())) {
             if (newAnswerModel.getContent().length() > 5) {
                 AnswerEntity answerEntity = new AnswerEntity();
                 answerEntity.setTopicIdTopic(newAnswerModel.getId());
                 answerEntity.setContent(newAnswerModel.getContent());
-                answerEntity.setUserIdUser(credentialsRepository.findByToken(token).getUserIdUser());
+                answerEntity.setUserIdUser(credentialsRepository.findByToken(auth.getName()).getUserIdUser());
                 answerEntity.setPublishDate(new Timestamp(System.currentTimeMillis()));
                 answerEntity.setUuid(newAnswerModel.getUuid());
                 this.addAnswersService.saveAndFlush(answerEntity);
@@ -106,7 +107,7 @@ public class AnswerRest {
     }
 
     @RequestMapping(value = "/limit", method = RequestMethod.POST)
-    public ResponseEntity<SchemaRestList> getLimitedAnswer(@RequestHeader(value = "Token") String token, @RequestBody LimitAnswerModel limitAnswerModel) {
+    public ResponseEntity<SchemaRestList> getLimitedAnswer(Authentication auth, @RequestBody LimitAnswerModel limitAnswerModel) {
 
         if (topicRestViewRepository.exists(limitAnswerModel.getId())) {
             if (limitAnswerModel.getHowMany() > 0) {
@@ -140,7 +141,7 @@ public class AnswerRest {
     }
 
     @RequestMapping(value = "/search", method = RequestMethod.POST)
-    public ResponseEntity<SchemaRestList> searchCircle(@RequestHeader(value = "Token") String token, @RequestBody(required = false) AnswerLookForModel lookForModel) {
+    public ResponseEntity<SchemaRestList> searchCircle(Authentication auth, @RequestBody(required = false) AnswerLookForModel lookForModel) {
 
         SchemaRestList<AnswerRestViewEntity> schemaRestList;
         LimitedListGenerator<AnswerRestViewEntity> listGenerator = new LimitedListGenerator<>();

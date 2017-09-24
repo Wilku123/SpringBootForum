@@ -39,7 +39,7 @@ public class RegisterController {
     @GetMapping("/register")
     public String register(Model model) {
         model.addAttribute("userEntity", new UserEntity());
-        return "register";
+        return "RegisterNewQr";
     }
 
     @PostMapping("/register")
@@ -48,7 +48,7 @@ public class RegisterController {
 
 
         if (userRepository.findFirstByEmail(userEntity.getEmail())!=null) {
-            return "redirect:/register?error=email";
+            return "redirect:/RegisterNewQr?error=email";
 
         } else {
             String token = UUID.randomUUID().toString();
@@ -73,7 +73,7 @@ public class RegisterController {
                     .build();
             new Mailer("smtp.gmail.com", 587, "dejmitogroup@gmail.com", "haslo123", TransportStrategy.SMTP_TLS).sendMail(email);
 
-            return "redirect:/register?register=true";
+            return "redirect:/RegisterNewQr?RegisterNewQr=true";
         }
     }
 

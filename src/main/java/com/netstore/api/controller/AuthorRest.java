@@ -7,6 +7,7 @@ import com.netstore.model.repository.rest.UserRestRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 /**
@@ -20,7 +21,7 @@ public class AuthorRest {
     private UserRestRepository userRepository;
 
     @RequestMapping(value = "/one",method = RequestMethod.POST)
-    public ResponseEntity<SchemaRest> getOneAuthor(@RequestHeader(value = "Token")String token, @RequestBody UserIdModel userIdModel)
+    public ResponseEntity<SchemaRest> getOneAuthor(Authentication auth, @RequestBody UserIdModel userIdModel)
     {
         if (userRepository.exists(userIdModel.getId()))
         {

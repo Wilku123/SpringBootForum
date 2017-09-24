@@ -4,13 +4,17 @@
     <!--<link rel="stylesheet" th:href="@{/css/style.css}" href="../../css/style.css"/>-->
 </head>
 <body>
-<div th:include="fragments/navbar"></div>
+<div th:include="fragments/navbar :: navbar"></div>
 <div class="container-fluid">
     <div class="row">
         <div class="col-md-2">
             <div th:include="fragments/sideMenu::sideMenu">
 
             </div>
+            <span th:title="'/qrcode/'+${token}+'/'+${userId}" alt="topkek"
+                  class="pointer glyphicon glyphicon-qrcode qrcode" style="float:right">
+                                <!--<img th:id="qrcode+${circleId[iter.index]}" style="display: none" th:attr="src='/qrcode/circle/'+${circleId[iter.index]}+'/RED'"/>-->
+            </span>
         </div>
         <div class="col-md-8">
             <!--<p th:text="'Hello, ' + ${name} + '!'"/>-->

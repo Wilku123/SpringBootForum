@@ -1,5 +1,7 @@
 package com.netstore.api.security;
 
+import com.netstore.model.API.SchemaRest;
+import com.netstore.model.entity.CredentialsEntity;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.authentication.www.BasicAuthenticationEntryPoint;
@@ -22,6 +24,7 @@ public class RestAuthenticationEntryPoint implements AuthenticationEntryPoint {
             HttpServletRequest request,
             HttpServletResponse response,
             AuthenticationException authException) throws IOException {
+        //SchemaRest<CredentialsEntity> credentialsEntitySchemaRest = new SchemaRest<>(false,"Zle Credentialsy",104,null);
 
         response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized");
     }
