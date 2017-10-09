@@ -1,7 +1,7 @@
 //package com.netstore.controller;
 //
 //import com.netstore.model.CircleEntity;
-//import com.netstore.service.AddCircleService;
+//import com.netstore.model.service.AddCircleService;
 //import org.springframework.beans.factory.annotation.Autowired;
 //
 //import org.springframework.ui.Model;

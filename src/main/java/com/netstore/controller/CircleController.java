@@ -1,11 +1,13 @@
 package com.netstore.controller;
 
 import com.netstore.model.entity.CircleEntity;
-import com.netstore.model.entity.UserEntity;
+import com.netstore.model.entity.SubscribedCircleEntity;
+import com.netstore.model.repository.CredentialsRepository;
 import com.netstore.model.view.CircleRestViewEntity;
 import com.netstore.model.repository.rest.CircleRestViewRepository;
 import com.netstore.model.repository.UserRepository;
-import com.netstore.service.AddCircleService;
+import com.netstore.model.service.AddCircleService;
+import com.netstore.model.service.AddCircleSubscriptionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.ui.Model;
@@ -33,10 +35,14 @@ public class CircleController {
     private CircleRestViewRepository circleRepository;
     @Autowired
     private AddCircleService addCircleService;
+    @Autowired
+    private CredentialsRepository credentialsRepository;
+    @Autowired
+    private AddCircleSubscriptionService addCircleSubscriptionService;
 
-    LocalDate todayLocalDate = LocalDate.now();
+    private LocalDate todayLocalDate = LocalDate.now();
     //java.sql.Date sqlDate = java.sql.Date.valueOf( todayLocalDate );
-    Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+    private Timestamp timestamp = new Timestamp(System.currentTimeMillis());
     //Date date = new Date(timestamp.getTime());
 
 
@@ -85,9 +91,7 @@ public class CircleController {
         //--------------------------------------
         //TODO Zrobic cos z tym zeby bylo ladniej czy cos
 
-        String token = UUID.randomUUID().toString();
-        UserEntity user = userRepository.findFirstByEmail(authentication.getName());
-        model.addAttribute("userId",user.getIdUser());
+        String token = credentialsRepository.findByUserIdUser(userRepository.findByEmail(authentication.getName()).getIdUser()).getToken();
         model.addAttribute("token",token);
 
         //--------------------------------------
@@ -101,11 +105,15 @@ public class CircleController {
         return "addCircle";
     }
     @PostMapping("/proccessAdding")
-    public String proccess(@Valid @ModelAttribute CircleEntity circleEntity, BindingResult result){
+    public String proccess(@Valid @ModelAttribute CircleEntity circleEntity, BindingResult result, Authentication authentication){
         circleEntity.setPublishDate(timestamp);
         circleEntity.setUuid(UUID.randomUUID().toString());
-        circleEntity.setUserIdUser(1); // TODO current user from session
+        circleEntity.setUserIdUser(userRepository.findFirstByEmail(authentication.getName()).getIdUser());
         this.addCircleService.saveAndFlush(circleEntity);
+        SubscribedCircleEntity subscribedCircleEntity = new SubscribedCircleEntity();
+        subscribedCircleEntity.setUserIdUser(userRepository.findByEmail(authentication.getName()).getIdUser());
+        subscribedCircleEntity.setCircleIdCircle(circleEntity.getIdCircle());
+        this.addCircleSubscriptionService.saveAndFlush(subscribedCircleEntity);
         return "redirect:/circles";
     }
 }

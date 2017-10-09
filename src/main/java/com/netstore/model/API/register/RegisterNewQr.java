@@ -5,7 +5,6 @@ package com.netstore.model.API.register;
  */
 public class RegisterNewQr {
     private String token;
-    private Integer userId;
     private String pin;
 
     public String getToken() {
@@ -16,13 +15,6 @@ public class RegisterNewQr {
         this.token = token;
     }
 
-    public Integer getUserId() {
-        return userId;
-    }
-
-    public void setUserId(Integer userId) {
-        this.userId = userId;
-    }
 
     public String getPin() {
         return pin;

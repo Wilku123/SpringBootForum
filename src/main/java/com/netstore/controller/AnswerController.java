@@ -6,8 +6,9 @@ import com.netstore.model.entity.UserEntity;
 import com.netstore.model.repository.AnswerRepository;
 import com.netstore.model.repository.TopicRepository;
 import com.netstore.model.repository.UserRepository;
-import com.netstore.service.AddAnswersService;
+import com.netstore.model.service.AddAnswersService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
@@ -67,12 +68,12 @@ public class AnswerController {
         return "answers";
     }
     @PostMapping("{name}/{id}/proccessAddingAnswer")
-    public String proccess(@PathVariable Integer id, @ModelAttribute AnswerEntity answerEntity, BindingResult result){
+    public String proccess(@PathVariable Integer id, @ModelAttribute AnswerEntity answerEntity, BindingResult result, Authentication authentication){
         answerEntity.setTopicIdTopic(id);
 //        answerEntity.setTopicByTopicIdTopic();
         answerEntity.setPublishDate(timestamp);
         answerEntity.setUuid(UUID.randomUUID().toString());
-        answerEntity.setUserIdUser(1); // TODO userId should come from session
+        answerEntity.setUserIdUser(userRepository.findByEmail(authentication.getName()).getIdUser());
         this.addAnswersService.saveAndFlush(answerEntity);
         return "redirect:/topic/{name}/{id}";
     }

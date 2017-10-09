@@ -1,4 +1,4 @@
-package com.netstore.service;
+package com.netstore.model.service;
 
 import com.netstore.model.entity.SubscribedCircleEntity;
 import com.netstore.model.repository.SubscribedCircleRepository;

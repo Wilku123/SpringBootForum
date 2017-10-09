@@ -1,8 +1,6 @@
 package com.netstore.security;
 
-import com.netstore.api.security.BasicAuthPoint;
-import com.netstore.api.security.MySavedRequestAwareAuthenticationSuccessHandler;
-import com.netstore.api.security.RestAuthenticationEntryPoint;
+import com.netstore.api.security.*;
 import org.apache.tomcat.jdbc.pool.DataSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -14,12 +12,16 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 
 /**
@@ -57,6 +59,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     private MySavedRequestAwareAuthenticationSuccessHandler mySavedRequestAwareAuthenticationSuccessHandler;
 
 
+
     @Override
     protected void configure(HttpSecurity http) throws Exception{
         http
@@ -67,7 +70,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/login").permitAll()
                 .antMatchers("/activate").permitAll()
                 .antMatchers("/api/**").authenticated()
-                .antMatchers("/registerrest").permitAll()
+                .antMatchers("/registerrest","/register").permitAll()
                 .antMatchers("/admin/**").hasAuthority("ADMIN").anyRequest()
                 .authenticated().and().csrf().disable().formLogin()
                 .loginPage("/login").failureUrl("/login?error=true")
@@ -82,7 +85,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .accessDeniedPage("/access-denied")
                 .and()
                 .httpBasic()
-                .authenticationEntryPoint(basicAuthPoint);
+                .authenticationEntryPoint(restAuthenticationEntryPoint);
 //        http
 //                .authorizeRequests()
 //                .antMatchers("/api/**").authenticated()
@@ -162,6 +165,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .authoritiesByUsernameQuery(restRolesQuery)
                 .dataSource(dataSource);
 
+//        rest
+//                .userDetailsService(userDetailsService)
+//                .passwordEncoder(bCryptPasswordEncoder);
     }
 
 

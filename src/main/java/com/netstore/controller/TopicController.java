@@ -2,10 +2,14 @@ package com.netstore.controller;
 
 
 import com.netstore.model.entity.CircleEntity;
+import com.netstore.model.entity.SubscribedTopicEntity;
 import com.netstore.model.entity.TopicEntity;
 import com.netstore.model.repository.TopicRepository;
-import com.netstore.service.AddTopicService;
+import com.netstore.model.repository.UserRepository;
+import com.netstore.model.service.AddTopicService;
+import com.netstore.model.service.AddTopicSubscriptionService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
@@ -30,6 +34,11 @@ public class TopicController {
     private TopicRepository topicRepository;
     @Autowired
     private AddTopicService addTopicService;
+    @Autowired
+    private UserRepository userRepository;
+    @Autowired
+    private AddTopicSubscriptionService addTopicSubscriptionService;
+
     @GetMapping("/{id}")
     public String getForm(@PathVariable Integer id,Model model) {
         model.addAttribute("topicEntity",new TopicEntity());
@@ -53,12 +62,16 @@ public class TopicController {
         return "topics";
     }
     @PostMapping("/{id}/proccessAdding")
-    public String proccess(@PathVariable Integer id, @ModelAttribute TopicEntity topicEntity, BindingResult result){
+    public String proccess(@PathVariable Integer id, @ModelAttribute TopicEntity topicEntity, BindingResult result, Authentication authentication){
         topicEntity.setCircleIdCircle(id);
         topicEntity.setPublishDate(timestamp);
         topicEntity.setUuid(UUID.randomUUID().toString());
-        topicEntity.setUserIdUser(1); //TODO set to current user from session
+        topicEntity.setUserIdUser(userRepository.findByEmail(authentication.getName()).getIdUser());
         this.addTopicService.saveAndFlush(topicEntity);
+        SubscribedTopicEntity subscribedTopicEntity = new SubscribedTopicEntity();
+        subscribedTopicEntity.setUserIdUser(userRepository.findByEmail(authentication.getName()).getIdUser());
+        subscribedTopicEntity.setTopicIdTopic(topicEntity.getIdTopic());
+        this.addTopicSubscriptionService.saveAndFlush(subscribedTopicEntity);
         return "redirect:/topic/{id}";
     }
 }

@@ -1,11 +1,13 @@
 package com.netstore.controller;
 
+import com.netstore.model.entity.CredentialsEntity;
 import com.netstore.model.entity.RoleEntity;
 import com.netstore.model.entity.UserEntity;
 import com.netstore.model.repository.RoleRepository;
 import com.netstore.model.repository.UserRepository;
-import com.netstore.service.AddRoleService;
-import com.netstore.service.AddUserService;
+import com.netstore.model.service.AddCredentialsService;
+import com.netstore.model.service.AddRoleService;
+import com.netstore.model.service.AddUserService;
 import org.simplejavamail.email.Email;
 import org.simplejavamail.email.EmailBuilder;
 import org.simplejavamail.mailer.Mailer;
@@ -35,11 +37,13 @@ public class RegisterController {
     private AddUserService userService;
     @Autowired
     private BCryptPasswordEncoder bCryptPasswordEncoder;
+    @Autowired
+    private AddCredentialsService addCredentialsService;
 
     @GetMapping("/register")
     public String register(Model model) {
         model.addAttribute("userEntity", new UserEntity());
-        return "RegisterNewQr";
+        return "/register";
     }
 
     @PostMapping("/register")
@@ -48,7 +52,7 @@ public class RegisterController {
 
 
         if (userRepository.findFirstByEmail(userEntity.getEmail())!=null) {
-            return "redirect:/RegisterNewQr?error=email";
+            return "redirect:/register?error=email";
 
         } else {
             String token = UUID.randomUUID().toString();
@@ -58,6 +62,12 @@ public class RegisterController {
             userEntity.setActive((byte) 0);
             userEntity.setActiveToken(token);
             this.userService.saveAndFlush(userEntity);
+
+            CredentialsEntity credentialsEntity = new CredentialsEntity();
+            credentialsEntity.setUserIdUser(userEntity.getIdUser());
+            credentialsEntity.setToken(UUID.randomUUID().toString());
+            this.addCredentialsService.saveAndFlush(credentialsEntity);
+
             RoleEntity roleEntity = new RoleEntity();
             roleEntity.setRole("USER");
             roleEntity.setUserByUserIdUser(userEntity);
@@ -73,7 +83,7 @@ public class RegisterController {
                     .build();
             new Mailer("smtp.gmail.com", 587, "dejmitogroup@gmail.com", "haslo123", TransportStrategy.SMTP_TLS).sendMail(email);
 
-            return "redirect:/RegisterNewQr?RegisterNewQr=true";
+            return "redirect:/register?register=true";
         }
     }
 

@@ -196,3 +196,4 @@ window.Prompt = function() {
 
     dialogue( message.add(input).add(ok).add(cancel), 'Attention!' );
 }
+

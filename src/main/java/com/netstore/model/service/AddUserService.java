@@ -1,4 +1,4 @@
-package com.netstore.service;
+package com.netstore.model.service;
 
 import com.netstore.model.entity.UserEntity;
 import com.netstore.model.repository.UserRepository;

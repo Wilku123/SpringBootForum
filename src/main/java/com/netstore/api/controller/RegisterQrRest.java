@@ -3,8 +3,9 @@ package com.netstore.api.controller;
 import com.netstore.model.API.SchemaRest;
 import com.netstore.model.API.register.RegisterNewQr;
 import com.netstore.model.entity.CredentialsEntity;
+import com.netstore.model.repository.CredentialsRepository;
 import com.netstore.model.repository.UserRepository;
-import com.netstore.service.AddCredentialsService;
+import com.netstore.model.service.AddCredentialsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,14 +25,15 @@ public class RegisterQrRest {
     @Autowired
     private AddCredentialsService addCredentialsService;
 
+    @Autowired
+    private CredentialsRepository credentialsRepository;
+
     @RequestMapping("/registerrest")
     public ResponseEntity<SchemaRest> addAnswer(@RequestBody RegisterNewQr registerQrRest) {
 
-        if (userRepository.exists(registerQrRest.getUserId())) {
-            CredentialsEntity credentialsEntity = new CredentialsEntity();
-            credentialsEntity.setToken(registerQrRest.getToken());
+        if (userRepository.exists(credentialsRepository.findByToken(registerQrRest.getToken()).getUserIdUser())) {
+            CredentialsEntity credentialsEntity = credentialsRepository.findByToken(registerQrRest.getToken());
             credentialsEntity.setPin(registerQrRest.getPin());
-            credentialsEntity.setUserIdUser(registerQrRest.getUserId());
             this.addCredentialsService.saveAndFlush(credentialsEntity);
             SchemaRest<CredentialsEntity> credentialsEntitySchemaRest = new SchemaRest<>(true,"Registered new device",1337,credentialsEntity);
             return new ResponseEntity<>(credentialsEntitySchemaRest,HttpStatus.OK);

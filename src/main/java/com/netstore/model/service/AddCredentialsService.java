@@ -1,4 +1,4 @@
-package com.netstore.service;
+package com.netstore.model.service;
 
 import com.netstore.model.entity.CredentialsEntity;
 import com.netstore.model.repository.CredentialsRepository;

@@ -24,6 +24,8 @@ public class RestAuthenticationEntryPoint implements AuthenticationEntryPoint {
             HttpServletRequest request,
             HttpServletResponse response,
             AuthenticationException authException) throws IOException {
+        request.getHeader("token");
+        request.getHeader("pin");
         //SchemaRest<CredentialsEntity> credentialsEntitySchemaRest = new SchemaRest<>(false,"Zle Credentialsy",104,null);
 
         response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized");
