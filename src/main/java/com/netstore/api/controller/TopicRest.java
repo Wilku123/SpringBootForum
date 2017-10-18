@@ -57,10 +57,14 @@ public class TopicRest {
 
         topicRestViewEntity.setIdTopic(idTopic);
         topicRestViewEntity.setName(name);
+        topicRestViewEntity.setDescription(i.getDescription());
         topicRestViewEntity.setUserIdUser(author);
         topicRestViewEntity.setIsSub(isSub);
         topicRestViewEntity.setPublishDate(publishDate);
         topicRestViewEntity.setCircleIdCircle(circleId);
+        topicRestViewEntity.setUuid(i.getUuid());
+        topicRestViewEntity.setCountSubbed(i.getCountSubbed());
+        topicRestViewEntity.setCountAnswer(i.getCountAnswer());
 
         return topicRestViewEntity;
     }
@@ -204,16 +208,16 @@ public class TopicRest {
     }
 
     @RequestMapping(value = "/search", method = RequestMethod.POST)
-    public ResponseEntity<SchemaRestList> searchCircle(Authentication auth, @RequestBody(required = false) TopicLookForModel lookForModel) {
+    public ResponseEntity<SchemaRestList> searchCircle(Authentication auth, @RequestBody TopicLookForModel lookForModel) {
 
         SchemaRestList<TopicRestViewEntity> schemaRestList;
         LimitedListGenerator<TopicRestViewEntity> listGenerator = new LimitedListGenerator<>();
         if (!lookForModel.getName().isEmpty())
-            schemaRestList = new SchemaRestList<>(true, "", 1337, listGenerator.limitedList(topicRestViewRepository.findAllByNameContaining(lookForModel.getName()), lookForModel.getHowMany()));
+            schemaRestList = new SchemaRestList<>(true, "", 1337, listGenerator.limitedList(topicRestViewRepository.findAllByNameContainingAndCircleIdCircle(lookForModel.getName(),lookForModel.getId()), lookForModel.getHowMany()));
         else
             schemaRestList = new SchemaRestList<>(false, "String is empty fix pl0x", 102, null);
 
-        if (!schemaRestList.getData().isEmpty())
+        if (schemaRestList.getData()!=null)
             return new ResponseEntity<>(schemaRestList, HttpStatus.OK);
         else {
             schemaRestList.setErrorCode(103);

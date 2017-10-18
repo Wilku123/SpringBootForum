@@ -13,7 +13,10 @@ import java.util.List;
  */
 public interface AnswerRestRepository extends JpaRepository<AnswerRestViewEntity,Integer>, JpaSpecificationExecutor<AnswerEntity> {
     List<AnswerRestViewEntity> findAllByTopicIdTopic(Integer id);
-    List<AnswerRestViewEntity> findAllByTopicIdTopicAndPublishDateIsLessThanEqualOrderByPublishDateDesc(Integer id, Timestamp timestamp);
-    List<AnswerRestViewEntity> findAllByContentContaining(String content);
+    List<AnswerRestViewEntity> findAllByTopicIdTopicAndPublishDateIsLessThanEqualOrderByPublishDateDesc(Integer id, Timestamp publishDate);
+    List<AnswerRestViewEntity> findAllByTopicIdTopicAndPublishDateIsGreaterThanEqualOrderByPublishDateDesc(Integer id, Timestamp publishDate);
+    List<AnswerRestViewEntity> findAllByContentContainingAndTopicIdTopic(String content,Integer id);
+//    List<AnswerRestViewEntity> findAllByTopicIdTopicAndPublishDateIsLessThanEqualOrderByPublishDate
+//    AnswerRestViewEntity findByUserIdUserAndIdAnswer(Integer user,Integer answer);
 
 }

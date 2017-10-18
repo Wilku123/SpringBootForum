@@ -61,6 +61,7 @@ public class CircleRest {
         circleRestViewEntity.setIsSub(isSub);
         circleRestViewEntity.setCountTopic(countTopic);
         circleRestViewEntity.setPublishDate(publishDate);
+        circleRestViewEntity.setUuid(i.getUuid());
 
         return circleRestViewEntity;
     }
@@ -225,7 +226,7 @@ public class CircleRest {
     }
 
     @RequestMapping(value = "/search", method = RequestMethod.POST)
-    public ResponseEntity<SchemaRestList> searchCircle(Authentication auth, @RequestBody(required = false) CircleLookForModel lookForModel) {
+    public ResponseEntity<SchemaRestList> searchCircle(Authentication auth, @RequestBody CircleLookForModel lookForModel) {
 
         SchemaRestList<CircleRestViewEntity> schemaRestList;
         LimitedListGenerator<CircleRestViewEntity> listGenerator = new LimitedListGenerator<>();
@@ -234,11 +235,11 @@ public class CircleRest {
         else if (lookForModel.getName().isEmpty() && !lookForModel.getDescription().isEmpty())
             schemaRestList = new SchemaRestList<>(true, "", 1337, listGenerator.limitedList(circleRestViewRepository.findAllByDescriptionContaining(lookForModel.getDescription()), lookForModel.getHowMany()));
         else if (!lookForModel.getName().isEmpty() && !lookForModel.getDescription().isEmpty())
-            schemaRestList = new SchemaRestList<>(true, "", 1337, listGenerator.limitedList(circleRestViewRepository.findAllByNameContainingAndDescriptionContaining(lookForModel.getName(), lookForModel.getDescription()), lookForModel.getHowMany()));
+            schemaRestList = new SchemaRestList<>(true, "", 1337, listGenerator.limitedList(circleRestViewRepository.findAllByNameContainingOrDescriptionContaining(lookForModel.getName(), lookForModel.getDescription()), lookForModel.getHowMany()));
         else
             schemaRestList = new SchemaRestList<>(false, "Strings are empty fix pl0x", 102, null);
 
-        if (!schemaRestList.getData().isEmpty())
+        if (schemaRestList.getData()!=null)
             return new ResponseEntity<>(schemaRestList, HttpStatus.OK);
         else {
             schemaRestList.setMessage("List is empty");

@@ -17,7 +17,7 @@ public interface CircleRestViewRepository extends JpaRepository<CircleRestViewEn
     List<CircleRestViewEntity> findAllByPublishDateIsLessThanEqualOrderByPublishDateDesc(Timestamp date);
     List<CircleRestViewEntity> findAllByNameContaining(String name);
     List<CircleRestViewEntity> findAllByDescriptionContaining(String name);
-    List<CircleRestViewEntity> findAllByNameContainingAndDescriptionContaining(String name,String description);
+    List<CircleRestViewEntity> findAllByNameContainingOrDescriptionContaining(String name,String description);
 
 
 

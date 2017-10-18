@@ -15,6 +15,23 @@ public class AnswerRestViewEntity {
     private Integer userIdUser;
     private Integer topicIdTopic;
     private String uuid;
+    private int yours;
+
+    public void setYours(Integer yours) {
+        this.yours = yours;
+    }
+
+    public void setIdAnswer(int idAnswer) {
+        this.idAnswer = idAnswer;
+    }
+
+    public void setUserIdUser(int userIdUser) {
+        this.userIdUser = userIdUser;
+    }
+
+    public void setTopicIdTopic(int topicIdTopic) {
+        this.topicIdTopic = topicIdTopic;
+    }
 
     @Basic
     @Id
@@ -101,5 +118,15 @@ public class AnswerRestViewEntity {
 
     public void setUuid(String uuid) {
         this.uuid = uuid;
+    }
+
+    @Basic
+    @Column(name = "Yours", nullable = false)
+    public int getYours() {
+        return yours;
+    }
+
+    public void setYours(int yours) {
+        this.yours = yours;
     }
 }

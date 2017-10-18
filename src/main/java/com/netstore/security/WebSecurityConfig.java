@@ -70,7 +70,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/login").permitAll()
                 .antMatchers("/activate").permitAll()
                 .antMatchers("/api/**").authenticated()
-                .antMatchers("/registerrest","/register").permitAll()
+                .antMatchers("/registerrest","/register","/validateToken").permitAll()
                 .antMatchers("/admin/**").hasAuthority("ADMIN").anyRequest()
                 .authenticated().and().csrf().disable().formLogin()
                 .loginPage("/login").failureUrl("/login?error=true")
@@ -85,7 +85,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .accessDeniedPage("/access-denied")
                 .and()
                 .httpBasic()
-                .authenticationEntryPoint(restAuthenticationEntryPoint);
+                .authenticationEntryPoint(basicAuthPoint);
 //        http
 //                .authorizeRequests()
 //                .antMatchers("/api/**").authenticated()

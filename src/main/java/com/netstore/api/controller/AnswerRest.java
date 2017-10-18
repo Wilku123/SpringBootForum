@@ -8,10 +8,12 @@ import com.netstore.model.API.answer.LimitAnswerModel;
 import com.netstore.model.API.answer.NewAnswerModel;
 import com.netstore.model.entity.AnswerEntity;
 import com.netstore.model.repository.CredentialsRepository;
+import com.netstore.model.repository.rest.UserRestRepository;
 import com.netstore.model.view.AnswerRestViewEntity;
 import com.netstore.model.repository.rest.AnswerRestRepository;
 import com.netstore.model.repository.rest.TopicRestViewRepository;
 import com.netstore.model.service.AddAnswersService;
+import com.netstore.model.view.UserRestViewEntity;
 import com.netstore.utility.LimitedListGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -31,7 +33,8 @@ public class AnswerRest {
 
     @Autowired
     private AnswerRestRepository answerRepository;
-
+    @Autowired
+    private UserRestRepository userRestRepository;
     @Autowired
     private CredentialsRepository credentialsRepository;
     @Autowired
@@ -39,13 +42,15 @@ public class AnswerRest {
     @Autowired
     private TopicRestViewRepository topicRestViewRepository;
 
-    private AnswerRestViewEntity generateAnswerList(AnswerRestViewEntity i) {
+    private AnswerRestViewEntity generateAnswerList(int yours, AnswerRestViewEntity i) {
 
         Integer idAnswer = i.getIdAnswer();
         String content = i.getContent();
         Integer idTopic = i.getTopicIdTopic();
         Integer author = i.getUserIdUser();
         Timestamp publishDate = i.getPublishDate();
+        String uuid = i.getUuid();
+
 
         AnswerRestViewEntity answerEntity = new AnswerRestViewEntity();
 
@@ -54,6 +59,8 @@ public class AnswerRest {
         answerEntity.setContent(content);
         answerEntity.setUserIdUser(author);
         answerEntity.setPublishDate(publishDate);
+        answerEntity.setUuid(uuid);
+        answerEntity.setYours(yours);
 
         return answerEntity;
     }
@@ -88,8 +95,11 @@ public class AnswerRest {
                 answerEntity.setPublishDate(new Timestamp(System.currentTimeMillis()));
                 answerEntity.setUuid(newAnswerModel.getUuid());
                 this.addAnswersService.saveAndFlush(answerEntity);
+                AnswerRestViewEntity restViewEntity;
+                restViewEntity = answerRepository.findOne(answerEntity.getIdAnswer());
+                restViewEntity.setYours(1);
 
-                SchemaRest<AnswerRestViewEntity> schemaRest = new SchemaRest<>(true, "git gut", 1337, answerRepository.findOne(answerEntity.getIdAnswer()));
+                SchemaRest<AnswerRestViewEntity> schemaRest = new SchemaRest<>(true, "git gut", 1337, restViewEntity);
 
                 return new ResponseEntity<>(schemaRest, HttpStatus.OK);
             } else {
@@ -105,8 +115,8 @@ public class AnswerRest {
 
     }
 
-    @RequestMapping(value = "/limit", method = RequestMethod.POST)
-    public ResponseEntity<SchemaRestList> getLimitedAnswer(Authentication auth, @RequestBody LimitAnswerModel limitAnswerModel) {
+    @RequestMapping(value = "/limitLess", method = RequestMethod.POST)
+    public ResponseEntity<SchemaRestList> getLimitedAnswerLessThan(Authentication auth, @RequestBody LimitAnswerModel limitAnswerModel) {
 
         if (topicRestViewRepository.exists(limitAnswerModel.getId())) {
             if (limitAnswerModel.getHowMany() > 0) {
@@ -114,9 +124,51 @@ public class AnswerRest {
                 List<AnswerRestViewEntity> answerRestList = new ArrayList<>();
 
                 for (AnswerRestViewEntity i : answerEntityList) {
-                    answerRestList.add(generateAnswerList(i));
-                }
+                    if (i.getUserIdUser() == credentialsRepository.findByToken(auth.getName()).getUserIdUser()) {
+                        answerRestList.add(generateAnswerList(1, i));
+                    } else {
+                        answerRestList.add(generateAnswerList(0, i));
+                    }
 
+                }
+                LimitedListGenerator<AnswerRestViewEntity> limitedListGenerator = new LimitedListGenerator<>();
+                SchemaRestList<AnswerRestViewEntity> schemaRestList = new SchemaRestList<>(true, "git gut", 1337, limitedListGenerator.limitedList(answerRestList, limitAnswerModel.getHowMany()));
+
+                if (!schemaRestList.getData().isEmpty())
+                    return new ResponseEntity<>(schemaRestList, HttpStatus.OK);
+                else {
+                    schemaRestList.setErrorCode(103);
+                    schemaRestList.setMessage("List Is empty");
+                    return new ResponseEntity<>(schemaRestList, HttpStatus.OK);
+                }
+            } else {
+                SchemaRestList<AnswerRestViewEntity> schemaRest = new SchemaRestList<>(false, "howMany is less than 1", 102, null);
+                return new ResponseEntity<>(schemaRest, HttpStatus.BAD_REQUEST);
+            }
+
+        } else {
+            SchemaRestList<AnswerRestViewEntity> schemaRest = new SchemaRestList<>(false, "Topic dosnt exist", 101, null);
+            return new ResponseEntity<>(schemaRest, HttpStatus.BAD_REQUEST);
+        }
+
+    }
+
+    @RequestMapping(value = "/limitGreater", method = RequestMethod.POST)
+    public ResponseEntity<SchemaRestList> getLimitedAnswerGreaterThan(Authentication auth, @RequestBody LimitAnswerModel limitAnswerModel) {
+
+        if (topicRestViewRepository.exists(limitAnswerModel.getId())) {
+            if (limitAnswerModel.getHowMany() > 0) {
+                List<AnswerRestViewEntity> answerEntityList = answerRepository.findAllByTopicIdTopicAndPublishDateIsGreaterThanEqualOrderByPublishDateDesc(limitAnswerModel.getId(), limitAnswerModel.getDate());
+                List<AnswerRestViewEntity> answerRestList = new ArrayList<>();
+
+                for (AnswerRestViewEntity i : answerEntityList) {
+                    if (i.getUserIdUser() == credentialsRepository.findByToken(auth.getName()).getUserIdUser()) {
+                        answerRestList.add(generateAnswerList(1, i));
+                    } else {
+                        answerRestList.add(generateAnswerList(0, i));
+                    }
+
+                }
                 LimitedListGenerator<AnswerRestViewEntity> limitedListGenerator = new LimitedListGenerator<>();
                 SchemaRestList<AnswerRestViewEntity> schemaRestList = new SchemaRestList<>(true, "git gut", 1337, limitedListGenerator.limitedList(answerRestList, limitAnswerModel.getHowMany()));
 
@@ -140,16 +192,16 @@ public class AnswerRest {
     }
 
     @RequestMapping(value = "/search", method = RequestMethod.POST)
-    public ResponseEntity<SchemaRestList> searchCircle(Authentication auth, @RequestBody(required = false) AnswerLookForModel lookForModel) {
+    public ResponseEntity<SchemaRestList> searchCircle(Authentication auth, @RequestBody AnswerLookForModel lookForModel) {
 
         SchemaRestList<AnswerRestViewEntity> schemaRestList;
         LimitedListGenerator<AnswerRestViewEntity> listGenerator = new LimitedListGenerator<>();
         if (!lookForModel.getContent().isEmpty())
-            schemaRestList = new SchemaRestList<>(true, "", 1337, listGenerator.limitedList(answerRepository.findAllByContentContaining(lookForModel.getContent()), lookForModel.getHowMany()));
+            schemaRestList = new SchemaRestList<>(true, "", 1337, listGenerator.limitedList(answerRepository.findAllByContentContainingAndTopicIdTopic(lookForModel.getContent(),lookForModel.getId()), lookForModel.getHowMany()));
         else
             schemaRestList = new SchemaRestList<>(false, "String is empty fix pl0x", 102, null);
 
-        if (!schemaRestList.getData().isEmpty())
+        if (schemaRestList.getData()!=null)
             return new ResponseEntity<>(schemaRestList, HttpStatus.OK);
         else {
             schemaRestList.setMessage("List empty");

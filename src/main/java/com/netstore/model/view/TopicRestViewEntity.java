@@ -17,6 +17,24 @@ public class TopicRestViewEntity {
     private Integer circleIdCircle;
     private String uuid;
     private String description;
+    private Long countSubbed;
+    private Long countAnswer;
+
+    public void setIdTopic(int idTopic) {
+        this.idTopic = idTopic;
+    }
+
+    public void setUserIdUser(int userIdUser) {
+        this.userIdUser = userIdUser;
+    }
+
+    public void setIsSub(int isSub) {
+        this.isSub = isSub;
+    }
+
+    public void setCircleIdCircle(int circleIdCircle) {
+        this.circleIdCircle = circleIdCircle;
+    }
 
     @Basic
     @Id
@@ -126,5 +144,25 @@ public class TopicRestViewEntity {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    @Basic
+    @Column(name = "Count_Subbed", nullable = true)
+    public Long getCountSubbed() {
+        return countSubbed;
+    }
+
+    public void setCountSubbed(Long countSubbed) {
+        this.countSubbed = countSubbed;
+    }
+
+    @Basic
+    @Column(name = "Count_Answer", nullable = true)
+    public Long getCountAnswer() {
+        return countAnswer;
+    }
+
+    public void setCountAnswer(Long countAnswer) {
+        this.countAnswer = countAnswer;
     }
 }

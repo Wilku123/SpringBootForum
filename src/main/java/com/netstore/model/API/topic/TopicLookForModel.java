@@ -6,6 +6,15 @@ package com.netstore.model.API.topic;
 public class TopicLookForModel {
     private String name;
     private int howMany;
+    private int id;
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
 
     public String getName() {
         return name;

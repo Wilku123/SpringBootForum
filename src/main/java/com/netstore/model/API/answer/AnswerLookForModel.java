@@ -6,6 +6,15 @@ package com.netstore.model.API.answer;
 public class AnswerLookForModel {
     private int howMany;
     private String content;
+    private int id;
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
 
     public int getHowMany() {
         return howMany;
