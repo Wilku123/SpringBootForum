@@ -12,10 +12,11 @@ public class UserRestViewEntity {
     private String name;
     private String lastName;
     private String email;
+    private String avatar;
 
     @Basic
     @Id
-    @Column(name = "idUser", nullable = false)
+    @Column(name = "IdUSER", nullable = false)
     public Integer getIdUser() {
         return idUser;
     }
@@ -76,5 +77,15 @@ public class UserRestViewEntity {
         result = 31 * result + (lastName != null ? lastName.hashCode() : 0);
         result = 31 * result + (email != null ? email.hashCode() : 0);
         return result;
+    }
+
+    @Basic
+    @Column(name = "Avatar", nullable = false, length = -1)
+    public String getAvatar() {
+        return avatar;
+    }
+
+    public void setAvatar(String avatar) {
+        this.avatar = avatar;
     }
 }

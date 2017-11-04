@@ -5,10 +5,10 @@ package com.netstore.model.API;
  */
 public class SchemaRest<T> {
 
-    boolean response;
-    String message;
-    int errorCode;
-    T data;
+    private boolean response;
+    private String message;
+    private int errorCode;
+    private T data;
 
     public SchemaRest(boolean response, String message, int errorCode, T data) {
         this.response = response;

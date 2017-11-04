@@ -1,5 +1,6 @@
 package com.netstore.api.controller;
 
+import com.netstore.model.API.EntityWithAuthor;
 import com.netstore.model.API.SchemaRest;
 import com.netstore.model.API.SchemaRestList;
 import com.netstore.model.API.answer.AnswerIdModel;
@@ -42,7 +43,7 @@ public class AnswerRest {
     @Autowired
     private TopicRestViewRepository topicRestViewRepository;
 
-    private AnswerRestViewEntity generateAnswerList(int yours, AnswerRestViewEntity i) {
+    private EntityWithAuthor<AnswerRestViewEntity> generateAnswerList(int yours, AnswerRestViewEntity i) {
 
         Integer idAnswer = i.getIdAnswer();
         String content = i.getContent();
@@ -50,7 +51,6 @@ public class AnswerRest {
         Integer author = i.getUserIdUser();
         Timestamp publishDate = i.getPublishDate();
         String uuid = i.getUuid();
-
 
         AnswerRestViewEntity answerEntity = new AnswerRestViewEntity();
 
@@ -62,7 +62,11 @@ public class AnswerRest {
         answerEntity.setUuid(uuid);
         answerEntity.setYours(yours);
 
-        return answerEntity;
+        UserRestViewEntity userEntity;
+
+        userEntity = userRestRepository.findByIdUser(answerEntity.getUserIdUser());
+        EntityWithAuthor<AnswerRestViewEntity> entityWithAuthor = new EntityWithAuthor<>(answerEntity, userEntity);
+        return entityWithAuthor;
     }
 
 
@@ -72,8 +76,10 @@ public class AnswerRest {
         if (answerRepository.exists(answerIdModel.getId())) {
 
             AnswerRestViewEntity answerEntity = answerRepository.findOne(answerIdModel.getId());
+            UserRestViewEntity userRestViewEntity = userRestRepository.findByIdUser(answerEntity.getUserIdUser());
+            EntityWithAuthor<AnswerRestViewEntity> entityWithAuthor = new EntityWithAuthor<>(answerEntity, userRestViewEntity);
 
-            SchemaRest<AnswerRestViewEntity> schemaRest = new SchemaRest<>(true, "git gut", 1337, answerEntity);
+            SchemaRest<EntityWithAuthor<AnswerRestViewEntity>> schemaRest = new SchemaRest<>(true, "git gut", 1337, entityWithAuthor);
 
             return new ResponseEntity<>(schemaRest, HttpStatus.OK);
         } else {
@@ -121,7 +127,7 @@ public class AnswerRest {
         if (topicRestViewRepository.exists(limitAnswerModel.getId())) {
             if (limitAnswerModel.getHowMany() > 0) {
                 List<AnswerRestViewEntity> answerEntityList = answerRepository.findAllByTopicIdTopicAndPublishDateIsLessThanEqualOrderByPublishDateDesc(limitAnswerModel.getId(), limitAnswerModel.getDate());
-                List<AnswerRestViewEntity> answerRestList = new ArrayList<>();
+                List<EntityWithAuthor<AnswerRestViewEntity>> answerRestList = new ArrayList<>();
 
                 for (AnswerRestViewEntity i : answerEntityList) {
                     if (i.getUserIdUser() == credentialsRepository.findByToken(auth.getName()).getUserIdUser()) {
@@ -131,8 +137,8 @@ public class AnswerRest {
                     }
 
                 }
-                LimitedListGenerator<AnswerRestViewEntity> limitedListGenerator = new LimitedListGenerator<>();
-                SchemaRestList<AnswerRestViewEntity> schemaRestList = new SchemaRestList<>(true, "git gut", 1337, limitedListGenerator.limitedList(answerRestList, limitAnswerModel.getHowMany()));
+                LimitedListGenerator<EntityWithAuthor<AnswerRestViewEntity>> limitedListGenerator = new LimitedListGenerator<>();
+                SchemaRestList<EntityWithAuthor<AnswerRestViewEntity>> schemaRestList = new SchemaRestList<>(true, "git gut", 1337, limitedListGenerator.limitedList(answerRestList, limitAnswerModel.getHowMany()));
 
                 if (!schemaRestList.getData().isEmpty())
                     return new ResponseEntity<>(schemaRestList, HttpStatus.OK);
@@ -159,7 +165,7 @@ public class AnswerRest {
         if (topicRestViewRepository.exists(limitAnswerModel.getId())) {
             if (limitAnswerModel.getHowMany() > 0) {
                 List<AnswerRestViewEntity> answerEntityList = answerRepository.findAllByTopicIdTopicAndPublishDateIsGreaterThanEqualOrderByPublishDateDesc(limitAnswerModel.getId(), limitAnswerModel.getDate());
-                List<AnswerRestViewEntity> answerRestList = new ArrayList<>();
+                List<EntityWithAuthor<AnswerRestViewEntity>> answerRestList = new ArrayList<>();
 
                 for (AnswerRestViewEntity i : answerEntityList) {
                     if (i.getUserIdUser() == credentialsRepository.findByToken(auth.getName()).getUserIdUser()) {
@@ -169,8 +175,8 @@ public class AnswerRest {
                     }
 
                 }
-                LimitedListGenerator<AnswerRestViewEntity> limitedListGenerator = new LimitedListGenerator<>();
-                SchemaRestList<AnswerRestViewEntity> schemaRestList = new SchemaRestList<>(true, "git gut", 1337, limitedListGenerator.limitedList(answerRestList, limitAnswerModel.getHowMany()));
+                LimitedListGenerator<EntityWithAuthor<AnswerRestViewEntity>> limitedListGenerator = new LimitedListGenerator<>();
+                SchemaRestList<EntityWithAuthor<AnswerRestViewEntity>> schemaRestList = new SchemaRestList<>(true, "git gut", 1337, limitedListGenerator.limitedList(answerRestList, limitAnswerModel.getHowMany()));
 
                 if (!schemaRestList.getData().isEmpty())
                     return new ResponseEntity<>(schemaRestList, HttpStatus.OK);
@@ -194,14 +200,46 @@ public class AnswerRest {
     @RequestMapping(value = "/search", method = RequestMethod.POST)
     public ResponseEntity<SchemaRestList> searchCircle(Authentication auth, @RequestBody AnswerLookForModel lookForModel) {
 
-        SchemaRestList<AnswerRestViewEntity> schemaRestList;
-        LimitedListGenerator<AnswerRestViewEntity> listGenerator = new LimitedListGenerator<>();
-        if (!lookForModel.getContent().isEmpty())
-            schemaRestList = new SchemaRestList<>(true, "", 1337, listGenerator.limitedList(answerRepository.findAllByContentContainingAndTopicIdTopic(lookForModel.getContent(),lookForModel.getId()), lookForModel.getHowMany()));
-        else
+//        SchemaRestList<AnswerRestViewEntity> schemaRestList;
+//        LimitedListGenerator<AnswerRestViewEntity> listGenerator = new LimitedListGenerator<>();
+//        if (!lookForModel.getContent().isEmpty())
+//            schemaRestList = new SchemaRestList<>(true, "", 1337, listGenerator.limitedList(answerRepository.findAllByContentContainingAndTopicIdTopic(lookForModel.getContent(),lookForModel.getId()), lookForModel.getHowMany()));
+//        else
+//            schemaRestList = new SchemaRestList<>(false, "String is empty fix pl0x", 102, null);
+//
+//        if (schemaRestList.getData()!=null)
+//            return new ResponseEntity<>(schemaRestList, HttpStatus.OK);
+//        else {
+//            schemaRestList.setMessage("List empty");
+//            schemaRestList.setErrorCode(103);
+//            return new ResponseEntity<>(schemaRestList, HttpStatus.OK);
+//
+//        }
+
+
+        SchemaRestList<EntityWithAuthor<AnswerRestViewEntity>> schemaRestList;
+        LimitedListGenerator<EntityWithAuthor<AnswerRestViewEntity>> listGenerator = new LimitedListGenerator<>();
+        List<EntityWithAuthor<AnswerRestViewEntity>> answerRestList = new ArrayList<>();
+        List<AnswerRestViewEntity> answerRestViewEntities;
+
+
+
+        if (!lookForModel.getContent().isEmpty()) {
+            answerRestViewEntities = answerRepository.findAllByContentContainingAndTopicIdTopic(lookForModel.getContent(), lookForModel.getId());
+            for (AnswerRestViewEntity i : answerRestViewEntities) {
+                if (i.getUserIdUser() == credentialsRepository.findByToken(auth.getName()).getUserIdUser()) {
+                    answerRestList.add(generateAnswerList(1, i));
+                } else {
+                    answerRestList.add(generateAnswerList(0, i));
+                }
+
+            }
+            schemaRestList = new SchemaRestList<>(true, "", 1337, listGenerator.limitedList(answerRestList, lookForModel.getHowMany()));
+
+        } else
             schemaRestList = new SchemaRestList<>(false, "String is empty fix pl0x", 102, null);
 
-        if (schemaRestList.getData()!=null)
+        if (schemaRestList.getData() != null)
             return new ResponseEntity<>(schemaRestList, HttpStatus.OK);
         else {
             schemaRestList.setMessage("List empty");

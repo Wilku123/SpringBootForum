@@ -15,6 +15,15 @@ public class UserEntity {
     private String password;
     private byte active;
     private String activeToken;
+    private String avatar;
+
+    public void setIdUser(Integer idUser) {
+        this.idUser = idUser;
+    }
+
+    public void setActive(Byte active) {
+        this.active = active;
+    }
 
     @Id
     @GeneratedValue
@@ -115,5 +124,15 @@ public class UserEntity {
         result = 31 * result + (int) active;
         result = 31 * result + (activeToken != null ? activeToken.hashCode() : 0);
         return result;
+    }
+
+    @Basic
+    @Column(name = "Avatar", nullable = false, length = -1)
+    public String getAvatar() {
+        return avatar;
+    }
+
+    public void setAvatar(String avatar) {
+        this.avatar = avatar;
     }
 }

@@ -1,17 +1,20 @@
 package com.netstore.api.controller;
 
+import com.netstore.model.API.EntityWithAuthor;
 import com.netstore.model.API.SchemaRest;
 import com.netstore.model.API.SchemaRestList;
 import com.netstore.model.API.topic.*;
 import com.netstore.model.entity.SubscribedTopicEntity;
 import com.netstore.model.entity.TopicEntity;
 import com.netstore.model.repository.CredentialsRepository;
+import com.netstore.model.repository.rest.UserRestRepository;
 import com.netstore.model.view.TopicRestViewEntity;
 import com.netstore.model.repository.rest.CircleRestViewRepository;
 import com.netstore.model.repository.SubscribedTopicRepository;
 import com.netstore.model.repository.rest.TopicRestViewRepository;
 import com.netstore.model.service.AddTopicService;
 import com.netstore.model.service.AddTopicSubscriptionService;
+import com.netstore.model.view.UserRestViewEntity;
 import com.netstore.utility.LimitedListGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -19,6 +22,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import javax.swing.text.html.parser.Entity;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
@@ -35,6 +39,8 @@ public class TopicRest {
     @Autowired
     private SubscribedTopicRepository subscribedTopicRepository;
     @Autowired
+    UserRestRepository userRestRepository;
+    @Autowired
     private CredentialsRepository credentialsRepository;
     @Autowired
     private AddTopicService addTopicService;
@@ -44,7 +50,7 @@ public class TopicRest {
     private CircleRestViewRepository circleRestViewRepository;
 
 
-    private TopicRestViewEntity generateTopicList(int sub, TopicRestViewEntity i) {
+    private EntityWithAuthor<TopicRestViewEntity> generateTopicList(int sub, TopicRestViewEntity i) {
 
         Integer idTopic = i.getIdTopic();
         String name = i.getName();
@@ -66,7 +72,11 @@ public class TopicRest {
         topicRestViewEntity.setCountSubbed(i.getCountSubbed());
         topicRestViewEntity.setCountAnswer(i.getCountAnswer());
 
-        return topicRestViewEntity;
+        UserRestViewEntity userRestViewEntity = new UserRestViewEntity();
+        userRestViewEntity = userRestRepository.findByIdUser(topicRestViewEntity.getUserIdUser());
+        EntityWithAuthor<TopicRestViewEntity> entityWithAuthor = new EntityWithAuthor<>(topicRestViewEntity,userRestViewEntity);
+
+        return entityWithAuthor;
     }
 
 
@@ -75,7 +85,9 @@ public class TopicRest {
 
         if (topicRestViewRepository.exists(topicIdModel.getId())) {
             TopicRestViewEntity topicEntity = topicRestViewRepository.findOne(topicIdModel.getId());
-            TopicRestViewEntity topicRestViewEntity;
+            UserRestViewEntity userRestViewEntity = userRestRepository.findByIdUser(topicEntity.getUserIdUser());
+            EntityWithAuthor<TopicRestViewEntity> topicRestViewEntity = new EntityWithAuthor<>(topicEntity,userRestViewEntity);
+
 
 
             if ((subscribedTopicRepository.findByUserIdUserAndTopicIdTopic(credentialsRepository.findByToken(auth.getName()).getUserIdUser(), topicEntity.getIdTopic())) != null) {
@@ -83,7 +95,7 @@ public class TopicRest {
             } else {
                 topicRestViewEntity = (generateTopicList(0, topicEntity));
             }
-            SchemaRest<TopicRestViewEntity> schemaRest = new SchemaRest<>(true, "git gut", 1337, topicRestViewEntity);
+            SchemaRest<EntityWithAuthor<TopicRestViewEntity>> schemaRest = new SchemaRest<>(true, "git gut", 1337, topicRestViewEntity);
 
             return new ResponseEntity<>(schemaRest, HttpStatus.OK);
         } else {
@@ -117,7 +129,10 @@ public class TopicRest {
                 TopicRestViewEntity topicRestViewEntity = topicRestViewRepository.findOne(topicEntity.getIdTopic());
                 topicRestViewEntity.setIsSub(1);
 
-                SchemaRest<TopicRestViewEntity> schemaRest = new SchemaRest<>(true, "topic added and subscribed successfully", 1337, topicRestViewEntity);
+                UserRestViewEntity userRestViewEntity = userRestRepository.findByIdUser(credentialsRepository.findByToken(auth.getName()).getUserIdUser());
+                EntityWithAuthor<TopicRestViewEntity> entityWithAuthor = new EntityWithAuthor<>(topicRestViewEntity,userRestViewEntity);
+
+                SchemaRest<EntityWithAuthor<TopicRestViewEntity>> schemaRest = new SchemaRest<>(true, "topic added and subscribed successfully", 1337, entityWithAuthor);
 
                 return new ResponseEntity<>(schemaRest, HttpStatus.OK);
             } else {
@@ -138,7 +153,7 @@ public class TopicRest {
         if (circleRestViewRepository.exists(limitTopicModel.getId())) {
             if (limitTopicModel.getHowMany() > 0) {
                 List<TopicRestViewEntity> topicEntityList = topicRestViewRepository.findAllByCircleIdCircleAndPublishDateIsLessThanEqualOrderByPublishDateDesc(limitTopicModel.getId(), limitTopicModel.getDate());
-                List<TopicRestViewEntity> topicRestList = new ArrayList<>();
+                List<EntityWithAuthor<TopicRestViewEntity>> topicRestList = new ArrayList<>();
 
 
                 for (TopicRestViewEntity i : topicEntityList) {
@@ -149,9 +164,9 @@ public class TopicRest {
                     }
                 }
 
-                LimitedListGenerator<TopicRestViewEntity> topicRestViewEntityLimitedListGenerator = new LimitedListGenerator<>();
+                LimitedListGenerator<EntityWithAuthor<TopicRestViewEntity>> topicRestViewEntityLimitedListGenerator = new LimitedListGenerator<>();
 
-                SchemaRestList<TopicRestViewEntity> schemaRest = new SchemaRestList<>(true, "should work not sure tho", 1337, topicRestViewEntityLimitedListGenerator.limitedList(topicRestList, limitTopicModel.getHowMany()));
+                SchemaRestList<EntityWithAuthor<TopicRestViewEntity>> schemaRest = new SchemaRestList<>(true, "should work not sure tho", 1337, topicRestViewEntityLimitedListGenerator.limitedList(topicRestList, limitTopicModel.getHowMany()));
 
                 if (!schemaRest.getData().isEmpty())
                     return new ResponseEntity<>(schemaRest, HttpStatus.OK);
@@ -210,10 +225,21 @@ public class TopicRest {
     @RequestMapping(value = "/search", method = RequestMethod.POST)
     public ResponseEntity<SchemaRestList> searchCircle(Authentication auth, @RequestBody TopicLookForModel lookForModel) {
 
-        SchemaRestList<TopicRestViewEntity> schemaRestList;
-        LimitedListGenerator<TopicRestViewEntity> listGenerator = new LimitedListGenerator<>();
-        if (!lookForModel.getName().isEmpty())
-            schemaRestList = new SchemaRestList<>(true, "", 1337, listGenerator.limitedList(topicRestViewRepository.findAllByNameContainingAndCircleIdCircle(lookForModel.getName(),lookForModel.getId()), lookForModel.getHowMany()));
+        SchemaRestList<EntityWithAuthor<TopicRestViewEntity>> schemaRestList;
+        LimitedListGenerator<EntityWithAuthor<TopicRestViewEntity>> listGenerator = new LimitedListGenerator<>();
+        List<TopicRestViewEntity> topicRestViewEntity = new ArrayList<>();
+        List<EntityWithAuthor<TopicRestViewEntity>> entityWithAuthors = new ArrayList<>();
+        if (!lookForModel.getName().isEmpty()) {
+            topicRestViewEntity= topicRestViewRepository.findAllByNameContainingAndCircleIdCircle(lookForModel.getName(), lookForModel.getId());
+            for (TopicRestViewEntity i : topicRestViewEntity) {
+                if ((subscribedTopicRepository.findByUserIdUserAndTopicIdTopic(credentialsRepository.findByToken(auth.getName()).getUserIdUser(), i.getIdTopic())) != null) {
+                    entityWithAuthors.add(generateTopicList(1, i));
+                } else {
+                    entityWithAuthors.add(generateTopicList(0, i));
+                }
+            }
+            schemaRestList = new SchemaRestList<>(true, "", 1337, listGenerator.limitedList(entityWithAuthors, lookForModel.getHowMany()));
+        }
         else
             schemaRestList = new SchemaRestList<>(false, "String is empty fix pl0x", 102, null);
 

@@ -7,10 +7,10 @@ import java.util.List;
  */
 public class SchemaRestList<T> {
 
-    boolean response;
-    String message;
-    int errorCode;
-    List<T> data;
+    private boolean response;
+    private String message;
+    private int errorCode;
+    private List<T> data;
 
     public SchemaRestList(boolean response, String message, int errorCode, List<T> data) {
         this.response = response;

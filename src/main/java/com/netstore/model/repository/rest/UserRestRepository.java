@@ -12,4 +12,5 @@ import java.util.List;
 public interface UserRestRepository extends JpaRepository<UserRestViewEntity,Integer>, JpaSpecificationExecutor<UserRestViewEntity> {
     List<UserRestViewEntity> findAllByIdUser(Integer id);
     UserRestViewEntity findByIdUser(Integer id);
+    UserRestViewEntity findByEmail(String email);
 }
