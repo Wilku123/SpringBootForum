@@ -66,6 +66,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .exceptionHandling()
                 .and()
                 .authorizeRequests()
+                .antMatchers("/**").permitAll() // TODO USUN TO!
                 .antMatchers("/webjars/**","/css/**","/js/**","/icons/**", "/","/greeting").permitAll()
                 .antMatchers("/login").permitAll()
                 .antMatchers("/activate").permitAll()

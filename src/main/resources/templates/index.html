@@ -1,13 +1,14 @@
-<!DOCTYPE HTML>
-<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
-<head th:include="fragments/header :: header">
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Title</title>
+
 </head>
 <body>
-<p>Get your greeting <a href="/circles">here</a></p>
-<div sec:authorize="isAnonymous()">
-    <p>LogIn here <a href="/login" th:href="@{/login}" class="btn">here</a></p>
-    <p>Register <a href="/register" th:href="@{/register}" class="btn">here</a></p>
+<div id ='app'>
+
 </div>
+
+<script src="built/bundle.js"></script>
 </body>
-<footer th:include="fragments/footer::footer"></footer>
 </html>
