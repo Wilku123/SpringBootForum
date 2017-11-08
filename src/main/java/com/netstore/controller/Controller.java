@@ -13,21 +13,23 @@ public class Controller {
     private CircleRepository circleRepository;
 
 
-
     @RequestMapping("/login")
-    public String login(){
-            return "login";
-        }
-    @RequestMapping("/logout")
-    public String logout(){
-            return "logout";
+    public String login() {
+        return "login";
     }
-    @RequestMapping("/")
-    public  String index(){
+
+    @RequestMapping("/logout")
+    public String logout() {
+        return "logout";
+    }
+
+    @RequestMapping({"/", "/{path:(?!.*.js|.*.css|.*.jpg).*$}"})
+    public String index() {
         return "index";
     }
+
     @RequestMapping("/addCircle")
-    public  String addCircle(){
+    public String addCircle() {
         return "addCircle";
     }
 

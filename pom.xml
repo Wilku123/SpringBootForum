@@ -91,11 +91,11 @@
             <artifactId>thymeleaf-extras-springsecurity4</artifactId>
             <version>2.1.2.RELEASE</version>
         </dependency>
-        <dependency>
-            <groupId>com.vaadin.external.google</groupId>
-            <artifactId>android-json</artifactId>
-            <version>0.0.20131108.vaadin1</version>
-        </dependency>
+        <!--<dependency>-->
+            <!--<groupId>com.vaadin.external.google</groupId>-->
+            <!--<artifactId>android-json</artifactId>-->
+            <!--<version>0.0.20131108.vaadin1</version>-->
+        <!--</dependency>-->
         <dependency>
             <groupId>org.webjars</groupId>
             <artifactId>jquery</artifactId>
@@ -111,11 +111,11 @@
             <artifactId>simple-java-mail</artifactId>
             <version>4.4.5</version>
         </dependency>
-        <dependency>
-            <groupId>io.jsonwebtoken</groupId>
-            <artifactId>jjwt</artifactId>
-            <version>0.8.0</version>
-        </dependency>
+        <!--<dependency>-->
+            <!--<groupId>io.jsonwebtoken</groupId>-->
+            <!--<artifactId>jjwt</artifactId>-->
+            <!--<version>0.8.0</version>-->
+        <!--</dependency>-->
         <!--<dependency>-->
         <!--<groupId>org.atmosphere.client</groupId>-->
         <!--<artifactId>javascript</artifactId>-->

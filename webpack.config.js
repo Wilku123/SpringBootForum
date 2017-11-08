@@ -1,8 +1,10 @@
 const WebpackNotifierPlugin = require('webpack-notifier');
+const webpack = require('webpack');
+const UglifyJSPlugin = require('uglifyjs-webpack-plugin')
 
 module.exports = {
     entry: {
-        app: ['./src/main/js/app.jsx']
+        app: ['./src/main/js/Index.jsx']
     },
     devtool: 'sourcemaps',
     cache: true,
@@ -27,6 +29,15 @@ module.exports = {
     plugins: [
         // Set up the notifier plugin - you can remove this (or set alwaysNotify false) if desired
         new WebpackNotifierPlugin({alwaysNotify: true}),
+        //TODO usun to pozniej kiedys tam
+        new webpack.DefinePlugin({
+            'process.env': {
+                NODE_ENV: JSON.stringify('production')
+            }
+        }),
+        new UglifyJSPlugin()
+        //TODO ^ to usun
     ],
     watch: true
+
 };
