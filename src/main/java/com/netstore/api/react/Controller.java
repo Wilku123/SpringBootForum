@@ -1,4 +1,4 @@
-package com.netstore.controller;
+package com.netstore.api.react;
 
 import com.netstore.model.repository.CircleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,9 +8,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 @org.springframework.stereotype.Controller
 public class Controller {
-
-    @Autowired
-    private CircleRepository circleRepository;
 
 
     @RequestMapping("/login")

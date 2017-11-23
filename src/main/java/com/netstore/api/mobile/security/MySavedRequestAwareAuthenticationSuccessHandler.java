@@ -1,4 +1,4 @@
-package com.netstore.api.security;
+package com.netstore.api.mobile.security;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;

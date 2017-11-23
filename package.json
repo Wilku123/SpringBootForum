@@ -18,6 +18,8 @@
   },
   "homepage": "https://github.com/Wilku123/SpringBootForum#readme",
   "dependencies": {
+    "es6-promise": "^4.1.1",
+    "react-fetch": "0.0.9",
     "rest": "^2.0.0",
     "webpack": "^3.7.1",
     "webpack-notifier": "^1.5.0"

@@ -1,0 +1,250 @@
+import React from 'react';
+import {BrowserRouter as Router, Route, Link} from 'react-router-dom';
+import {FormErrors} from "./FormErrors";
+
+// const FormErrors= require('./FormErrors.jsx');
+
+const API_ADDRESS = "http://localhost:8080/react";
+
+class Home extends React.Component {
+
+    constructor(props) {
+        super(props);
+        this.onSubmit = this.handleSubmit.bind(this)
+        this.state = {
+            stat: [],
+            name: '',
+            lastName: '',
+            email: '',
+            password: '',
+            confirmPassword: '',
+            formErrors: {name: '', lastName: '', email: '', password: '', confirmPassword: ''},
+            nameValid: false,
+            lastNameValid: false,
+            emailValid: false,
+            passwordValid: false,
+            formValid: false,
+            confirmPasswordValid: false,
+        }
+    }
+
+    errorClass(error) {
+        return (error.length === 0 ? '' : 'has-error' );
+    }
+
+    componentDidMount() {
+        this.state={stat: []};
+    }
+
+
+    validateField(fieldName, value) {
+        let fieldValidationErrors = this.state.formErrors;
+        let nameValid = this.state.nameValid;
+        let lastNameValid = this.state.lastNameValid;
+        let emailValid = this.state.emailValid;
+        let passwordValid = this.state.passwordValid;
+        let confirmPasswordValid = this.state.confirmPasswordValid;
+
+
+        switch (fieldName) {
+            case 'email':
+                // emailValid = value.match(/^([\w.%+-]+)@([\w-]+\.)+([\w]{2,})$/i);
+                emailValid = value.match(/^([\w.%+-]+)@us+\.edu+\.pl$/i);
+                fieldValidationErrors.email = emailValid ? '' : ' Nie prawidłowy adres E-mail';
+                break;
+            case 'name':
+                nameValid = value.length >= 3;
+                fieldValidationErrors.name = nameValid ? '' : "Imię za krótkie";
+                break;
+            case 'lastName':
+                lastNameValid = value.length >= 3;
+                fieldValidationErrors.lastName = lastNameValid ? '' : "Nazwisko za krótkie";
+                break;
+            case 'password':
+                passwordValid = value.length >= 8;
+                if (value === this.state.confirmPassword.toString()) {
+                    confirmPasswordValid = true;
+                    fieldValidationErrors.confirmPassword = confirmPasswordValid ? '' : 'Hasła niezgodne';
+                }
+                else {
+                    confirmPasswordValid = false;
+                    fieldValidationErrors.confirmPassword = confirmPasswordValid ? '' : 'Hasła niezgodne';
+                }
+                fieldValidationErrors.password = passwordValid ? '' : ' Hasło za krótkie';
+                break;
+            case 'confirmPassword':
+                if (value === this.state.password.toString())
+                    confirmPasswordValid = true;
+
+                else
+                    confirmPasswordValid = false;
+
+                fieldValidationErrors.confirmPassword = confirmPasswordValid ? '' : 'Hasła niezgodne';
+                break;
+            default:
+                break;
+        }
+        this.setState({
+
+            formErrors: fieldValidationErrors,
+            emailValid: emailValid,
+            passwordValid: passwordValid,
+            confirmPasswordValid: confirmPasswordValid,
+            nameValid: nameValid,
+            lastNameValid: lastNameValid
+        }, this.validateForm);
+    }
+
+    validateForm() {
+        this.setState({formValid: this.state.emailValid && this.state.passwordValid && this.state.confirmPasswordValid && this.state.nameValid && this.state.lastNameValid});
+    }
+
+    handleUserInput(e) {
+        const name = e.target.name;
+        const value = e.target.value;
+        this.setState({[name]: value},
+            () => {
+                this.validateField(name, value)
+            });
+    }
+
+    handleSubmit(e) {
+        e.preventDefault();
+
+
+        let emailValid = this.state.emailValid;
+        let fieldValidationErrors = this.state.formErrors;
+        var myHeaders = new Headers({"Content-Type": "application/json"});
+
+        fetch(API_ADDRESS + '/register', {
+            method: 'POST',
+            headers: myHeaders,
+            body: JSON.stringify({
+                name: this.state.name,
+                lastName: this.state.lastName,
+                email: this.state.email,
+                password: this.state.password
+            })
+        })
+            .then(function (response) {
+                return response.json()
+            }).then((findresponse) => {
+            this.setState({
+                stat: findresponse
+            })
+        });
+        let checkUser = this.state.stat.status;
+        if (checkUser === true) {
+            emailValid = true;
+            fieldValidationErrors.email = emailValid ? '' : 'Adres E-mail juz istnieje';
+        } else {
+            emailValid = false
+        }
+
+
+        this.setState({
+            formErrors: fieldValidationErrors,
+            emailValid: emailValid
+        }, this.validateForm);
+
+
+    }
+
+
+    render() {
+        return (
+            <div>
+                <link rel="stylesheet" type="text/css" href="../../css/loginPage.css"/>
+
+                <div className="container-fluid">
+                    <div className="row">
+                        <div className="col-md-2">
+                        </div>
+                        <div className="col-md-8">
+                            <div id="octagonWrap">
+                                <div id="octagon">
+                                    <form role="form" autoComplete="off" className="jumbotron" onSubmit={this.onSubmit}>
+                                        <div
+                                            className={`form-group has-feedback ${this.errorClass(this.state.formErrors.name)}`}>
+                                            <label htmlFor="name">
+                                                Imie
+                                            </label>
+                                            <input type="text" className="form-control" placeholder="Imię" id="name"
+                                                   name="name"
+                                                   value={this.state.name}
+                                                   onChange={(event) => this.handleUserInput(event)} ref="name"/>
+                                        </div>
+                                        <div
+                                            className={`form-group has-feedback ${this.errorClass(this.state.formErrors.lastName)}`}>
+
+                                            <label htmlFor="lastName">
+                                                Nazwisko
+                                            </label>
+                                            <input type="text" className="form-control" placeholder="Nazwisko"
+                                                   name="lastName"
+                                                   id="lastName" value={this.state.lastName}
+                                                   onChange={(event) => this.handleUserInput(event)} ref="lastName"/>
+                                        </div>
+                                        <div
+                                            className={`form-group has-feedback ${this.errorClass(this.state.formErrors.email)}`}>
+
+                                            <label htmlFor="email">
+                                                Adres Email(<a href="#"
+                                                               title={"Adres email musi kończyć się @us.edu.pl"}>?</a>)
+                                            </label>
+                                            <input type="email" className="form-control" placeholder="E-mail@us.edu.pl"
+                                                   id="email" name="email" value={this.state.email}
+                                                   autoComplete="new-email"
+                                                   onChange={(event) => this.handleUserInput(event)} ref="email"/>
+                                        </div>
+                                        <div
+                                            className={`form-group has-feedback ${this.errorClass(this.state.formErrors.password)}`}>
+
+                                            <label htmlFor="password">
+                                                Hasło(<a href="#"
+                                                         title={"Hasło musi składać się z minimum 8 znaków"}>?</a>)
+                                            </label>
+
+                                            <input type="password" className="form-control glyphicon glyphicon-lock"
+                                                   id="password" name="password" placeholder="Hasło"
+                                                   value={this.state.password} autoComplete="new-password"
+                                                   onChange={(event) => this.handleUserInput(event)} ref="password"/>
+                                            <i class="glyphicon glyphicon-lock form-control-feedback"></i>
+                                        </div>
+
+                                        <div
+                                            className={`form-group has-feedback ${this.errorClass(this.state.formErrors.confirmPassword)}`}>
+                                            <label htmlFor="confirmPassword">
+                                                Potwierdź hasło
+                                            </label>
+
+                                            <input type="password" className="form-control glyphicon glyphicon-lock"
+                                                   id="confirmPassword" name="confirmPassword"
+                                                   placeholder="Potwierdź hasło"
+                                                   value={this.state.confirmPassword} autoComplete="new-password"
+                                                   onChange={(event) => this.handleUserInput(event)}
+                                            />
+                                            <i class="glyphicon glyphicon-lock form-control-feedback"></i>
+                                        </div>
+                                        <div className="text-center button">
+                                            <button type="submit" className="btn btn-default"
+                                                    disabled={!this.state.formValid}>
+                                                Zarejestruj się
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="col-md-2">
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        );
+    }
+
+}
+
+export default Home;

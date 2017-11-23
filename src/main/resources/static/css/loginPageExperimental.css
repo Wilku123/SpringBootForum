@@ -1,0 +1,74 @@
+body
+{
+    background-color: #161616;
+}
+
+/*#octagon {*/
+
+    /*width: 40%;*/
+    /*height: 80%;*/
+    /*background: transparent;*/
+    /*position: relative;*/
+    /*padding: 40px;*/
+    /*margin: 15% auto;*/
+    /*border: 4px solid #24e7ff;*/
+
+/*}*/
+
+/*#octagon:before {*/
+    /*content: "";*/
+    /*position: absolute;*/
+    /*top: 0;*/
+    /*left: 0;*/
+    /*border-bottom: 79px solid #161616;*/
+    /*border-left: 79px solid #161616;*/
+    /*border-right: 79px solid #161616;*/
+    /*width: 100%;*/
+    /*height: 0;*/
+/*}*/
+
+/*#octagon:after {*/
+    /*content: "";*/
+    /*position: absolute;*/
+    /*bottom: 0;*/
+    /*left: 0;*/
+    /*border-top: 79px solid #24e7ff;*/
+    /*border-left: 79px solid #161616;*/
+    /*border-right: 79px solid #161616;*/
+    /*width: 100%;*/
+    /*height: 0;*/
+/*}*/
+form {
+    width: 70%;
+    margin: 80px auto 80px auto;
+    transform: rotate(-45deg);
+}
+#octagonWrap {
+    width:350px;
+    height:350px;
+    float: left;
+    position: relative;
+    overflow: hidden;
+    margin: auto;
+}
+#octagon {
+
+    margin: auto;
+    position: absolute;
+    top: 0; right: 0; bottom: 0; left: 0;
+    overflow: hidden;
+    transform: rotate(45deg);
+    background: transparent;
+    border: 3px solid #24e7ff;
+}
+#octagon:before {
+    position: absolute;
+    /* There needs to be a negative value here to cancel
+     * out the width of the border. It's currently -3px,
+     * but if the border were 5px, then it'd be -5px.
+     */
+    top: -3px; right: -3px; bottom: -3px; left: -3px;
+    transform: rotate(45deg);
+    content: '';
+    border: inherit;
+}

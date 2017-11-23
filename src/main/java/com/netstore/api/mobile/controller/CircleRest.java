@@ -1,6 +1,5 @@
-package com.netstore.api.controller;
+package com.netstore.api.mobile.controller;
 
-import com.netstore.model.API.EntityWithAuthor;
 import com.netstore.model.API.SchemaRest;
 import com.netstore.model.API.SchemaRestList;
 import com.netstore.model.API.circle.*;
@@ -15,12 +14,10 @@ import com.netstore.model.service.AddCircleService;
 import com.netstore.model.service.AddCircleSubscriptionService;
 import com.netstore.model.view.UserRestViewEntity;
 import com.netstore.utility.LimitedListGenerator;
-import org.apache.tomcat.util.buf.Utf8Decoder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.crypto.codec.Utf8;
 import org.springframework.web.bind.annotation.*;
 
 import java.sql.Timestamp;
@@ -47,7 +44,7 @@ public class CircleRest {
     @Autowired
     private AddCircleSubscriptionService addCircleSubscriptionService;
 
-    private EntityWithAuthor<CircleRestViewEntity> generateCircleList(int sub, CircleRestViewEntity i) {
+    private CircleWithAuthor generateCircleList(int sub, CircleRestViewEntity i) {
 
         Integer idCircle = i.getIdCircle();
         String name = i.getName();
@@ -58,7 +55,7 @@ public class CircleRest {
         Long countTopic = i.getCountTopic();
         Timestamp publishDate = i.getPublishDate();
 
-        CircleRestViewEntity circleRestViewEntity = new CircleRestViewEntity();
+        CircleWithAuthor circleRestViewEntity = new CircleWithAuthor();
 
         circleRestViewEntity.setIdCircle(idCircle);
         circleRestViewEntity.setName(name);
@@ -73,8 +70,8 @@ public class CircleRest {
         UserRestViewEntity userEntity;
 
         userEntity = userRestRepository.findByIdUser(circleRestViewEntity.getUserIdUser());
-        EntityWithAuthor<CircleRestViewEntity> entityWithAuthor = new EntityWithAuthor<>(circleRestViewEntity,userEntity);
-        return entityWithAuthor;
+        circleRestViewEntity.setAuthor(userEntity);
+        return circleRestViewEntity;
     }
 
 //    @RequestMapping(method = RequestMethod.GET)
@@ -117,16 +114,15 @@ public class CircleRest {
 
             CircleRestViewEntity circleRestViewEntity;
             circleRestViewEntity = circleRestViewRepository.findOne(circleEntity.getIdCircle());
-            circleRestViewEntity.setIsSub(1);
+            CircleWithAuthor circleWithAuthor = generateCircleList(1,circleRestViewEntity);
 
-            UserRestViewEntity userRestViewEntity = userRestRepository.findByIdUser(credentialsRepository.findByToken(auth.getName()).getUserIdUser());
-            EntityWithAuthor<CircleRestViewEntity> entityWithAuthor = new EntityWithAuthor<>(circleRestViewEntity,userRestViewEntity);
-            SchemaRest<EntityWithAuthor<CircleRestViewEntity>> schemaRest = new SchemaRest<>(true, "Added circle and subbed successfully", 1337, entityWithAuthor);
+
+            SchemaRest<CircleWithAuthor> schemaRest = new SchemaRest<>(true, "Added circle and subbed successfully", 1337, circleWithAuthor);
 
 
             return new ResponseEntity<>(schemaRest, HttpStatus.OK);
         } else {
-            SchemaRest<EntityWithAuthor<CircleRestViewEntity>> schemaRest = new SchemaRest<>(false, "name should be longer than 2chars and description than 10chars", 102, null);
+            SchemaRest<CircleWithAuthor> schemaRest = new SchemaRest<>(false, "name should be longer than 2chars and description than 10chars", 102, null);
 
             return new ResponseEntity<>(schemaRest, HttpStatus.OK);
         }
@@ -137,7 +133,7 @@ public class CircleRest {
 
         if (limit.getHowMany() > 0) {
             List<CircleRestViewEntity> circleEntityList = circleRestViewRepository.findAllByPublishDateIsLessThanEqualOrderByPublishDateDesc(limit.getDate());
-            List<EntityWithAuthor<CircleRestViewEntity>> circleRestList = new ArrayList<>();
+            List<CircleWithAuthor> circleRestList = new ArrayList<>();
 
             for (CircleRestViewEntity i : circleEntityList) {
                 if ((subscribedCircleRepository.findByUserIdUserAndCircleIdCircle(credentialsRepository.findByToken(auth.getName()).getUserIdUser(), i.getIdCircle())) != null) {
@@ -146,9 +142,9 @@ public class CircleRest {
                     circleRestList.add(generateCircleList(0, i));
                 }
             }
-            LimitedListGenerator<EntityWithAuthor<CircleRestViewEntity>> listGenerator = new LimitedListGenerator<>();
+            LimitedListGenerator<CircleWithAuthor> listGenerator = new LimitedListGenerator<>();
 
-            SchemaRestList<EntityWithAuthor<CircleRestViewEntity>> schemaRest = new SchemaRestList<>(true, "git gut", 1337, listGenerator.limitedList(circleRestList,limit.getHowMany()));
+            SchemaRestList<CircleWithAuthor> schemaRest = new SchemaRestList<>(true, "git gut", 1337, listGenerator.limitedList(circleRestList,limit.getHowMany()));
 
             if (!schemaRest.getData().isEmpty())
                 return new ResponseEntity<>(schemaRest, HttpStatus.OK);
@@ -160,7 +156,7 @@ public class CircleRest {
             }
 
         } else {
-            SchemaRestList<EntityWithAuthor<CircleRestViewEntity>> schemaRest = new SchemaRestList<>(false, "howMany is less than 1", 102, null);
+            SchemaRestList<CircleWithAuthor> schemaRest = new SchemaRestList<>(false, "howMany is less than 1", 102, null);
             return new ResponseEntity<>(schemaRest, HttpStatus.BAD_REQUEST);
 
         }
@@ -173,7 +169,7 @@ public class CircleRest {
         if (circleRestViewRepository.exists(oneById.getId())) {
 
             CircleRestViewEntity circleEntity = circleRestViewRepository.findOne(oneById.getId());
-            EntityWithAuthor<CircleRestViewEntity> entityWithAuthor;
+            CircleWithAuthor entityWithAuthor;
 
 
 
@@ -183,14 +179,14 @@ public class CircleRest {
                 entityWithAuthor = (generateCircleList(0, circleEntity));
             }
 
-            SchemaRest<EntityWithAuthor<CircleRestViewEntity>> schemaRest = new SchemaRest<>(true, "git gut", 1337, entityWithAuthor);
+            SchemaRest<CircleWithAuthor> schemaRest = new SchemaRest<>(true, "git gut", 1337, entityWithAuthor);
 
 
             return new ResponseEntity<>(schemaRest, HttpStatus.OK);
 
         } else {
 
-            SchemaRest<EntityWithAuthor<CircleRestViewEntity>> schemaRest = new SchemaRest<>(false, "ID dosnt exists in DB", 101, null);
+            SchemaRest<CircleWithAuthor> schemaRest = new SchemaRest<>(false, "ID dosnt exists in DB", 101, null);
 
             return new ResponseEntity<>(schemaRest, HttpStatus.OK);
 
@@ -198,21 +194,15 @@ public class CircleRest {
     }
 
     //-------------------------------------------------------------------------------------------------------------
-//    @RequestMapping(value = "/all", method = RequestMethod.POST)
-//    public ResponseEntity<List<CircleRestViewEntity>> getAllCircles(@RequestHeader(value = "Token") String token) {
-//
-//        List<CircleRestViewEntity> circleEntityList = circleRestViewRepository.findAll();
-//        List<CircleRestViewEntity> circleRestList = new ArrayList<>();
-//
-//        for (CircleRestViewEntity i : circleEntityList) {
-//            if ((subscribedCircleRepository.findByUserIdUserAndCircleIdCircle(credentialsRepository.findByToken(token).getUserIdUser(), i.getIdCircle())) != null) {
-//                circleRestList.add(generateCircleList(1, i));
-//            } else {
-//                circleRestList.add(generateCircleList(0, i));
-//            }
-//        }
-//        return new ResponseEntity<>(circleRestList, HttpStatus.OK);
-//    }
+    @RequestMapping(value = "/all", method = RequestMethod.POST)
+    public ResponseEntity<List<CircleRestViewEntity>> getAllCircles() {
+
+        List<CircleRestViewEntity> circleEntityList = circleRestViewRepository.findAll();
+        List<CircleRestViewEntity> circleRestList = new ArrayList<>();
+
+
+        return new ResponseEntity<>(circleEntityList, HttpStatus.OK);
+    }
 
     //-------------------------------------------------------------------------------------------------------------
     @RequestMapping(value = "/sub", method = RequestMethod.POST)
@@ -246,9 +236,9 @@ public class CircleRest {
     @RequestMapping(value = "/search", method = RequestMethod.POST)
     public ResponseEntity<SchemaRestList> searchCircle(Authentication auth, @RequestBody CircleLookForModel lookForModel) {
 
-        SchemaRestList<EntityWithAuthor<CircleRestViewEntity>> schemaRestList;
-        LimitedListGenerator<EntityWithAuthor<CircleRestViewEntity>> listGenerator = new LimitedListGenerator<>();
-        List<EntityWithAuthor<CircleRestViewEntity>> circleRestList = new ArrayList<>();
+        SchemaRestList<CircleWithAuthor> schemaRestList;
+        LimitedListGenerator<CircleWithAuthor> listGenerator = new LimitedListGenerator<>();
+        List<CircleWithAuthor> circleRestList = new ArrayList<>();
         List<CircleRestViewEntity> circleRestViewEntities;
 
 

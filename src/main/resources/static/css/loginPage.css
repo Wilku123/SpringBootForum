@@ -1,0 +1,23 @@
+body
+{
+    background-color: #161616;
+}
+form {
+    width: 40%;
+    margin:  25% auto;
+
+}
+
+.toRight
+{
+    float: right;
+}
+.button
+{
+    margin-top: 25px;
+    width: 100%;
+}
+.jumbotron
+{
+
+}

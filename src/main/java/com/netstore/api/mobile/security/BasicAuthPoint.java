@@ -1,4 +1,4 @@
-package com.netstore.api.security;
+package com.netstore.api.mobile.security;
 
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.www.BasicAuthenticationEntryPoint;
@@ -8,7 +8,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.io.PrintWriter;
 
 /**
  * Created by Master on 2017-09-19.

@@ -1,4 +1,4 @@
-package com.netstore.api.controller;
+package com.netstore.api.mobile.controller;
 
 import com.netstore.model.API.SchemaRest;
 import com.netstore.model.API.user.UserIdModel;
