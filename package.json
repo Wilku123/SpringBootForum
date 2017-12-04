@@ -19,7 +19,11 @@
   "homepage": "https://github.com/Wilku123/SpringBootForum#readme",
   "dependencies": {
     "es6-promise": "^4.1.1",
+    "material-ui": "^0.19.4",
+    "react-bootstrap": "^0.31.5",
     "react-fetch": "0.0.9",
+    "react-query-params": "^1.0.7",
+    "react-simple-dropdown": "^3.2.0",
     "rest": "^2.0.0",
     "webpack": "^3.7.1",
     "webpack-notifier": "^1.5.0"

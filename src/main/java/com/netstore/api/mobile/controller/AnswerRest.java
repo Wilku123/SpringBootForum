@@ -1,8 +1,8 @@
 package com.netstore.api.mobile.controller;
 
-import com.netstore.model.API.SchemaRest;
-import com.netstore.model.API.SchemaRestList;
-import com.netstore.model.API.answer.*;
+import com.netstore.model.API.mobile.SchemaRest;
+import com.netstore.model.API.mobile.SchemaRestList;
+import com.netstore.model.API.mobile.answer.*;
 import com.netstore.model.entity.AnswerEntity;
 import com.netstore.model.repository.CredentialsRepository;
 import com.netstore.model.repository.rest.UserRestRepository;
@@ -104,9 +104,10 @@ public class AnswerRest {
                 this.addAnswersService.saveAndFlush(answerEntity);
                 AnswerRestViewEntity restViewEntity;
                 restViewEntity = answerRepository.findOne(answerEntity.getIdAnswer());
-                restViewEntity.setYours(1);
+                AnswerWithAuthor answerWithAuthor = generateAnswerList(1,restViewEntity);
 
-                SchemaRest<AnswerRestViewEntity> schemaRest = new SchemaRest<>(true, "git gut", 1337, restViewEntity);
+
+                SchemaRest<AnswerWithAuthor> schemaRest = new SchemaRest<>(true, "git gut", 1337, answerWithAuthor);
 
                 return new ResponseEntity<>(schemaRest, HttpStatus.OK);
             } else {
@@ -115,7 +116,7 @@ public class AnswerRest {
                 return new ResponseEntity<>(schemaRest, HttpStatus.BAD_REQUEST);
             }
         } else {
-            SchemaRest<AnswerRestViewEntity> schemaRest = new SchemaRest<>(false, "ID dosnt exsist in DB", 101, null);
+            SchemaRest<AnswerWithAuthor> schemaRest = new SchemaRest<>(false, "ID dosnt exsist in DB", 101, null);
 
             return new ResponseEntity<>(schemaRest, HttpStatus.BAD_REQUEST);
         }
@@ -127,7 +128,7 @@ public class AnswerRest {
 
         if (topicRestViewRepository.exists(limitAnswerModel.getId())) {
             if (limitAnswerModel.getHowMany() > 0) {
-                List<AnswerRestViewEntity> answerEntityList = answerRepository.findAllByTopicIdTopicAndPublishDateIsLessThanEqualOrderByPublishDateDesc(limitAnswerModel.getId(), limitAnswerModel.getDate());
+                List<AnswerRestViewEntity> answerEntityList = answerRepository.findAllByTopicIdTopicAndPublishDateIsLessThanOrderByPublishDateDesc(limitAnswerModel.getId(), limitAnswerModel.getDate());
                 List<AnswerWithAuthor> answerRestList = new ArrayList<>();
 
                 for (AnswerRestViewEntity i : answerEntityList) {
@@ -165,7 +166,7 @@ public class AnswerRest {
 
         if (topicRestViewRepository.exists(limitAnswerModel.getId())) {
             if (limitAnswerModel.getHowMany() > 0) {
-                List<AnswerRestViewEntity> answerEntityList = answerRepository.findAllByTopicIdTopicAndPublishDateIsGreaterThanEqualOrderByPublishDateDesc(limitAnswerModel.getId(), limitAnswerModel.getDate());
+                List<AnswerRestViewEntity> answerEntityList = answerRepository.findAllByTopicIdTopicAndPublishDateIsGreaterThanOrderByPublishDateDesc(limitAnswerModel.getId(), limitAnswerModel.getDate());
                 List<AnswerWithAuthor> answerRestList = new ArrayList<>();
 
                 for (AnswerRestViewEntity i : answerEntityList) {

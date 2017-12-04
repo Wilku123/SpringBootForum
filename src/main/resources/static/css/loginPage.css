@@ -17,7 +17,13 @@ form {
     margin-top: 25px;
     width: 100%;
 }
-.jumbotron
+.jumbotron span Link
 {
-
+    position: absolute;
+    padding-left: 5px;
+    padding-top: 5px;
+}
+.errorSpan
+{
+    color:red;
 }

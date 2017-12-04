@@ -102,15 +102,15 @@ public class Register {
             return "redirect:/?activate=false";
         }
     }
-    @PostMapping("/userExists")
-    public ResponseEntity<ReactStatus> userExists(@RequestBody CheckUser checkUser){
-        ReactStatus reactStatus = new ReactStatus();
-        if (userRepository.findFirstByEmail(checkUser.getEmail())!=null){
-            reactStatus.setStatus(true);
-            return new ResponseEntity<>(reactStatus,HttpStatus.OK);}
-        else{
-            reactStatus.setStatus(false);
-            return new ResponseEntity<>(reactStatus,HttpStatus.OK);
-        }
-    }
+//    @PostMapping("/userExists")
+//    public ResponseEntity<ReactStatus> userExists(@RequestBody CheckUser checkUser){
+//        ReactStatus reactStatus = new ReactStatus();
+//        if (userRepository.findFirstByEmail(checkUser.getEmail())!=null){
+//            reactStatus.setStatus(true);
+//            return new ResponseEntity<>(reactStatus,HttpStatus.OK);}
+//        else{
+//            reactStatus.setStatus(false);
+//            return new ResponseEntity<>(reactStatus,HttpStatus.OK);
+//        }
+//    }
 }

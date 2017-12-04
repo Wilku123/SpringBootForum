@@ -4,27 +4,29 @@ import {FormErrors} from "./FormErrors";
 
 // const FormErrors= require('./FormErrors.jsx');
 
-const API_ADDRESS = "http://localhost:8080/react";
+const API_ADDRESS = "http://localhost:8080/react"; //TODO Change it to normal URL
+
 
 class Home extends React.Component {
 
     constructor(props) {
         super(props);
-        this.onSubmit = this.handleSubmit.bind(this)
+        this.onSubmit = this.handleSubmit.bind(this);
         this.state = {
-            stat: [],
+            stat: {status:""},
             name: '',
             lastName: '',
             email: '',
+            emailExists: '',
             password: '',
             confirmPassword: '',
-            formErrors: {name: '', lastName: '', email: '', password: '', confirmPassword: ''},
+            formErrors: {name: '', lastName: '', email: '',emailExists:'', password: '', confirmPassword: ''},
             nameValid: false,
             lastNameValid: false,
             emailValid: false,
             passwordValid: false,
             formValid: false,
-            confirmPasswordValid: false,
+            confirmPasswordValid: false
         }
     }
 
@@ -33,7 +35,7 @@ class Home extends React.Component {
     }
 
     componentDidMount() {
-        this.state={stat: []};
+        // this.state={stat: []};
     }
 
 
@@ -50,6 +52,7 @@ class Home extends React.Component {
             case 'email':
                 // emailValid = value.match(/^([\w.%+-]+)@([\w-]+\.)+([\w]{2,})$/i);
                 emailValid = value.match(/^([\w.%+-]+)@us+\.edu+\.pl$/i);
+                fieldValidationErrors.emailExists = emailValid ? '' : 'Adres E-mail już istnieje';
                 fieldValidationErrors.email = emailValid ? '' : ' Nie prawidłowy adres E-mail';
                 break;
             case 'name':
@@ -111,7 +114,7 @@ class Home extends React.Component {
     handleSubmit(e) {
         e.preventDefault();
 
-
+        let checkUser;
         let emailValid = this.state.emailValid;
         let fieldValidationErrors = this.state.formErrors;
         var myHeaders = new Headers({"Content-Type": "application/json"});
@@ -132,20 +135,36 @@ class Home extends React.Component {
             this.setState({
                 stat: findresponse
             })
+        }).then(() =>{
+            checkUser = this.state.stat.status;
+            if (checkUser === true) {
+                emailValid = false;
+                fieldValidationErrors.emailExists = emailValid ? '' : 'Adres E-mail już istnieje';
+                this.setState({
+                    formErrors: fieldValidationErrors,
+                    emailValid: emailValid
+                }, this.validateForm);
+            }
         });
-        let checkUser = this.state.stat.status;
-        if (checkUser === true) {
-            emailValid = true;
-            fieldValidationErrors.email = emailValid ? '' : 'Adres E-mail juz istnieje';
-        } else {
-            emailValid = false
-        }
+
+        // checkUser = this.state.stat.status;
+        //
+        //
+        // console.log(checkUser);
+        // if (checkUser === true) {
+        //     emailValid = false;
+        //     fieldValidationErrors.emailExists = emailValid ? '' : 'Adres E-mail już istnieje';
+        //     this.setState({
+        //         formErrors: fieldValidationErrors,
+        //         emailValid: emailValid
+        //     }, this.validateForm);
+        // }
+        // else {
+        //     emailValid = false
+        // }
 
 
-        this.setState({
-            formErrors: fieldValidationErrors,
-            emailValid: emailValid
-        }, this.validateForm);
+
 
 
     }
@@ -154,16 +173,18 @@ class Home extends React.Component {
     render() {
         return (
             <div>
-                <link rel="stylesheet" type="text/css" href="../../css/loginPage.css"/>
+                <link rel="stylesheet" type="text/css" href="/../../css/loginPage.css"/>
 
                 <div className="container-fluid">
                     <div className="row">
                         <div className="col-md-2">
                         </div>
                         <div className="col-md-8">
+
                             <div id="octagonWrap">
                                 <div id="octagon">
                                     <form role="form" autoComplete="off" className="jumbotron" onSubmit={this.onSubmit}>
+
                                         <div
                                             className={`form-group has-feedback ${this.errorClass(this.state.formErrors.name)}`}>
                                             <label htmlFor="name">
@@ -173,6 +194,7 @@ class Home extends React.Component {
                                                    name="name"
                                                    value={this.state.name}
                                                    onChange={(event) => this.handleUserInput(event)} ref="name"/>
+                                            <span className="errorSpan">{this.state.formErrors.name}</span>
                                         </div>
                                         <div
                                             className={`form-group has-feedback ${this.errorClass(this.state.formErrors.lastName)}`}>
@@ -184,9 +206,10 @@ class Home extends React.Component {
                                                    name="lastName"
                                                    id="lastName" value={this.state.lastName}
                                                    onChange={(event) => this.handleUserInput(event)} ref="lastName"/>
+                                            <span className="errorSpan">{this.state.formErrors.lastName}</span>
                                         </div>
                                         <div
-                                            className={`form-group has-feedback ${this.errorClass(this.state.formErrors.email)}`}>
+                                            className={`form-group has-feedback ${this.errorClass(this.state.formErrors.email)} ${this.errorClass(this.state.formErrors.emailExists)}`}>
 
                                             <label htmlFor="email">
                                                 Adres Email(<a href="#"
@@ -196,6 +219,8 @@ class Home extends React.Component {
                                                    id="email" name="email" value={this.state.email}
                                                    autoComplete="new-email"
                                                    onChange={(event) => this.handleUserInput(event)} ref="email"/>
+                                            <span className="errorSpan">{this.state.formErrors.email}</span>
+                                            <span className="errorSpan"> {this.state.formErrors.emailExists}</span>
                                         </div>
                                         <div
                                             className={`form-group has-feedback ${this.errorClass(this.state.formErrors.password)}`}>
@@ -210,6 +235,7 @@ class Home extends React.Component {
                                                    value={this.state.password} autoComplete="new-password"
                                                    onChange={(event) => this.handleUserInput(event)} ref="password"/>
                                             <i class="glyphicon glyphicon-lock form-control-feedback"></i>
+                                            <span className="errorSpan">{this.state.formErrors.password}</span>
                                         </div>
 
                                         <div
@@ -225,13 +251,16 @@ class Home extends React.Component {
                                                    onChange={(event) => this.handleUserInput(event)}
                                             />
                                             <i class="glyphicon glyphicon-lock form-control-feedback"></i>
+                                            <span className="errorSpan">{this.state.formErrors.confirmPassword}</span>
                                         </div>
                                         <div className="text-center button">
                                             <button type="submit" className="btn btn-default"
                                                     disabled={!this.state.formValid}>
                                                 Zarejestruj się
                                             </button>
+
                                         </div>
+                                        <Link to={"/"}><span className="text-left btn btn-link">Powrót</span></Link>
                                     </form>
                                 </div>
                             </div>

@@ -1,8 +1,8 @@
 package com.netstore.api.mobile.controller;
 
-import com.netstore.model.API.SchemaRest;
-import com.netstore.model.API.SchemaRestList;
-import com.netstore.model.API.topic.*;
+import com.netstore.model.API.mobile.SchemaRest;
+import com.netstore.model.API.mobile.SchemaRestList;
+import com.netstore.model.API.mobile.topic.*;
 import com.netstore.model.entity.SubscribedTopicEntity;
 import com.netstore.model.entity.TopicEntity;
 import com.netstore.model.repository.CredentialsRepository;
@@ -148,7 +148,7 @@ public class TopicRest {
 
         if (circleRestViewRepository.exists(limitTopicModel.getId())) {
             if (limitTopicModel.getHowMany() > 0) {
-                List<TopicRestViewEntity> topicEntityList = topicRestViewRepository.findAllByCircleIdCircleAndPublishDateIsLessThanEqualOrderByPublishDateDesc(limitTopicModel.getId(), limitTopicModel.getDate());
+                List<TopicRestViewEntity> topicEntityList = topicRestViewRepository.findAllByCircleIdCircleAndPublishDateIsLessThanOrderByPublishDateDesc(limitTopicModel.getId(), limitTopicModel.getDate());
                 List<TopicWithAuthor> topicWithAuthor= new ArrayList<>();
 
 
@@ -247,5 +247,31 @@ public class TopicRest {
             return new ResponseEntity<>(schemaRestList, HttpStatus.OK);
 
         }
+    }
+    @RequestMapping(value = "/subTopic", method = RequestMethod.GET)
+    public ResponseEntity<SchemaRestList> getLimitedTopic(Authentication auth) {
+
+                List<TopicRestViewEntity> topicEntityList = topicRestViewRepository.findAll();
+                List<TopicWithAuthor> topicWithAuthor= new ArrayList<>();
+
+
+                for (TopicRestViewEntity i : topicEntityList) {
+                    if ((subscribedTopicRepository.findByUserIdUserAndTopicIdTopic(credentialsRepository.findByToken(auth.getName()).getUserIdUser(), i.getIdTopic())) != null) {
+                        topicWithAuthor.add(generateTopicList(1, i));
+                    }
+                }
+
+
+                SchemaRestList<TopicWithAuthor> schemaRest = new SchemaRestList<>(true, "should work not sure tho", 1337, topicWithAuthor);
+
+                if (!schemaRest.getData().isEmpty())
+                    return new ResponseEntity<>(schemaRest, HttpStatus.OK);
+                else {
+                    schemaRest.setErrorCode(103);
+                    schemaRest.setMessage("Subbed topic list is empty");
+                    return new ResponseEntity<>(schemaRest, HttpStatus.OK);
+                }
+
+
     }
 }

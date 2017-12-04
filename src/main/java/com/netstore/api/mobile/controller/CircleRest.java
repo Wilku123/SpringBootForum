@@ -1,8 +1,8 @@
 package com.netstore.api.mobile.controller;
 
-import com.netstore.model.API.SchemaRest;
-import com.netstore.model.API.SchemaRestList;
-import com.netstore.model.API.circle.*;
+import com.netstore.model.API.mobile.SchemaRest;
+import com.netstore.model.API.mobile.SchemaRestList;
+import com.netstore.model.API.mobile.circle.*;
 import com.netstore.model.entity.CircleEntity;
 import com.netstore.model.repository.CredentialsRepository;
 import com.netstore.model.repository.rest.UserRestRepository;
@@ -132,7 +132,7 @@ public class CircleRest {
     public ResponseEntity<SchemaRestList> getLimitedCircle(Authentication auth , @RequestBody LimitCircleModel limit) {
 
         if (limit.getHowMany() > 0) {
-            List<CircleRestViewEntity> circleEntityList = circleRestViewRepository.findAllByPublishDateIsLessThanEqualOrderByPublishDateDesc(limit.getDate());
+            List<CircleRestViewEntity> circleEntityList = circleRestViewRepository.findAllByPublishDateIsLessThanOrderByPublishDateDesc(limit.getDate());
             List<CircleWithAuthor> circleRestList = new ArrayList<>();
 
             for (CircleRestViewEntity i : circleEntityList) {
@@ -287,5 +287,31 @@ public class CircleRest {
             schemaRestList.setErrorCode(103);
             return new ResponseEntity<>(schemaRestList, HttpStatus.OK);
         }
+    }
+    @RequestMapping(value = "/subCircle", method = RequestMethod.GET)
+    public ResponseEntity<SchemaRestList> getLimitedCircle(Authentication auth) {
+
+
+            List<CircleRestViewEntity> circleEntityList = circleRestViewRepository.findAll();
+            List<CircleWithAuthor> circleRestList = new ArrayList<>();
+
+            for (CircleRestViewEntity i : circleEntityList) {
+                if ((subscribedCircleRepository.findByUserIdUserAndCircleIdCircle(credentialsRepository.findByToken(auth.getName()).getUserIdUser(), i.getIdCircle())) != null) {
+                    circleRestList.add(generateCircleList(1, i));
+                }
+            }
+
+            SchemaRestList<CircleWithAuthor> schemaRest = new SchemaRestList<>(true, "git gut", 1337, circleRestList);
+
+            if (!schemaRest.getData().isEmpty())
+                return new ResponseEntity<>(schemaRest, HttpStatus.OK);
+            else {
+                schemaRest.setErrorCode(103);
+                schemaRest.setMessage("Circle Subbed List is empty");
+                return new ResponseEntity<>(schemaRest, HttpStatus.OK);
+            }
+
+
+
     }
 }

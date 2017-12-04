@@ -3,7 +3,10 @@ import ReactDOM from 'react-dom';
 import {BrowserRouter, Router, Route, Link, Switch} from 'react-router-dom';
 import Login from './components/login/Login';
 import Register from './components/login/Register';
-import About from './components/About';
+import Circle from './components/main/Circle';
+import ForgotPassword from './components/login/ForgotPassword';
+import ResetPass from './components/login/ResetPass';
+
 
 
 class Routers extends React.Component{
@@ -11,7 +14,7 @@ class Routers extends React.Component{
     render() {
         return(
 
-            <BrowserRouter>
+            <BrowserRouter forceRefresh={true}>
 
                 <div>
                     {/*<ul>*/}
@@ -22,9 +25,12 @@ class Routers extends React.Component{
 
                     {/*<hr />*/}
                     <Switch>
-                        <Route exact path='/' component={Login} />
-                        <Route path='/about' component={About} />
-                        <Route path='/register' component={Register}/>
+
+                        <Route exact path='/login' component={Login} />
+                        <Route path='/main/circle' component={Circle}/>
+                        <Route path='/reg' component={Register}/>
+                        <Route path='/forgot' component={ForgotPassword}/>
+                        <Route path="/resetPass" component={ResetPass}/>
                         {/*<Route path='/contact' component={Contact} />*/}
                     </Switch>
 

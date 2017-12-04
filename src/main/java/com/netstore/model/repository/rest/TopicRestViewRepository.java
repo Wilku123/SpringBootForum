@@ -15,7 +15,7 @@ import java.util.List;
 public interface TopicRestViewRepository extends JpaRepository<TopicRestViewEntity,Integer> {
     TopicRestViewEntity findByIdTopic(Integer id);
     List<TopicRestViewEntity> findAllByCircleIdCircleOrderByPublishDateDesc(Integer id);
-    List<TopicRestViewEntity> findAllByCircleIdCircleAndPublishDateIsLessThanEqualOrderByPublishDateDesc(Integer id, Timestamp timestamp);
+    List<TopicRestViewEntity> findAllByCircleIdCircleAndPublishDateIsLessThanOrderByPublishDateDesc(Integer id, Timestamp timestamp);
     List<TopicRestViewEntity> findAllByNameContainingAndCircleIdCircle(String name,Integer id);
 
 }

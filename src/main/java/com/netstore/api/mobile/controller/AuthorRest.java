@@ -1,7 +1,7 @@
 package com.netstore.api.mobile.controller;
 
-import com.netstore.model.API.SchemaRest;
-import com.netstore.model.API.user.UserIdModel;
+import com.netstore.model.API.mobile.SchemaRest;
+import com.netstore.model.API.mobile.user.UserIdModel;
 import com.netstore.model.view.UserRestViewEntity;
 import com.netstore.model.repository.rest.UserRestRepository;
 import org.springframework.beans.factory.annotation.Autowired;

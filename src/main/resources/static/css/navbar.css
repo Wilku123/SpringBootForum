@@ -1,59 +1,53 @@
-@font-face {
-    /*font-family: fallout;*/
-    /*src: url('../fonts/fallout-webfont.woff');*/
-}
-
 body {
     min-height: 2000px;
-    /*font-family: fallout;*/
+    border: 1px solid black;
     font-size: 18px;
 }
-.navbar-default{
-    border-color: transparent;
-}
+
 .navbar {
-    background-color: #6fc7d8;
-    color: #fff;
-    /*border: 1px solid black;*/
-    /*text-shadow: 1px 1px #131313;*/
+    background-color: #171717;
+    color: #acacac;
+    border: 1px solid black;
+    text-shadow: 1px 1px #131313;
 }
 
 .navbar .nav > li > a {
-    color: #ffffff;
-    /*font-family: fallout;*/
-    /*text-shadow: 1px 1px #131313;*/
+    color: #acacac;
+    text-shadow: 1px 1px #131313;
 }
 
 .navbar .nav > li > a:hover {
-    color: #6fc7d8;
-    background-color: #fff;
+    color: #fff;
+    background: #171717;
 }
 
 .navbar .nav > li > a:focus {
-    color: #475057;
+    color: #fff;
 }
 
 .navbar .navbar-header > a {
-    color: #fff;
-    /*font-family: fallout;*/
-    /*text-shadow: 1px 1px #131313;*/
+    color: #acacac;
+    text-shadow: 1px 1px #131313;
 }
 
 .navbar .navbar-header > a:hover {
-    color: #6fc7d8;
-    background-color: #fff;
+    color: #fff;
 
 }
 
 .navbar .navbar-header > a:focus {
-    color: #6fc7d8;
-    background-color: #fff;
+    color: #fff;
 }
 .navbar-default .navbar-nav>.open>a, .navbar-default .navbar-nav>.open>a:focus, .navbar-default .navbar-nav>.open>a:hover{
-    color: #6fc7d8;
-    background-color: #fff;
+    color: #fff;
+    background-color: #131313;
 }
 .dropdown-menu
 {
+    background-color: whitesmoke;
+}
+.dropdown
+{
+    color:green;
     background-color: #131313;
 }

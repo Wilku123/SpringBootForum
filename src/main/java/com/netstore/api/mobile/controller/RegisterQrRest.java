@@ -1,8 +1,8 @@
 package com.netstore.api.mobile.controller;
 
-import com.netstore.model.API.SchemaRest;
-import com.netstore.model.API.register.RegisterNewQr;
-import com.netstore.model.API.register.ValidateQr;
+import com.netstore.model.API.mobile.SchemaRest;
+import com.netstore.model.API.mobile.register.RegisterNewQr;
+import com.netstore.model.API.mobile.register.ValidateQr;
 import com.netstore.model.entity.CredentialsEntity;
 import com.netstore.model.repository.CredentialsRepository;
 import com.netstore.model.repository.UserRepository;
