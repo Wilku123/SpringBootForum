@@ -8,9 +8,7 @@ import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 
 const API_ADDRESS = "http://localhost:8080/react/main/showUser"; //TODO Change it to normal URL
 let header = {
-    "Content-Type": "application/json",
-    // "Authorization": "Basic YzgwNzlkNTAtMTViNy00NTkxLWI3MDktZjhhYTQzYjAxMmE4OjEyMzQ="
-
+    "Content-Type": "application/json"
 };
 
 class NavBar extends React.Component {
