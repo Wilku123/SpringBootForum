@@ -4,8 +4,10 @@ import com.netstore.model.API.mobile.SchemaRest;
 import com.netstore.model.API.mobile.SchemaRestList;
 import com.netstore.model.API.mobile.answer.*;
 import com.netstore.model.entity.AnswerEntity;
+import com.netstore.model.entity.EventEntity;
 import com.netstore.model.repository.CredentialsRepository;
 import com.netstore.model.repository.rest.UserRestRepository;
+import com.netstore.model.service.AddEventService;
 import com.netstore.model.view.AnswerRestViewEntity;
 import com.netstore.model.repository.rest.AnswerRestRepository;
 import com.netstore.model.repository.rest.TopicRestViewRepository;
@@ -38,6 +40,8 @@ public class AnswerRest {
     private AddAnswersService addAnswersService;
     @Autowired
     private TopicRestViewRepository topicRestViewRepository;
+    @Autowired
+    private AddEventService addEventService;
 
     private AnswerWithAuthor generateAnswerList(int yours, AnswerRestViewEntity i) {
 
@@ -102,6 +106,14 @@ public class AnswerRest {
                 answerEntity.setPublishDate(new Timestamp(System.currentTimeMillis()));
                 answerEntity.setUuid(newAnswerModel.getUuid());
                 this.addAnswersService.saveAndFlush(answerEntity);
+
+                EventEntity eventEntity = new EventEntity();
+                eventEntity.setType("Answer");
+                eventEntity.setEntityId(answerEntity.getIdAnswer());
+                eventEntity.setAuthorId(answerEntity.getUserIdUser());
+                eventEntity.setPublishDate(new Timestamp(System.currentTimeMillis()));
+                this.addEventService.saveAndFlush(eventEntity);
+
                 AnswerRestViewEntity restViewEntity;
                 restViewEntity = answerRepository.findOne(answerEntity.getIdAnswer());
                 AnswerWithAuthor answerWithAuthor = generateAnswerList(1,restViewEntity);

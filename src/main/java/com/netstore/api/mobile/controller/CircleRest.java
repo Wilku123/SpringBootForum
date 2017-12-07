@@ -4,8 +4,10 @@ import com.netstore.model.API.mobile.SchemaRest;
 import com.netstore.model.API.mobile.SchemaRestList;
 import com.netstore.model.API.mobile.circle.*;
 import com.netstore.model.entity.CircleEntity;
+import com.netstore.model.entity.EventEntity;
 import com.netstore.model.repository.CredentialsRepository;
 import com.netstore.model.repository.rest.UserRestRepository;
+import com.netstore.model.service.AddEventService;
 import com.netstore.model.view.CircleRestViewEntity;
 import com.netstore.model.entity.SubscribedCircleEntity;
 import com.netstore.model.repository.rest.CircleRestViewRepository;
@@ -18,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.sql.Timestamp;
@@ -43,6 +46,8 @@ public class CircleRest {
     private UserRestRepository userRestRepository;
     @Autowired
     private AddCircleSubscriptionService addCircleSubscriptionService;
+    @Autowired
+    private AddEventService addEventService;
 
     public CircleWithAuthor generateCircleList(int sub, CircleRestViewEntity i) {
 
@@ -92,6 +97,7 @@ public class CircleRest {
 //
 //    }
 
+    @Transactional
     @RequestMapping(value = "/add", method = RequestMethod.POST)
     public ResponseEntity<SchemaRest> addCircle(Authentication auth, @RequestBody NewCircleModel newCircleModel) {
 
@@ -110,6 +116,13 @@ public class CircleRest {
             subscribedCircleEntity.setUserIdUser(credentialsRepository.findByToken(auth.getName()).getUserIdUser());
             subscribedCircleEntity.setCircleIdCircle(circleEntity.getIdCircle());
             this.addCircleSubscriptionService.saveAndFlush(subscribedCircleEntity);
+
+            EventEntity eventEntity = new EventEntity();
+            eventEntity.setType("Circle");
+            eventEntity.setEntityId(circleEntity.getIdCircle());
+            eventEntity.setAuthorId(circleEntity.getUserIdUser());
+            eventEntity.setPublishDate(new Timestamp(System.currentTimeMillis()));
+            this.addEventService.saveAndFlush(eventEntity);
 
 
             CircleRestViewEntity circleRestViewEntity;

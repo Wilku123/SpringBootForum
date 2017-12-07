@@ -3,10 +3,12 @@ package com.netstore.api.mobile.controller;
 import com.netstore.model.API.mobile.SchemaRest;
 import com.netstore.model.API.mobile.SchemaRestList;
 import com.netstore.model.API.mobile.topic.*;
+import com.netstore.model.entity.EventEntity;
 import com.netstore.model.entity.SubscribedTopicEntity;
 import com.netstore.model.entity.TopicEntity;
 import com.netstore.model.repository.CredentialsRepository;
 import com.netstore.model.repository.rest.UserRestRepository;
+import com.netstore.model.service.AddEventService;
 import com.netstore.model.view.TopicRestViewEntity;
 import com.netstore.model.repository.rest.CircleRestViewRepository;
 import com.netstore.model.repository.SubscribedTopicRepository;
@@ -19,6 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.sql.Timestamp;
@@ -46,6 +49,8 @@ public class TopicRest {
     private AddTopicSubscriptionService addTopicSubscriptionService;
     @Autowired
     private CircleRestViewRepository circleRestViewRepository;
+    @Autowired
+    private AddEventService addEventService;
 
 
     private TopicWithAuthor generateTopicList(int sub, TopicRestViewEntity i) {
@@ -102,6 +107,7 @@ public class TopicRest {
         }
     }
 
+    @Transactional
     @RequestMapping(value = "/add", method = RequestMethod.POST)
     public ResponseEntity<SchemaRest> addTopic(Authentication auth, @RequestBody NewTopicModel newTopicModel) {
 
@@ -122,6 +128,13 @@ public class TopicRest {
                 subscribedTopicEntity.setUserIdUser(credentialsRepository.findByToken(auth.getName()).getUserIdUser());
                 subscribedTopicEntity.setTopicIdTopic(topicEntity.getIdTopic());
                 this.addTopicSubscriptionService.saveAndFlush(subscribedTopicEntity);
+
+                EventEntity eventEntity = new EventEntity();
+                eventEntity.setType("Topic");
+                eventEntity.setEntityId(topicEntity.getIdTopic());
+                eventEntity.setAuthorId(topicEntity.getUserIdUser());
+                eventEntity.setPublishDate(new Timestamp(System.currentTimeMillis()));
+                this.addEventService.saveAndFlush(eventEntity);
 
                 TopicRestViewEntity topicRestViewEntity = topicRestViewRepository.findOne(topicEntity.getIdTopic());
                 TopicWithAuthor topicWithAuthor = generateTopicList(1 , topicRestViewEntity);

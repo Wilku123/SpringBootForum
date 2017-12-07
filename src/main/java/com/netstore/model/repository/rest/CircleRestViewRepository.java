@@ -13,6 +13,7 @@ import java.util.List;
 @Repository
 @javax.transaction.Transactional
 public interface CircleRestViewRepository extends JpaRepository<CircleRestViewEntity,Integer> {
+    CircleRestViewEntity findByIdCircle(Integer id);
     CircleRestViewEntity findByUserIdUser(Integer id);
     List<CircleRestViewEntity> findAllByPublishDateIsLessThanEqualOrderByPublishDateDesc(Timestamp date);
     List<CircleRestViewEntity> findAllByPublishDateIsLessThanOrderByPublishDateDesc(Timestamp date);
