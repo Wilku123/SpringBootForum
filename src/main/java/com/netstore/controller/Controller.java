@@ -20,7 +20,11 @@ public class Controller {
 //        return "logout";
 //    }
 
-    @RequestMapping({"/", "/{path:(?!.*.js|.*.css|.*.jpg).*$}","/main/{path:(?!.*.js|.*.css|.*.jpg).*$}"})
+    @RequestMapping({"/",
+            "/{path:(?!.*.js|.*.css|.*.jpg).*$}",
+            "/main/{path:(?!.*.js|.*.css|.*.jpg).*$}",
+            "/main/app"
+    })
     public String index() {
         return "index";
     }

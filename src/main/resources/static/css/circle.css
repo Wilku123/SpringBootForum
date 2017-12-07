@@ -1,0 +1,30 @@
+.panel-group .panel + .panel
+{
+    margin-top: 0px;
+}
+#mainPanel
+{
+    background: linear-gradient(to right, #4371ff, #272727, #4371ff, #272727,#4371ff);
+    background-image: url(../img/overlay.png);
+    /*background-color: rgba(0, 0, 0, 0.3);*/
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+.panel
+{
+    margin-bottom: 0px;
+}
+.panel-body
+{
+    padding:15px;
+}
+.jumbotron
+{
+    /*padding-top: 1px;*/
+    /*padding-bottom: 1px;*/
+    padding: 1px;
+}
+h3
+{
+
+}

@@ -1,12 +1,9 @@
 import React from 'react';
-import {Dropdown, DropdownButton, MenuItem, Nav, Navbar, NavDropdown, NavItem, SplitButton} from "react-bootstrap";
-import Avatar from 'material-ui/Avatar';
-import List from 'material-ui/List/List';
-import ListItem from 'material-ui/List/ListItem';
-import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
+import {MenuItem, Nav, Navbar, NavDropdown, NavItem} from "react-bootstrap";
+import {url} from '../../Constants';
+import {Avatar, List, ListItem, MuiThemeProvider} from "material-ui";
+import {Link} from "react-router-dom";
 
-
-const API_ADDRESS = "http://localhost:8080/react/main/showUser"; //TODO Change it to normal URL
 let header = {
     "Content-Type": "application/json"
 };
@@ -15,11 +12,11 @@ class NavBar extends React.Component {
 
     constructor() {
         super();
-        this.state = {user: []};
+        this.state = {user: [name=""]};
     }
 
     componentDidMount() {
-        fetch(API_ADDRESS, {
+        fetch(url+"/react/main/showUser", {
             method: 'POST',
             body: "",
             headers: header,
@@ -30,35 +27,35 @@ class NavBar extends React.Component {
             })
         })
     }
-
+// {/*<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/latest/css/bootstrap.min.css"/>*/}
+// {/*<link rel="stylesheet" href="../../css/navbar.css"/>*/}
     render() {
         return (
 
             <Navbar>
                 <MuiThemeProvider>
                     <List>
-                        {/*<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/latest/css/bootstrap.min.css"/>*/}
-                        {/*<link rel="stylesheet" href="../../css/navbar.css"/>*/}
+
                         <Navbar.Header>
                             <Navbar.Brand>
                                 <a href="#">Forum romanum</a>
                             </Navbar.Brand>
                         </Navbar.Header>
                         <Nav>
-                            <NavItem pullRight eventKey={1} href="#">Link</NavItem>
+                            <NavItem href="#">Link</NavItem>
                             <NavItem href="#">Link</NavItem>
                         </Nav>
                         <Nav pullRight>
 
 
                             <ListItem disabled={true} leftAvatar={<Avatar
-                                src={"https://www.codeproject.com/KB/GDI-plus/ImageProcessing2/img.jpg"} size={30}/>}>
+                                src={this.state.user.avatar}/>}>
 
                                 <NavDropdown title={this.state.user.name + " " + this.state.user.lastName}
                                              id="basic-nav-dropdown">
-                                    <MenuItem href={"#"}>Aplikacja Moblina</MenuItem>
-                                    <MenuItem href={"#"}>Subskrybowane</MenuItem>
-                                    <MenuItem href={"#"}>Ustawienia</MenuItem>
+                                    <MenuItem href={"/main/app"}>Aplikacja Moblina</MenuItem>
+                                    <MenuItem href={"/main/subbed"}>Subskrybowane</MenuItem>
+                                    <MenuItem href={"/main/config/"}>Ustawienia</MenuItem>
                                     <MenuItem divider/>
                                     <MenuItem href={"/logout"}>Wyloguj</MenuItem>
                                 </NavDropdown>

@@ -12,6 +12,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
@@ -25,8 +26,6 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 @EnableWebSecurity
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
-    @Autowired
-    private BCryptPasswordEncoder bCryptPasswordEncoder;
 
     @Autowired
     private DataSource dataSource;
@@ -48,6 +47,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
     private BasicAuthPoint basicAuthPoint;
+
 
     @Autowired
     private MySavedRequestAwareAuthenticationSuccessHandler mySavedRequestAwareAuthenticationSuccessHandler;
@@ -160,7 +160,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .usersByUsernameQuery(usersQuery)
                 .authoritiesByUsernameQuery(rolesQuery)
                 .dataSource(dataSource)
-                .passwordEncoder(bCryptPasswordEncoder);
+                .passwordEncoder(passwordEncoder());
 
         rest
                 .jdbcAuthentication()
@@ -192,6 +192,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     }
     public SimpleUrlAuthenticationFailureHandler myFailureHandler(){
         return new SimpleUrlAuthenticationFailureHandler();
+    }
+    @Bean
+    public BCryptPasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
     }
 
 

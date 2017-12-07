@@ -1,6 +1,6 @@
 const WebpackNotifierPlugin = require('webpack-notifier');
 const webpack = require('webpack');
-const UglifyJSPlugin = require('uglifyjs-webpack-plugin')
+const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 
 module.exports = {
     entry: {
@@ -35,7 +35,18 @@ module.exports = {
                 NODE_ENV: JSON.stringify('production')
             }
         }),
-        new UglifyJSPlugin()
+        new UglifyJsPlugin({
+            uglifyOptions: {
+                ie8: false,
+                ecma: 8,
+                output: {
+                    comments: false,
+                    beautify: false
+                },
+                compress: true,
+                warnings: false
+            }
+        })
         //TODO ^ to usun
     ],
     watch: true

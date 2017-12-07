@@ -1,8 +1,7 @@
 import React from 'react';
 import {BrowserRouter as Router, Route, Link} from 'react-router-dom';
 
-const API_ADDRESS = "http://localhost:8080/"; //TODO Change it to normal URL
-
+import {url} from '../../Constants'
 class Home extends React.Component {
     constructor(props) {
         super(props);
@@ -71,7 +70,7 @@ class Home extends React.Component {
         "username":this.state.username,
         "password":this.state.password});
 
-        fetch(API_ADDRESS + "login", {
+        fetch(url + "/login", {
 
             method: 'POST',
             headers: myHeaders,
@@ -137,7 +136,7 @@ class Home extends React.Component {
                                                    id="password" name="password" placeholder="Hasło"
                                                    value={this.state.password}
                                                    onChange={(event) => this.handleUserInput(event)} ref="password"/>
-                                            <i class="glyphicon glyphicon-lock form-control-feedback"></i>
+                                            <i className="glyphicon glyphicon-lock form-control-feedback"/>
                                             <span className="errorSpan">{this.state.formErrors.password}</span>
                                         </div>
                                         <Link to={"/reg"}> Zarejestruj się</Link>

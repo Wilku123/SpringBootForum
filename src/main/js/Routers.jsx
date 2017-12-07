@@ -6,28 +6,34 @@ import Register from './components/login/Register';
 import Circle from './components/main/Circle';
 import ForgotPassword from './components/login/ForgotPassword';
 import ResetPass from './components/login/ResetPass';
+import MobileApp from './components/user/MobileApp';
+import SubbedEntityList from './components/main/SubbedEntityList'
 
 
-
-class Routers extends React.Component{
+class Routers extends React.Component {
 
     render() {
-        return(
+        return (
 
             <BrowserRouter forceRefresh={true}>
 
                 <div>
                     {/*<ul>*/}
-                        {/*<li><Link to="/">Home</Link></li>*/}
-                        {/*<li><Link to="/about">About</Link></li>*/}
-                        {/*<li><Link to="/topics">Topics</Link></li>*/}
+                    {/*<li><Link to="/">Home</Link></li>*/}
+                    {/*<li><Link to="/about">About</Link></li>*/}
+                    {/*<li><Link to="/topics">Topics</Link></li>*/}
                     {/*</ul>*/}
 
                     {/*<hr />*/}
                     <Switch>
 
-                        <Route exact path='/login' component={Login} />
-                        <Route path='/main/circle' component={Circle}/>
+                        <Route exact path='/login' component={Login}/>
+
+                        <Route path="/main/circle" component={Circle}/>
+                        <Route path="/main/app" component={MobileApp}/>
+                        <Route path="/main/subbed" component={SubbedEntityList}/>
+
+
                         <Route path='/reg' component={Register}/>
                         <Route path='/forgot' component={ForgotPassword}/>
                         <Route path="/resetPass" component={ResetPass}/>
@@ -41,4 +47,5 @@ class Routers extends React.Component{
 
 
 }
+
 export default Routers;

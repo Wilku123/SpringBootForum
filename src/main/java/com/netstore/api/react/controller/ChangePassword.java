@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
@@ -47,8 +48,9 @@ public class ChangePassword {
     public ResponseEntity<ReactStatus> changePass(@RequestBody UserEntity resetPasswordUserEntity) {
 
 
+        String pass = resetPasswordUserEntity.getPassword();
         UserEntity userEntity = userRepository.findByActiveToken(resetPasswordUserEntity.getActiveToken());
-        userEntity.setPassword(bCryptPasswordEncoder.encode(resetPasswordUserEntity.getPassword()));
+        userEntity.setPassword(bCryptPasswordEncoder.encode(pass));
         this.userService.saveAndFlush(userEntity);
         ReactStatus reactStatus = new ReactStatus();
         reactStatus.setStatus(true);

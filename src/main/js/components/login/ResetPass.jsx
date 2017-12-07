@@ -1,8 +1,7 @@
 import React from 'react';
 import ReactQueryParams from 'react-query-params';
 import {BrowserRouter as Router, Route, Link,Redirect} from 'react-router-dom';
-const API_ADDRESS = "http://localhost:8080/react"; //TODO Change it to normal URL
-
+import {url} from '../../Constants'
 
 class ResetPass extends ReactQueryParams {
 
@@ -64,7 +63,7 @@ class ResetPass extends ReactQueryParams {
         let checkUser;
         var myHeaders = new Headers({"Content-Type": "application/json"});
 
-        fetch(API_ADDRESS + '/changePass', {
+        fetch(url + '/react/changePass', {
             method: 'POST',
             headers: myHeaders,
             body: JSON.stringify({

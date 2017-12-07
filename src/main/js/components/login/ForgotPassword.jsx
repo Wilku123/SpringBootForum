@@ -1,7 +1,6 @@
 import React from 'react';
 import {BrowserRouter as Router, Route, Link} from 'react-router-dom';
-const API_ADDRESS = "http://localhost:8080/react"; //TODO Change it to normal URL
-
+import {url} from '../../Constants'
 
 class ForgotPassword extends React.Component {
 
@@ -54,7 +53,7 @@ class ForgotPassword extends React.Component {
         let checkUser;
         var myHeaders = new Headers({"Content-Type": "application/json"});
 
-        fetch(API_ADDRESS + '/forgotPassword', {
+        fetch(url + '/react/forgotPassword', {
             method: 'POST',
             headers: myHeaders,
             body: JSON.stringify({

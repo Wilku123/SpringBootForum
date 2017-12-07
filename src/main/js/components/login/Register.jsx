@@ -1,10 +1,9 @@
 import React from 'react';
 import {BrowserRouter as Router, Route, Link} from 'react-router-dom';
 import {FormErrors} from "./FormErrors";
-
+import {url} from '../../Constants';
 // const FormErrors= require('./FormErrors.jsx');
 
-const API_ADDRESS = "http://localhost:8080/react"; //TODO Change it to normal URL
 
 
 class Home extends React.Component {
@@ -119,7 +118,7 @@ class Home extends React.Component {
         let fieldValidationErrors = this.state.formErrors;
         var myHeaders = new Headers({"Content-Type": "application/json"});
 
-        fetch(API_ADDRESS + '/register', {
+        fetch(url + '/react/register', {
             method: 'POST',
             headers: myHeaders,
             body: JSON.stringify({

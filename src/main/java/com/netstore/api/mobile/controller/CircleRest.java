@@ -44,7 +44,7 @@ public class CircleRest {
     @Autowired
     private AddCircleSubscriptionService addCircleSubscriptionService;
 
-    private CircleWithAuthor generateCircleList(int sub, CircleRestViewEntity i) {
+    public CircleWithAuthor generateCircleList(int sub, CircleRestViewEntity i) {
 
         Integer idCircle = i.getIdCircle();
         String name = i.getName();
