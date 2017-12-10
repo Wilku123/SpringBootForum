@@ -2,6 +2,7 @@ import React from 'react';
 import {BrowserRouter as Router, Route, Link} from 'react-router-dom';
 import {FormErrors} from "./FormErrors";
 import {url} from '../../Constants';
+import {Dialog, FlatButton, MuiThemeProvider, RaisedButton} from "material-ui";
 // const FormErrors= require('./FormErrors.jsx');
 
 
@@ -10,6 +11,8 @@ class Home extends React.Component {
 
     constructor(props) {
         super(props);
+        this.modalOpen = this.handleOpen.bind(this);
+        this.modalClose = this.handleClose.bind(this);
         this.onSubmit = this.handleSubmit.bind(this);
         this.state = {
             stat: {status:""},
@@ -25,10 +28,19 @@ class Home extends React.Component {
             emailValid: false,
             passwordValid: false,
             formValid: false,
-            confirmPasswordValid: false
+            confirmPasswordValid: false,
+            open:false
         }
     }
+    handleOpen(){
+        this.setState({});
+    };
 
+    handleClose () {
+        this.setState({open: false});
+
+        window.location.replace(url+"/login");
+    };
     errorClass(error) {
         return (error.length === 0 ? '' : 'has-error' );
     }
@@ -51,8 +63,8 @@ class Home extends React.Component {
             case 'email':
                 // emailValid = value.match(/^([\w.%+-]+)@([\w-]+\.)+([\w]{2,})$/i);
                 emailValid = value.match(/^([\w.%+-]+)@us+\.edu+\.pl$/i);
-                fieldValidationErrors.emailExists = emailValid ? '' : 'Adres E-mail już istnieje';
                 fieldValidationErrors.email = emailValid ? '' : ' Nie prawidłowy adres E-mail';
+                fieldValidationErrors.emailExists ="";
                 break;
             case 'name':
                 nameValid = value.length >= 3;
@@ -113,6 +125,7 @@ class Home extends React.Component {
     handleSubmit(e) {
         e.preventDefault();
 
+
         let checkUser;
         let emailValid = this.state.emailValid;
         let fieldValidationErrors = this.state.formErrors;
@@ -136,6 +149,7 @@ class Home extends React.Component {
             })
         }).then(() =>{
             checkUser = this.state.stat.status;
+            // console.log("status",checkUser);
             if (checkUser === true) {
                 emailValid = false;
                 fieldValidationErrors.emailExists = emailValid ? '' : 'Adres E-mail już istnieje';
@@ -143,6 +157,8 @@ class Home extends React.Component {
                     formErrors: fieldValidationErrors,
                     emailValid: emailValid
                 }, this.validateForm);
+            }else {
+                this.setState({open: true});
             }
         });
 
@@ -170,8 +186,18 @@ class Home extends React.Component {
 
 
     render() {
+        const actions =
+
+            <FlatButton
+                label="Ok"
+                primary={true}
+                keyboardFocused={true}
+                onClick={this.modalClose}
+            />;
+
         return (
             <div>
+                <MuiThemeProvider>
                 <link rel="stylesheet" type="text/css" href="/../../css/loginPage.css"/>
 
                 <div className="container-fluid">
@@ -233,7 +259,7 @@ class Home extends React.Component {
                                                    id="password" name="password" placeholder="Hasło"
                                                    value={this.state.password} autoComplete="new-password"
                                                    onChange={(event) => this.handleUserInput(event)} ref="password"/>
-                                            <i class="glyphicon glyphicon-lock form-control-feedback"></i>
+                                            <i className="glyphicon glyphicon-lock form-control-feedback"></i>
                                             <span className="errorSpan">{this.state.formErrors.password}</span>
                                         </div>
 
@@ -249,7 +275,7 @@ class Home extends React.Component {
                                                    value={this.state.confirmPassword} autoComplete="new-password"
                                                    onChange={(event) => this.handleUserInput(event)}
                                             />
-                                            <i class="glyphicon glyphicon-lock form-control-feedback"></i>
+                                            <i className="glyphicon glyphicon-lock form-control-feedback"></i>
                                             <span className="errorSpan">{this.state.formErrors.confirmPassword}</span>
                                         </div>
                                         <div className="text-center button">
@@ -258,9 +284,18 @@ class Home extends React.Component {
                                                 Zarejestruj się
                                             </button>
 
+
                                         </div>
-                                        <Link to={"/"}><span className="text-left btn btn-link">Powrót</span></Link>
+                                        <Link to={"/login"}><span className="text-left btn btn-link">Powrót</span></Link>
                                     </form>
+                                    <Dialog
+                                        title="Aktywacja konta"
+                                        actions={actions}
+                                        modal={false}
+                                        open={this.state.open}
+                                        onRequestClose={this.modalClose}
+                                    > Na twój adres e-mail wysłalismy link aktywacyjny
+                                    </Dialog>
                                 </div>
                             </div>
                         </div>
@@ -268,7 +303,7 @@ class Home extends React.Component {
                         </div>
                     </div>
                 </div>
-
+                </MuiThemeProvider>
             </div>
         );
     }

@@ -47,6 +47,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
     private BasicAuthPoint basicAuthPoint;
+    @Autowired
+    private BCryptPasswordEncoder bCryptPasswordEncoder;
 
 
     @Autowired
@@ -64,7 +66,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/webjars/**","/css/**","/js/**","/icons/**","/built/**").permitAll()
                 .antMatchers("/react/register","/react/activate","/react/forgotPassword","/react/changePass").permitAll()
                 .antMatchers("/registerrest","/register","/validateToken").permitAll()
-                .antMatchers("/reg","/forgot","/resetPass").permitAll()
+                .antMatchers("/reg","/forgot","/changePass","/activate").permitAll()
                 .antMatchers("/login","/loginReact").permitAll()
                 .antMatchers("/api/**").authenticated()
                 .antMatchers("/react/main/**","/main/**").authenticated()
@@ -160,7 +162,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .usersByUsernameQuery(usersQuery)
                 .authoritiesByUsernameQuery(rolesQuery)
                 .dataSource(dataSource)
-                .passwordEncoder(passwordEncoder());
+                .passwordEncoder(bCryptPasswordEncoder);
 
         rest
                 .jdbcAuthentication()

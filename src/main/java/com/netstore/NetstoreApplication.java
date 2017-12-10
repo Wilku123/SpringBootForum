@@ -12,7 +12,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @SpringBootApplication
 public class NetstoreApplication extends SpringBootServletInitializer
  {
-
+	 @Bean
+	 public BCryptPasswordEncoder bCryptPasswordEncoder() {
+		 return new BCryptPasswordEncoder(8);
+	 }
 
 	public static void main(String[] args) {
 		SpringApplication.run(NetstoreApplication.class, args);

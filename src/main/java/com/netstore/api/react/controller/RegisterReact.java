@@ -25,8 +25,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/react")
-public class Register {
+public class RegisterReact {
 
     @Autowired
     private RoleRepository roleRepository;
@@ -42,7 +41,7 @@ public class Register {
     private AddCredentialsService addCredentialsService;
 
 
-    @PostMapping("/register")
+    @PostMapping("/react/register")
     @Transactional
     public ResponseEntity<ReactStatus> processRegister(@RequestBody UserEntity userEntity) {
         ReactStatus reactStatus = new ReactStatus();

@@ -22,23 +22,20 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.io.ByteArrayOutputStream;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
 @RestController
 @RequestMapping("/react/main")
-public class UserActions {
+public class UserActionsReact {
 
     @Autowired
     private UserRestRepository userRestRepository;
     @Autowired
     private CredentialsRepository credentialsRepository;
-    @Autowired
-    private CircleRestViewRepository circleRestViewRepository;
-    @Autowired
-    private SubscribedCircleRepository subscribedCircleRepository;
-    @Autowired
-    private CircleRest circleRest;
+
+
 
     @RequestMapping("/qr")
     public ResponseEntity<byte[]> getTokenForQr(Authentication authentication) {
@@ -54,20 +51,7 @@ public class UserActions {
 //        return new ResponseEntity<>(credentialsRepository.findByUserIdUser(userRestRepository.findByEmail(authentication.getName()).getIdUser()), HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/subbedCircle", method = RequestMethod.POST)
-    public ResponseEntity<List<CircleWithAuthor>> getLimitedCircle(Authentication auth) {
 
-
-        List<CircleRestViewEntity> circleEntityList = circleRestViewRepository.findAll();
-        List<CircleWithAuthor> circleRestList = new ArrayList<>();
-
-        for (CircleRestViewEntity i : circleEntityList) {
-            if ((subscribedCircleRepository.findByUserIdUserAndCircleIdCircle(userRestRepository.findByEmail(auth.getName()).getIdUser(), i.getIdCircle())) != null) {
-                circleRestList.add(circleRest.generateCircleList(1, i));
-            }
-        }
-        return new ResponseEntity<>(circleRestList, HttpStatus.OK);
-    }
 
 
 }

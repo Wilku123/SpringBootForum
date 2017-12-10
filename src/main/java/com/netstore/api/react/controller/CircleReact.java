@@ -1,9 +1,14 @@
 package com.netstore.api.react.controller;
 
 import com.netstore.api.mobile.controller.CircleRest;
+import com.netstore.model.API.mobile.SchemaRest;
 import com.netstore.model.API.mobile.SchemaRestList;
+import com.netstore.model.API.mobile.circle.CircleIdModel;
 import com.netstore.model.API.mobile.circle.CircleWithAuthor;
 import com.netstore.model.API.mobile.circle.LimitCircleModel;
+import com.netstore.model.API.react.circle.CircleToUnSub;
+import com.netstore.model.API.react.entry.ReactStatus;
+import com.netstore.model.entity.SubscribedCircleEntity;
 import com.netstore.model.repository.CredentialsRepository;
 import com.netstore.model.repository.SubscribedCircleRepository;
 import com.netstore.model.repository.rest.CircleRestViewRepository;
@@ -46,10 +51,8 @@ public class CircleReact {
     private CircleRest circleRest;
 
 
-
-
     @RequestMapping(value = "/getCircle", method = RequestMethod.POST)
-    public ResponseEntity<List<CircleWithAuthor>> getLimitedCircle(Authentication auth) {
+    public ResponseEntity<List<CircleWithAuthor>> getTopic(Authentication auth) {
 
 
         List<CircleRestViewEntity> circleEntityList = circleRestViewRepository.findAllByPublishDateIsLessThanOrderByPublishDateDesc(new Timestamp(System.currentTimeMillis()));
@@ -62,10 +65,49 @@ public class CircleReact {
                 circleRestList.add(circleRest.generateCircleList(0, i));
             }
         }
-        //LimitedListGenerator<CircleWithAuthor> listGenerator = new LimitedListGenerator<>();
-
 
         return new ResponseEntity<>(circleRestList, HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/getOne", method = RequestMethod.POST)
+    public ResponseEntity<CircleRestViewEntity> getOneCircle(@RequestBody CircleIdModel oneById) {
+
+        CircleRestViewEntity circleEntity = circleRestViewRepository.findOne(oneById.getId());
+
+        return new ResponseEntity<>(circleEntity, HttpStatus.OK);
+
+
+    }
+
+    @RequestMapping(value = "/subbedCircle", method = RequestMethod.POST)
+    public ResponseEntity<List<CircleWithAuthor>> getSubbedCircle(Authentication auth) {
+
+
+        List<CircleRestViewEntity> circleEntityList = circleRestViewRepository.findAll();
+        List<CircleWithAuthor> circleRestList = new ArrayList<>();
+
+        for (CircleRestViewEntity i : circleEntityList) {
+            if ((subscribedCircleRepository.findByUserIdUserAndCircleIdCircle(userRestRepository.findByEmail(auth.getName()).getIdUser(), i.getIdCircle())) != null) {
+                circleRestList.add(circleRest.generateCircleList(1, i));
+            }
+        }
+        return new ResponseEntity<>(circleRestList, HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/unSubCircle", method = RequestMethod.POST)
+    public ResponseEntity<ReactStatus> unSubCircle(Authentication auth, @RequestBody CircleToUnSub circleToUnSub) {
+
+
+        List<Integer> list = circleToUnSub.getList();
+        SubscribedCircleEntity subscribedCircleEntity = new SubscribedCircleEntity();
+        for (Integer i : list) {
+            subscribedCircleEntity.setUserIdUser(userRestRepository.findByEmail(auth.getName()).getIdUser());
+            subscribedCircleEntity.setCircleIdCircle(i);
+            subscribedCircleRepository.delete(subscribedCircleEntity);
+        }
+        ReactStatus reactStatus = new ReactStatus();
+        reactStatus.setStatus(true);
+        return new ResponseEntity<>(reactStatus, HttpStatus.OK);
 
 
     }

@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/react")
-public class ChangePassword {
+public class ChangePasswordReact {
 
     @Autowired
     UserRepository userRepository;
@@ -35,7 +35,7 @@ public class ChangePassword {
                 .to((""), (userEntity.getEmail()))// (userEntity.getEmail()+"@us.edu.pl")
                 .cc("Halo halo", "dejmitogroup@gmail.com")
                 .subject("Resetowanie Hasła")
-                .text("By zresetować hasło proszę wejsc w link http://37.233.102.142:8080/resetPass?token=" + userRepository.findByEmail(userEntity.getEmail()).getActiveToken())
+                .text("By zresetować hasło proszę wejsc w link http://37.233.102.142:8080/changePass?token=" + userRepository.findByEmail(userEntity.getEmail()).getActiveToken())
                 .build();
         new Mailer("smtp.gmail.com", 587, "dejmitogroup@gmail.com", "haslo123", TransportStrategy.SMTP_TLS).sendMail(mail);
 

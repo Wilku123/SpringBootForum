@@ -14,7 +14,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/react/main")
-public class CurrentUser {
+public class CurrentUserReact {
     @Autowired
     private UserRestRepository userRestRepository;
 

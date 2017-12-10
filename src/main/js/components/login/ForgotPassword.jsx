@@ -1,19 +1,27 @@
 import React from 'react';
 import {BrowserRouter as Router, Route, Link} from 'react-router-dom';
 import {url} from '../../Constants'
+import {Dialog, FlatButton, MuiThemeProvider} from "material-ui";
 
 class ForgotPassword extends React.Component {
 
     constructor(props) {
         super(props);
         this.onSubmit = this.handleSubmit.bind(this);
+        this.modalClose = this.handleClose.bind(this);
         this.state = {
             stat: {status:""},
             email: '',
             formErrors: {email: ''},
-            emailValid: false
+            emailValid: false,
+            open:false
         }
     }
+    handleClose () {
+        this.setState({open: false});
+
+        window.location.replace(url+"/login");
+    };
 
     handleUserInput(e) {
         const name = e.target.name;
@@ -69,12 +77,20 @@ class ForgotPassword extends React.Component {
         }).then(() => {
             checkUser = this.state.stat.status;
             if (checkUser === true) {
-
+                this.setState({open: true});
             }
         });
     }
 
     render() {
+        const actions =
+
+            <FlatButton
+                label="Ok"
+                primary={true}
+                keyboardFocused={true}
+                onClick={this.modalClose}
+            />;
         return (
             <div>
                 <link rel="stylesheet" type="text/css" href="/../../css/loginPage.css"/>
@@ -112,7 +128,16 @@ class ForgotPassword extends React.Component {
                         </div>
                     </div>
                 </div>
-
+                <MuiThemeProvider>
+                <Dialog
+                    title="Aktywacja konta"
+                    actions={actions}
+                    modal={false}
+                    open={this.state.open}
+                    onRequestClose={this.modalClose}
+                > Na twój adres e-mail wysłalismy link do zmiany hasła
+                </Dialog>
+            </MuiThemeProvider>
             </div>
         );
     }

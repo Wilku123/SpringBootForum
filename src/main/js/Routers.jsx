@@ -36,7 +36,7 @@ class Routers extends React.Component {
 
                         <Route path='/reg' component={Register}/>
                         <Route path='/forgot' component={ForgotPassword}/>
-                        <Route path="/resetPass" component={ResetPass}/>
+                        <Route path="/changePass" component={ResetPass}/>
                         {/*<Route path='/contact' component={Contact} />*/}
                     </Switch>
 

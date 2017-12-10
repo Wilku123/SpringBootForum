@@ -63,7 +63,7 @@ class ResetPass extends ReactQueryParams {
         let checkUser;
         var myHeaders = new Headers({"Content-Type": "application/json"});
 
-        fetch(url + '/react/changePass', {
+        fetch(url + "/react/changePass", {
             method: 'POST',
             headers: myHeaders,
             body: JSON.stringify({

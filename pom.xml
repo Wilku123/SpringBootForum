@@ -131,7 +131,24 @@
     </dependencies>
 
     <build>
+
         <plugins>
+            <plugin>
+            <groupId>org.cloudfoundry</groupId>
+            <artifactId>cf-maven-plugin</artifactId>
+            <version>1.1.2</version>
+            <configuration>
+                <target>https://api.eu-gb.bluemix.net</target>
+                <org>bjarni123@gmail.com</org>        <!-- update -->
+                <space>dev</space>                               <!-- update -->
+                <appname>reactTestAdrMac</appname>              <!-- update -->
+                <url>reactTestAdrMac.eu-gb.mybluemix.net</url>  <!-- update -->
+                <memory>512</memory>
+                <instances>1</instances>
+                <username>bjarni123@gmail.com</username> <!-- update, insecure -->
+                <password>Ha$lo123</password>     <!-- update, insecure -->
+            </configuration>
+        </plugin>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>

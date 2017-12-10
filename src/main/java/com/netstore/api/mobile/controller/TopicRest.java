@@ -53,7 +53,7 @@ public class TopicRest {
     private AddEventService addEventService;
 
 
-    private TopicWithAuthor generateTopicList(int sub, TopicRestViewEntity i) {
+    public TopicWithAuthor generateTopicWithAuthor(int sub, TopicRestViewEntity i) {
 
         Integer idTopic = i.getIdTopic();
         String name = i.getName();
@@ -93,9 +93,9 @@ public class TopicRest {
 
 
             if ((subscribedTopicRepository.findByUserIdUserAndTopicIdTopic(credentialsRepository.findByToken(auth.getName()).getUserIdUser(), topicEntity.getIdTopic())) != null) {
-                topicWithAuthor = (generateTopicList(1, topicEntity));
+                topicWithAuthor = (generateTopicWithAuthor(1, topicEntity));
             } else {
-                topicWithAuthor = (generateTopicList(0, topicEntity));
+                topicWithAuthor = (generateTopicWithAuthor(0, topicEntity));
             }
             SchemaRest<TopicWithAuthor> schemaRest = new SchemaRest<>(true, "git gut", 1337, topicWithAuthor);
 
@@ -137,7 +137,7 @@ public class TopicRest {
                 this.addEventService.saveAndFlush(eventEntity);
 
                 TopicRestViewEntity topicRestViewEntity = topicRestViewRepository.findOne(topicEntity.getIdTopic());
-                TopicWithAuthor topicWithAuthor = generateTopicList(1 , topicRestViewEntity);
+                TopicWithAuthor topicWithAuthor = generateTopicWithAuthor(1 , topicRestViewEntity);
 
 
 
@@ -167,9 +167,9 @@ public class TopicRest {
 
                 for (TopicRestViewEntity i : topicEntityList) {
                     if ((subscribedTopicRepository.findByUserIdUserAndTopicIdTopic(credentialsRepository.findByToken(auth.getName()).getUserIdUser(), i.getIdTopic())) != null) {
-                        topicWithAuthor.add(generateTopicList(1, i));
+                        topicWithAuthor.add(generateTopicWithAuthor(1, i));
                     } else {
-                        topicWithAuthor.add(generateTopicList(0, i));
+                        topicWithAuthor.add(generateTopicWithAuthor(0, i));
                     }
                 }
 
@@ -242,9 +242,9 @@ public class TopicRest {
             topicRestViewEntity= topicRestViewRepository.findAllByNameContainingAndCircleIdCircle(lookForModel.getName(), lookForModel.getId());
             for (TopicRestViewEntity i : topicRestViewEntity) {
                 if ((subscribedTopicRepository.findByUserIdUserAndTopicIdTopic(credentialsRepository.findByToken(auth.getName()).getUserIdUser(), i.getIdTopic())) != null) {
-                    entityWithAuthors.add(generateTopicList(1, i));
+                    entityWithAuthors.add(generateTopicWithAuthor(1, i));
                 } else {
-                    entityWithAuthors.add(generateTopicList(0, i));
+                    entityWithAuthors.add(generateTopicWithAuthor(0, i));
                 }
             }
             schemaRestList = new SchemaRestList<>(true, "", 1337, listGenerator.limitedList(entityWithAuthors, lookForModel.getHowMany()));
@@ -270,7 +270,7 @@ public class TopicRest {
 
                 for (TopicRestViewEntity i : topicEntityList) {
                     if ((subscribedTopicRepository.findByUserIdUserAndTopicIdTopic(credentialsRepository.findByToken(auth.getName()).getUserIdUser(), i.getIdTopic())) != null) {
-                        topicWithAuthor.add(generateTopicList(1, i));
+                        topicWithAuthor.add(generateTopicWithAuthor(1, i));
                     }
                 }
 
