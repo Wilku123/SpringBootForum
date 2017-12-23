@@ -1,6 +1,6 @@
 package com.netstore.api.react.controller;
 
-import com.netstore.model.API.react.entry.ReactStatus;
+import com.netstore.model.API.react.ReactStatus;
 import com.netstore.model.entity.UserEntity;
 import com.netstore.model.repository.UserRepository;
 import com.netstore.model.service.AddUserService;
@@ -12,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 

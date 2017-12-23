@@ -43,7 +43,7 @@ public class AnswerRest {
     @Autowired
     private AddEventService addEventService;
 
-    private AnswerWithAuthor generateAnswerList(int yours, AnswerRestViewEntity i) {
+    public AnswerWithAuthor generateAnswerList(int yours, AnswerRestViewEntity i) {
 
         Integer idAnswer = i.getIdAnswer();
         String content = i.getContent();

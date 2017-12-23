@@ -13,5 +13,6 @@ public interface UserRepository extends JpaRepository<UserEntity,Integer>, JpaSp
     UserEntity findByActiveToken(String activeToken);
     UserEntity findFirstByEmail(String email);
     UserEntity findByEmail(String email);
+    UserEntity findByEmailAndPassword(String email,String pass);
 
 }

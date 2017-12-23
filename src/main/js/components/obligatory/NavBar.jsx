@@ -55,7 +55,7 @@ class NavBar extends React.Component {
                                              id="basic-nav-dropdown">
                                     <MenuItem href={"/main/app"}>Aplikacja Moblina</MenuItem>
                                     <MenuItem href={"/main/subbed"}>Subskrybowane</MenuItem>
-                                    <MenuItem href={"/main/config/"}>Ustawienia</MenuItem>
+                                    <MenuItem href={"/main/config"}>Ustawienia</MenuItem>
                                     <MenuItem divider/>
                                     <MenuItem href={"/logout"}>Wyloguj</MenuItem>
                                 </NavDropdown>

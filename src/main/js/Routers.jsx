@@ -8,6 +8,11 @@ import ForgotPassword from './components/login/ForgotPassword';
 import ResetPass from './components/login/ResetPass';
 import MobileApp from './components/user/MobileApp';
 import SubbedEntityList from './components/main/SubbedEntityList'
+import Config from './components/main/Config';
+import Topic from './components/main/Topic';
+import Answer from './components/main/Answer';
+import User from './components/main/User';
+
 
 
 class Routers extends React.Component {
@@ -30,8 +35,14 @@ class Routers extends React.Component {
                         <Route exact path='/login' component={Login}/>
 
                         <Route path="/main/circle" component={Circle}/>
+                        <Route path="/main/topic" component={Topic}/>
+                        <Route path="/main/answer" component={Answer}/>
+                        <Route path="/main/profile" component={User}/>
+
+
                         <Route path="/main/app" component={MobileApp}/>
                         <Route path="/main/subbed" component={SubbedEntityList}/>
+                        <Route path="/main/config" component={Config}/>
 
 
                         <Route path='/reg' component={Register}/>

@@ -1,4 +1,4 @@
-package com.netstore.model.API.react.entry;
+package com.netstore.model.API.react;
 
 public class ReactStatus {
     private boolean status;

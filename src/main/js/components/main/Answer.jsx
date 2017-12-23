@@ -2,12 +2,15 @@ import React, {Component} from 'react';
 import NavBar from './../obligatory/NavBar';
 import {Breadcrumb, Col, Grid, Jumbotron, Panel, Row} from "react-bootstrap";
 import {
-    Avatar, CircularProgress, Dialog, Divider, FlatButton, FloatingActionButton, List, ListItem,
+    Avatar, CircularProgress, Dialog, FlatButton, FloatingActionButton, List, ListItem,
     MuiThemeProvider, TextField
 } from "material-ui";
 import ContentAdd from 'material-ui/svg-icons/content/add';
 import {Link} from "react-router-dom";
 import {url} from '../../Constants';
+import ReactQueryParams from 'react-query-params';
+import Timestamp from 'react-timestamp';
+
 
 let header = {
     "Content-Type": "application/json"
@@ -17,7 +20,7 @@ let header = {
 // /*{dynamicData.name}:*/
 // /*{dynamicData.lastName}*/
 
-class Circle extends React.Component {
+class Answer extends ReactQueryParams {
 
 
     constructor() {
@@ -26,13 +29,12 @@ class Circle extends React.Component {
         this.closeModal = this.handleClose.bind(this);
         this.openDialog = this.handleOpen.bind(this);
         this.state = {
-            newCircle:[],
-            circles: [],
-            circleName: "",
-            circleNameValid: false,
-            circleDescription: "",
-            circleDescriptionValid: false,
-            formErrors: {circleName: '', circleDescription: ''},
+            circle: [],
+            topic: [],
+            answers: [],
+            answerName: "",
+            answerNameValid: false,
+            formErrors: {answerName: ''},
             formValid: false,
             isLoading: true,
             open: false,
@@ -51,19 +53,13 @@ class Circle extends React.Component {
 
     validateField(fieldName, value) {
         let fieldValidationErrors = this.state.formErrors;
-        let circleNameValid = this.state.circleNameValid;
-        let circleDescriptionValid = this.state.circleDescriptionValid;
+        let answerNameValid = this.state.answerNameValid;
 
 
         switch (fieldName) {
-            case 'circleName':
-                circleNameValid = value.length >= 3 && value.length <= 40;
-                fieldValidationErrors.circleName = circleNameValid ? '' : 'Nie poprawna długość';
-                break;
-            case 'circleDescription':
-                circleDescriptionValid = value.length >= 5 && value.length <= 120;
-
-                fieldValidationErrors.circleDescription = circleDescriptionValid ? '' : "Nie poprawna długość";
+            case 'answerName':
+                answerNameValid = value.length >= 2 && value.length <= 250;
+                fieldValidationErrors.answerName = answerNameValid ? '' : 'Nie poprawna długość';
                 break;
             default:
                 break;
@@ -71,13 +67,12 @@ class Circle extends React.Component {
         this.setState({
 
             formErrors: fieldValidationErrors,
-            circleNameValid: circleNameValid,
-            circleDescriptionValid: circleDescriptionValid,
+            answerNameValid: answerNameValid
         }, this.validateForm);
     }
 
     validateForm() {
-        this.setState({formValid: this.state.circleNameValid && this.state.circleDescriptionValid});
+        this.setState({formValid: this.state.answerNameValid});
     }
 
     handleOpen() {
@@ -90,29 +85,56 @@ class Circle extends React.Component {
     };
 
     componentDidMount() {
-        fetch(url + "/react/main/getCircle", {
+        fetch(url + "/react/main/getAnswers", {
             method: 'POST',
-            body: "",
+            body: JSON.stringify({
+                topicIdTopic: this.queryParams.topic
+            }),
             headers: header,
             credentials: 'same-origin'
         }).then((Response) => Response.json()).then((findresponse) => {
             this.setState({
-                circles: findresponse,
+                answers: findresponse,
                 isLoading: false
             })
-        })
+        });
+        fetch(url + "/react/main/getOneTopic", {
+            method: 'POST',
+            body: JSON.stringify({
+                id: this.queryParams.topic
+            }),
+            headers: header,
+            credentials: 'same-origin'
+        }).then((Response) => Response.json()).then((findresponse) => {
+            this.setState({
+                topic: findresponse,
+            })
+        }).then(() => {
+            fetch(url + "/react/main/getOneCircleFromTopic", {
+                method: 'POST',
+                body: JSON.stringify({
+                    id: this.queryParams.topic
+                }),
+                headers: header,
+                credentials: 'same-origin'
+            }).then((Response) => Response.json()).then((findresponse) => {
+                this.setState({
+                    circle: findresponse,
+                })
+            })
+        });
     }
 
     handleSaveChanges() {
         var myHeaders = new Headers({"Content-Type": "application/json"});
 
-        fetch(url + '/react/main/addCircle', {
+        fetch(url + '/react/main/addAnswer', {
             method: 'POST',
             headers: myHeaders,
             credentials: 'same-origin',
             body: JSON.stringify({
-                name: this.state.circleName,
-                description: this.state.circleDescription
+                content: this.state.answerName,
+                topicIdTopic: this.queryParams.topic
             })
 
         })
@@ -120,21 +142,16 @@ class Circle extends React.Component {
                 return response.json()
             }).then((findresponse) => {
             this.setState({
-                newCircle: findresponse
+                stat: findresponse
             });
-            return findresponse
+            return findresponse;
         }).then((findresponse) => {
-            let circles = this.state.circles;
-            let newCircle = this.state.newCircle;
-            let newCircles = newCircle.concat(circles);
-            this.setState(
-                {circles:newCircles}
-            );
+            const answers = this.state.answers.concat(findresponse);
+            this.setState({answers});
         }).then(() => {
             this.setState({
                 open: false,
-                circleName: "",
-                circleDescription: ""
+                answerName: ""
             });
         });
 
@@ -168,23 +185,21 @@ class Circle extends React.Component {
             />,
         ];
         let content =
-
             <Jumbotron>
-                {this.state.circles.map((dynamicData, key) => (
+                {this.state.answers.map((dynamicData, key) =>
                     <Panel key={key}>
                         <Grid>
                             <Row className="show-grid">
                                 <Col xs={12} md={8}>
-                                    <Link to={"/main/topic?circle=" + dynamicData.idCircle}>
-                                        <h4>
-                                            {dynamicData.name}
-                                        </h4>
-                                    </Link>
 
-                                    {dynamicData.description}
+                                    <h4>
+                                        {dynamicData.content}
+                                    </h4>
+
+
                                 </Col>
                                 <Col xs={6} md={2}>
-                                    <h4>{dynamicData.countTopic}</h4> Tematów
+                                    <h4><Timestamp time={(dynamicData.publishDate) / 1000} format='full'/></h4> Data publikacji
 
                                 </Col>
                                 <Col xs={6} md={2}>
@@ -205,9 +220,8 @@ class Circle extends React.Component {
                         </Grid>
 
                     </Panel>
-                ))}
+                )}
             </Jumbotron>;
-
         let loader = <MuiThemeProvider>
             <div align="center">
                 <CircularProgress/>
@@ -220,7 +234,7 @@ class Circle extends React.Component {
 
             <div>
                 <NavBar/>
-                <link rel="stylesheet" href="../../css/circle.css"/>
+                <link rel="stylesheet" href="../../css/answer.css"/>
 
 
                 <Row className="show-grid">
@@ -229,17 +243,21 @@ class Circle extends React.Component {
                     <Col xs={6} md={8}>
 
                         <Breadcrumb>
-                            <Breadcrumb.Item href="/" active>
+                            <Breadcrumb.Item href="/main/circle">
                                 Strona Główna
+                            </Breadcrumb.Item>
+                            <Breadcrumb.Item href={"/main/topic?circle=" + this.state.circle.idCircle}>
+                                {this.state.circle.name}
+                            </Breadcrumb.Item>
+                            <Breadcrumb.Item active>
+                                {this.state.topic.name}
                             </Breadcrumb.Item>
                         </Breadcrumb>
                         <Panel id="mainPanel">
                             <h4>
-                                Koła zainteresowań
+                                Odpowiedzi
                             </h4>
                         </Panel>
-                        <div id={"circles"}>
-                        </div>
                         {this.state.isLoading ? loader : content}
 
 
@@ -253,18 +271,15 @@ class Circle extends React.Component {
 
                         <FloatingActionButton onClick={this.openDialog}>
                             <ContentAdd/>
-
                         </FloatingActionButton>
                         <div className={"buttonUnderFab"}>
                             <FlatButton hoverColor={"transparent"} disableTouchRipple={true}
-                                        label={<strong>Dodaj koło</strong>} primary={true} onClick={this.openDialog}/>
+                                        label={<strong>Dodaj Odpowiedź</strong>} primary={true}
+                                        onClick={this.openDialog}/>
                         </div>
-
                     </div>
-
-
                     <Dialog
-                        title="Dodaj krąg"
+                        title="Dodaj Odpowiedź"
                         actions={actions}
                         modal={true}
                         open={this.state.open}
@@ -272,26 +287,15 @@ class Circle extends React.Component {
                     >
                         <div className={"dialog"}>
                             <TextField
-                                floatingLabelText="Nazwa kręgu"
-
-
-                                name="circleName"
-                                id="circleName" value={this.state.circleName}
-
-                                errorText={this.state.formErrors.circleName}
-                                onChange={(event) => this.handleUserInput(event)}
-                            /><br/>
-                            <TextField
-                                floatingLabelText="Krótki opis kręgu"
+                                floatingLabelText="Odpowiedz"
+                                name="answerName"
+                                id="answerName" value={this.state.answerName}
                                 multiLine={true}
-                                name="circleDescription"
-                                hintText={"Opis musi mieć minimum 5 liter i nie więcej jak 120"}
-
-                                id="circleDescription" value={this.state.circleDescription}
-                                errorText={this.state.formErrors.circleDescription}
+                                errorText={this.state.formErrors.answerName}
                                 onChange={(event) => this.handleUserInput(event)}
-                                rows={2}
+                                rows={3}
                             /><br/>
+
                         </div>
                     </Dialog>
                 </MuiThemeProvider>
@@ -301,4 +305,4 @@ class Circle extends React.Component {
     }
 }
 
-export default Circle
+export default Answer

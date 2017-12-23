@@ -5,10 +5,8 @@ import {
     Checkbox, CircularProgress, Dialog, FlatButton, MuiThemeProvider, RaisedButton, Tab,
     Tabs
 } from "material-ui";
-import ActionFavorite from 'material-ui/svg-icons/action/favorite';
-import ActionFavoriteBorder from 'material-ui/svg-icons/action/favorite-border';
+
 import Timestamp from 'react-timestamp';
-import {Link} from "react-router-dom";
 import {url} from '../../Constants';
 
 let header = {
@@ -32,7 +30,8 @@ class SubbedEntityList extends React.Component {
         this.state = {
             subbedCircle: [],
             subbedTopic: [],
-            isLoading: true,
+            isLoadingCircle: true,
+            isLoadingTopic: true,
             circleInTopic: "",
             unSubListCircle: [],
             unSubListTopic: [],
@@ -52,6 +51,7 @@ class SubbedEntityList extends React.Component {
         }
 
     }
+
     handleUnSubTopic(checked, id) {
 
         if (checked) {
@@ -65,17 +65,18 @@ class SubbedEntityList extends React.Component {
     handleOpenCircle() {
         this.setState({openCircle: true});
     };
+
     handleOpenTopic() {
         this.setState({openTopic: true});
     };
 
     handleClose() {
-        this.setState({openCircle: false, openTopic:false});
+        this.setState({openCircle: false, openTopic: false});
     };
 
     handleSaveChangesCircle() {
 
-        if (this.state.unSubListCircle.length>0) {
+        if (this.state.unSubListCircle.length > 0) {
             fetch(url + "/react/main/unSubCircle", {
                 method: 'POST',
                 body: JSON.stringify({
@@ -94,14 +95,10 @@ class SubbedEntityList extends React.Component {
             this.handleClose();
         }
     }
+
     handleSaveChangesTopic() {
 
-
-
-
-
-
-        if (this.state.unSubListTopic.length>0) {
+        if (this.state.unSubListTopic.length > 0) {
             fetch(url + "/react/main/unSubTopic", {
                 method: 'POST',
                 body: JSON.stringify({
@@ -131,7 +128,7 @@ class SubbedEntityList extends React.Component {
         }).then((Response) => Response.json()).then((findresponse) => {
             this.setState({
                 subbedCircle: findresponse,
-                isLoading: false
+                isLoadingCircle: false
             })
         });
         fetch(url + "/react/main/subbedTopic", {
@@ -142,7 +139,7 @@ class SubbedEntityList extends React.Component {
         }).then((Response) => Response.json()).then((findresponse) => {
             this.setState({
                 subbedTopic: findresponse,
-                isLoading: false
+                isLoadingTopic: false
             })
         })
     }
@@ -196,16 +193,42 @@ class SubbedEntityList extends React.Component {
                 />,
             </MuiThemeProvider>
         ];
-        let content =
+        let contentTopic =
+            <Jumbotron>
+                <Table bordered striped hover>
+                    <thead>
+                    <tr>
+                        <th></th>
+                        <th>Nazwa</th>
+                        <th>Opis</th>
+                        <th>Data Utworzenia</th>
+                        <th>Autor</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {this.state.subbedTopic.map((dynamicData, key) =>
+                        <tr>
+                            <td>
+                                <Checkbox
+                                    onCheck={(event, isChecked) => this.handleUnSubTopic(isChecked, dynamicData.idTopic)}/>
+                            </td>
+                            <td>{dynamicData.name}</td>
+                            <td>{dynamicData.description}</td>
+                            <td><Timestamp time={(dynamicData.publishDate) / 1000} format='date'/></td>
+                            <td>{dynamicData.author.name + " " + dynamicData.author.lastName}</td>
+                        </tr>
+                    )}
+                    </tbody>
+                </Table>
+                <RaisedButton label="Usuń Zaznaczone subskrypcje" onClick={this.openDialogTopic}
+                              fullWidth={true}/>
+            </Jumbotron>;
+        let contentCircle =
             <Jumbotron>
                 <MuiThemeProvider>
 
 
-                    <Tabs
-                        value={this.state.value}
-                        onChange={this.handleChange}
-                    >
-                        <Tab label="Subskrybowane Koła" value="a">
+
                             <Table bordered striped hover>
                                 <thead>
                                 <tr>
@@ -225,48 +248,23 @@ class SubbedEntityList extends React.Component {
                                         </td>
                                         <td>{dynamicData.name}</td>
                                         <td>{dynamicData.description}</td>
-                                        <td><Timestamp time={(dynamicData.publishDate)/1000} format='date'/></td>
+                                        <td><Timestamp time={(dynamicData.publishDate) / 1000} format='date'/></td>
                                         <td>{dynamicData.author.name + " " + dynamicData.author.lastName}</td>
                                     </tr>
                                 )}
                                 </tbody>
                             </Table>
-                            <RaisedButton label="Usuń Zaznaczone subskrypcje" onClick={this.openDialogCircle} fullWidth={true}/>
-                        </Tab>
-                        <Tab label="Subskrybowane Tematy" value="b">
-                            <Table bordered striped hover>
-                                <thead>
-                                <tr>
-                                    <th></th>
-                                    <th>Nazwa</th>
-                                    <th>Opis</th>
-                                    <th>Data Utworzenia</th>
-                                    <th>Autor</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                {this.state.subbedTopic.map((dynamicData, key) =>
-                                    <tr>
-                                        <td>
-                                            <Checkbox
-                                                onCheck={(event, isChecked) => this.handleUnSubTopic(isChecked, dynamicData.idTopic)}/>
-                                        </td>
-                                        <td>{dynamicData.name}</td>
-                                        <td>{dynamicData.description}</td>
-                                        <td><Timestamp time={dynamicData.publishDate.toString()} format='date'/></td>
-                                        <td>{dynamicData.author.name + " " + dynamicData.author.lastName}</td>
-                                    </tr>
-                                )}
-                                </tbody>
-                            </Table>
-                            <RaisedButton label="Usuń Zaznaczone subskrypcje" onClick={this.openDialogTopic} fullWidth={true}/>
-                        </Tab>
-                    </Tabs>
+                            <RaisedButton label="Usuń Zaznaczone subskrypcje" onClick={this.openDialogCircle}
+                                          fullWidth={true}/>
+
 
 
                 </MuiThemeProvider>
             </Jumbotron>;
-        let loader = <MuiThemeProvider>
+
+
+        let loader =
+            <MuiThemeProvider>
             <div align="center">
                 <CircularProgress/>
             </div>
@@ -275,6 +273,7 @@ class SubbedEntityList extends React.Component {
         return (
 
             <div>
+                <MuiThemeProvider>
                 <NavBar/>
                 <link rel="stylesheet" href="../../css/circle.css"/>
 
@@ -293,15 +292,24 @@ class SubbedEntityList extends React.Component {
                                 Subskrybowane
                             </Breadcrumb.Item>
                         </Breadcrumb>
-                        {this.state.isLoading ? loader : content}
-
+                        <Tabs
+                            value={this.state.value}
+                            onChange={this.handleChange}
+                        >
+                            <Tab label="Subskrybowane Koła" value="a">
+                                {this.state.isLoadingCircle ? loader : contentCircle}
+                            </Tab>
+                            <Tab label="Subskrybowane Tematy" value="b">
+                                {this.state.isLoadingTopic ? loader : contentTopic}
+                            </Tab>
+                        </Tabs>
 
                     </Col>
 
                     <Col xsHidden md={1}/>
                 </Row>
 
-                <MuiThemeProvider>
+
                     <Dialog
                         title="Usunąć Subksrypcje?"
                         actions={actionsCircle}

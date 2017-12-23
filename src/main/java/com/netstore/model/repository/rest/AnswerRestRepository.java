@@ -15,6 +15,7 @@ public interface AnswerRestRepository extends JpaRepository<AnswerRestViewEntity
     AnswerRestViewEntity findByIdAnswer(Integer id);
     List<AnswerRestViewEntity> findAllByTopicIdTopic(Integer id);
     List<AnswerRestViewEntity> findAllByTopicIdTopicAndPublishDateIsLessThanOrderByPublishDateDesc(Integer id, Timestamp publishDate);
+    List<AnswerRestViewEntity> findAllByTopicIdTopicAndPublishDateIsLessThanOrderByPublishDate(Integer id, Timestamp publishDate);
     List<AnswerRestViewEntity> findAllByTopicIdTopicAndPublishDateIsGreaterThanOrderByPublishDateDesc(Integer id, Timestamp publishDate);
     List<AnswerRestViewEntity> findAllByContentContainingAndTopicIdTopic(String content,Integer id);
 //    List<AnswerRestViewEntity> findAllByTopicIdTopicAndPublishDateIsLessThanEqualOrderByPublishDate

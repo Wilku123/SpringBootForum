@@ -8,6 +8,8 @@ import {
 import ContentAdd from 'material-ui/svg-icons/content/add';
 import {Link} from "react-router-dom";
 import {url} from '../../Constants';
+import ReactQueryParams from 'react-query-params';
+
 
 let header = {
     "Content-Type": "application/json"
@@ -17,7 +19,7 @@ let header = {
 // /*{dynamicData.name}:*/
 // /*{dynamicData.lastName}*/
 
-class Circle extends React.Component {
+class Topic extends ReactQueryParams {
 
 
     constructor() {
@@ -26,13 +28,14 @@ class Circle extends React.Component {
         this.closeModal = this.handleClose.bind(this);
         this.openDialog = this.handleOpen.bind(this);
         this.state = {
-            newCircle:[],
-            circles: [],
-            circleName: "",
-            circleNameValid: false,
-            circleDescription: "",
-            circleDescriptionValid: false,
-            formErrors: {circleName: '', circleDescription: ''},
+            stat:[],
+            circle: [],
+            topics: [],
+            topicName: "",
+            topicNameValid: false,
+            topicDescription: "",
+            topicDescriptionValid: false,
+            formErrors: {topicName: '', topicDescription: ''},
             formValid: false,
             isLoading: true,
             open: false,
@@ -51,19 +54,19 @@ class Circle extends React.Component {
 
     validateField(fieldName, value) {
         let fieldValidationErrors = this.state.formErrors;
-        let circleNameValid = this.state.circleNameValid;
-        let circleDescriptionValid = this.state.circleDescriptionValid;
+        let topicNameValid = this.state.topicNameValid;
+        let topicDescriptionValid = this.state.topicDescriptionValid;
 
 
         switch (fieldName) {
-            case 'circleName':
-                circleNameValid = value.length >= 3 && value.length <= 40;
-                fieldValidationErrors.circleName = circleNameValid ? '' : 'Nie poprawna długość';
+            case 'topicName':
+                topicNameValid = value.length >= 3 && value.length <= 40;
+                fieldValidationErrors.topicName = topicNameValid ? '' : 'Nie poprawna długość';
                 break;
-            case 'circleDescription':
-                circleDescriptionValid = value.length >= 5 && value.length <= 120;
+            case 'topicDescription':
+                topicDescriptionValid = value.length >= 5 && value.length <= 120;
 
-                fieldValidationErrors.circleDescription = circleDescriptionValid ? '' : "Nie poprawna długość";
+                fieldValidationErrors.topicDescription = topicDescriptionValid ? '' : "Nie poprawna długość";
                 break;
             default:
                 break;
@@ -71,13 +74,13 @@ class Circle extends React.Component {
         this.setState({
 
             formErrors: fieldValidationErrors,
-            circleNameValid: circleNameValid,
-            circleDescriptionValid: circleDescriptionValid,
+            topicNameValid: topicNameValid,
+            topicDescriptionValid: topicDescriptionValid,
         }, this.validateForm);
     }
 
     validateForm() {
-        this.setState({formValid: this.state.circleNameValid && this.state.circleDescriptionValid});
+        this.setState({formValid: this.state.topicNameValid && this.state.topicDescriptionValid});
     }
 
     handleOpen() {
@@ -90,15 +93,29 @@ class Circle extends React.Component {
     };
 
     componentDidMount() {
-        fetch(url + "/react/main/getCircle", {
+        fetch(url + "/react/main/getTopic", {
             method: 'POST',
-            body: "",
+            body: JSON.stringify({
+                circleIdCircle: this.queryParams.circle
+            }),
             headers: header,
             credentials: 'same-origin'
         }).then((Response) => Response.json()).then((findresponse) => {
             this.setState({
-                circles: findresponse,
+                topics: findresponse,
                 isLoading: false
+            })
+        });
+        fetch(url + "/react/main/getOneCircle", {
+            method: 'POST',
+            body: JSON.stringify({
+                id: this.queryParams.circle
+            }),
+            headers: header,
+            credentials: 'same-origin'
+        }).then((Response) => Response.json()).then((findresponse) => {
+            this.setState({
+                circle: findresponse,
             })
         })
     }
@@ -106,13 +123,14 @@ class Circle extends React.Component {
     handleSaveChanges() {
         var myHeaders = new Headers({"Content-Type": "application/json"});
 
-        fetch(url + '/react/main/addCircle', {
+        fetch(url + '/react/main/addTopic', {
             method: 'POST',
             headers: myHeaders,
             credentials: 'same-origin',
             body: JSON.stringify({
-                name: this.state.circleName,
-                description: this.state.circleDescription
+                name: this.state.topicName,
+                description: this.state.topicDescription,
+                circleIdCircle: this.queryParams.circle
             })
 
         })
@@ -120,24 +138,26 @@ class Circle extends React.Component {
                 return response.json()
             }).then((findresponse) => {
             this.setState({
-                newCircle: findresponse
+                stat: findresponse,
             });
             return findresponse
         }).then((findresponse) => {
-            let circles = this.state.circles;
-            let newCircle = this.state.newCircle;
-            let newCircles = newCircle.concat(circles);
+            let topics = this.state.topics;
+            let newTopic = this.state.stat;
+            let newTopics = newTopic.concat(topics);
+            // const topics = this.state.topics.concat(findresponse);
             this.setState(
-                {circles:newCircles}
+                {topics:newTopics}
             );
         }).then(() => {
             this.setState({
                 open: false,
-                circleName: "",
-                circleDescription: ""
+                // isLoading: true,
+                topicName: "",
+                topicDescription: ""
             });
-        });
 
+        });
 
     }
 
@@ -168,14 +188,13 @@ class Circle extends React.Component {
             />,
         ];
         let content =
-
             <Jumbotron>
-                {this.state.circles.map((dynamicData, key) => (
+                {this.state.topics.map((dynamicData, key) =>
                     <Panel key={key}>
                         <Grid>
                             <Row className="show-grid">
                                 <Col xs={12} md={8}>
-                                    <Link to={"/main/topic?circle=" + dynamicData.idCircle}>
+                                    <Link to={"/main/answer?topic=" + dynamicData.idTopic}>
                                         <h4>
                                             {dynamicData.name}
                                         </h4>
@@ -184,7 +203,7 @@ class Circle extends React.Component {
                                     {dynamicData.description}
                                 </Col>
                                 <Col xs={6} md={2}>
-                                    <h4>{dynamicData.countTopic}</h4> Tematów
+                                    <h4>{dynamicData.countAnswer}</h4> Odpowiedzi
 
                                 </Col>
                                 <Col xs={6} md={2}>
@@ -205,9 +224,8 @@ class Circle extends React.Component {
                         </Grid>
 
                     </Panel>
-                ))}
+                )}
             </Jumbotron>;
-
         let loader = <MuiThemeProvider>
             <div align="center">
                 <CircularProgress/>
@@ -220,7 +238,7 @@ class Circle extends React.Component {
 
             <div>
                 <NavBar/>
-                <link rel="stylesheet" href="../../css/circle.css"/>
+                <link rel="stylesheet" href="../../css/answer.css"/>
 
 
                 <Row className="show-grid">
@@ -229,17 +247,18 @@ class Circle extends React.Component {
                     <Col xs={6} md={8}>
 
                         <Breadcrumb>
-                            <Breadcrumb.Item href="/" active>
+                            <Breadcrumb.Item href="/main/circle">
                                 Strona Główna
+                            </Breadcrumb.Item>
+                            <Breadcrumb.Item active>
+                                {this.state.circle.name}
                             </Breadcrumb.Item>
                         </Breadcrumb>
                         <Panel id="mainPanel">
                             <h4>
-                                Koła zainteresowań
+                                Aktwyne tematy
                             </h4>
                         </Panel>
-                        <div id={"circles"}>
-                        </div>
                         {this.state.isLoading ? loader : content}
 
 
@@ -253,18 +272,14 @@ class Circle extends React.Component {
 
                         <FloatingActionButton onClick={this.openDialog}>
                             <ContentAdd/>
-
                         </FloatingActionButton>
                         <div className={"buttonUnderFab"}>
                             <FlatButton hoverColor={"transparent"} disableTouchRipple={true}
-                                        label={<strong>Dodaj koło</strong>} primary={true} onClick={this.openDialog}/>
+                                        label={<strong>Dodaj Temat</strong>} primary={true} onClick={this.openDialog}/>
                         </div>
-
                     </div>
-
-
                     <Dialog
-                        title="Dodaj krąg"
+                        title="Dodaj temat"
                         actions={actions}
                         modal={true}
                         open={this.state.open}
@@ -272,23 +287,20 @@ class Circle extends React.Component {
                     >
                         <div className={"dialog"}>
                             <TextField
-                                floatingLabelText="Nazwa kręgu"
+                                floatingLabelText="Nazwa tematu"
+                                name="topicName"
+                                id="topicName" value={this.state.topicName}
 
-
-                                name="circleName"
-                                id="circleName" value={this.state.circleName}
-
-                                errorText={this.state.formErrors.circleName}
+                                errorText={this.state.formErrors.topicName}
                                 onChange={(event) => this.handleUserInput(event)}
                             /><br/>
                             <TextField
-                                floatingLabelText="Krótki opis kręgu"
+                                floatingLabelText="Krótki opis tematu"
                                 multiLine={true}
-                                name="circleDescription"
+                                name="topicDescription"
                                 hintText={"Opis musi mieć minimum 5 liter i nie więcej jak 120"}
-
-                                id="circleDescription" value={this.state.circleDescription}
-                                errorText={this.state.formErrors.circleDescription}
+                                id="topicDescription" value={this.state.topicDescription}
+                                errorText={this.state.formErrors.topicDescription}
                                 onChange={(event) => this.handleUserInput(event)}
                                 rows={2}
                             /><br/>
@@ -301,4 +313,4 @@ class Circle extends React.Component {
     }
 }
 
-export default Circle
+export default Topic
