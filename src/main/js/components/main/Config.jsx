@@ -1,19 +1,21 @@
 import React, {Component} from 'react';
 import NavBar from './../obligatory/NavBar';
+
 import {
     Breadcrumb, Col, ControlLabel, Form, FormControl, FormGroup, Grid, InputGroup, Jumbotron, Panel, Row,
     Table
 } from "react-bootstrap";
 import {
     Avatar,
-    Checkbox, CircularProgress, Dialog, Divider, FlatButton, List, ListItem, MuiThemeProvider, RaisedButton, Tab,
+    Checkbox, CircularProgress, Dialog, Divider, FlatButton, List, ListItem, MuiThemeProvider, RaisedButton, Slider,
+    Tab,
     Tabs, TextField
 } from "material-ui";
-import ActionFavorite from 'material-ui/svg-icons/action/favorite';
-import ActionFavoriteBorder from 'material-ui/svg-icons/action/favorite-border';
-import Timestamp from 'react-timestamp';
-import {Link} from "react-router-dom";
+
 import {url} from '../../Constants';
+import AvatarEditor from "react-avatar-editor";
+import {ImageUploadField} from "react-image-file";
+
 
 let header = {
     "Content-Type": "application/json"
@@ -34,24 +36,40 @@ class Config extends React.Component {
         this.openDialog = this.handleOpen.bind(this);
         this.loadAvatar = this.handleLoadingAvatar.bind(this);
         this.saveAvatar = this.handleSaveAvatar.bind(this);
+        this.avatar = this.handleAvatar.bind(this);
+        this.slider = this.handleSlider.bind(this);
+        this.setEditor = this.setEditorRef.bind(this);
+
         this.state = {
             isLoading: false,
             open: false,
             status: [],
             avatarLink: "",
-            avatar: "",
-            passwordOld:"",
-            oldPasswordValid:false,
+            avatar: "/img/avatar/uganda.jpg",
+            avatarPreview:"",
+            passwordOld: "",
+            oldPasswordValid: false,
             password: '',
             confirmPassword: '',
             formErrors: {password: '', confirmPassword: ''},
             passwordValid: false,
             formValid: false,
             confirmPasswordValid: false,
+            scale:1
+
         };
 
     }
+    setEditorRef(editor){
+        this.editor=editor;
+    }
+    handleAvatar(event){
+        this.state.avatar = event.target.files[0];
+    }
+    handleSlider (event, value)  {
 
+        this.setState({scale: value});
+    };
 
     handleUserInput(e) {
         const name = e.target.name;
@@ -69,11 +87,10 @@ class Config extends React.Component {
         let oldPassValid = this.state.oldPasswordValid;
 
 
-
         switch (fieldName) {
 
             case 'passwordOld':
-                oldPassValid=false;
+                oldPassValid = false;
                 if (!this.state.status.status) {
                     oldPassValid = true;
                     fieldValidationErrors.passwordOld = oldPassValid ? '' : 'Podano błędne hasło';
@@ -109,7 +126,7 @@ class Config extends React.Component {
             formErrors: fieldValidationErrors,
             passwordValid: passwordValid,
             confirmPasswordValid: confirmPasswordValid,
-            oldPasswordValid:oldPassValid
+            oldPasswordValid: oldPassValid
         }, this.validateForm);
         // if(this.state.passO===this.state.passT){
         //     this.state.validPass=false;
@@ -120,14 +137,16 @@ class Config extends React.Component {
         // }
 
     }
+
     validateForm() {
         this.setState({formValid: this.state.passwordValid && this.state.confirmPasswordValid && this.state.oldPasswordValid});
     }
+
     handleSaveAvatar() {
         fetch(url + "/react/main/saveAvatar", {
             method: 'POST',
             body: JSON.stringify({
-                avatar: this.state.avatarLink
+                avatar: this.state.avatarPreview
             }),
             headers: header,
             credentials: 'same-origin'
@@ -140,7 +159,11 @@ class Config extends React.Component {
     }
 
     handleLoadingAvatar() {
-        this.setState({avatar: this.state.avatarLink});
+        if (this.editor){
+
+            this.setState({avatarPreview: this.editor.getImageScaledToCanvas().toDataURL()});
+        }
+
 
     }
 
@@ -164,17 +187,17 @@ class Config extends React.Component {
         fetch(url + "/react/main/changePass", {
             method: 'POST',
             body: JSON.stringify({
-                oldPass:this.state.passwordOld,
+                oldPass: this.state.passwordOld,
                 newPass: this.state.password
             }),
             headers: header,
             credentials: 'same-origin'
         }).then((Response) => Response.json()).then((findresponse) => {
-            this.setState({
-                status: findresponse
-            });
-        }
-        ).then(() =>{
+                this.setState({
+                    status: findresponse
+                });
+            }
+        ).then(() => {
             oldPass = this.state.status.status;
             // console.log("status",checkUser);
             if (oldPass === false) {
@@ -184,7 +207,7 @@ class Config extends React.Component {
                     formErrors: fieldValidationErrors,
                     oldPasswordValid: oldPassValid
                 }, this.validateForm);
-            }else {
+            } else {
                 this.setState({open: true});
             }
         });
@@ -241,21 +264,39 @@ class Config extends React.Component {
                                         <ControlLabel>Avatar</ControlLabel>
                                         <Form>
                                             <FormGroup>
-                                                <FormControl
-                                                    type="text"
-                                                    value={this.state.value}
-                                                    placeholder="www.<link>.com/<avatar>.jpg"
-                                                    onChange={this.link}
-                                                />
                                                 <div align="center">
-                                                    <RaisedButton label="Potwierdź" primary={true}
-                                                                  onClick={this.loadAvatar}/>
+                                                    <AvatarEditor
+                                                        ref={this.setEditor}
+                                                        image={this.state.avatar}
+                                                        width={250}
+                                                        height={250}
+                                                        border={50}
+                                                        color={[255, 255, 255, 0.6]} // RGBA
+                                                        scale={this.state.scale}
+                                                        rotate={0}
+                                                        borderRadius={200}
+                                                    />
+                                                    <ImageUploadField
+                                                        label={"Wybierz Obraz"}
+                                                        onChange={(file)=>this.setState({avatar:file})}
+                                                    />
+                                                    <br/>
+                                                    <h3>Przybliż :</h3>
+                                                    <Slider
+                                                        min={0.4}
+                                                        max={10}
+                                                        step={0.1}
+                                                        defaultValue={1}
+                                                        onChange={this.slider}
+                                                    />
+                                                    <RaisedButton label={"Podgląd avatara"} primary={true} onClick={this.loadAvatar}/>
                                                 </div>
                                             </FormGroup>
                                         </Form>
+
                                         <div align="center">
                                             <h3>Tak Wygląda twój avatar</h3>
-                                            <Avatar size={120} src={this.state.avatar}/>
+                                            <Avatar size={120} src={this.state.avatarPreview}/>
 
                                         </div>
                                         <div align="center">
@@ -270,7 +311,7 @@ class Config extends React.Component {
                                                 floatingLabelText="Wpisz aktualne hasło"
                                                 value={this.state.passwordOld}
                                                 name={"passwordOld"}
-                                                onChange={(event)=>this.handleUserInput(event)}
+                                                onChange={(event) => this.handleUserInput(event)}
                                                 errorText={this.state.formErrors.passwordOld}
                                                 // floatingLabelFixed={true}
                                                 type="password"
@@ -278,7 +319,7 @@ class Config extends React.Component {
                                             <TextField
                                                 name={"password"}
                                                 value={this.state.password}
-                                                onChange={(event)=>this.handleUserInput(event)}
+                                                onChange={(event) => this.handleUserInput(event)}
                                                 hintText=""
                                                 floatingLabelText="Wpisz nowe haslo"
                                                 errorText={this.state.formErrors.password}
@@ -287,16 +328,15 @@ class Config extends React.Component {
                                             <TextField
                                                 name={"confirmPassword"}
                                                 value={this.state.confirmPassword}
-                                                onChange={(event)=>this.handleUserInput(event)}
+                                                onChange={(event) => this.handleUserInput(event)}
                                                 hintText=""
                                                 floatingLabelText="Powtórz hasło"
                                                 errorText={this.state.formErrors.confirmPassword}
-
                                                 type="password"
                                             /><br/>
 
                                             <RaisedButton label="Zmień Hasło" primary={true}
-                                            disabled={!this.state.formValid} onClick={this.saveChanges}/>
+                                                          disabled={!this.state.formValid} onClick={this.saveChanges}/>
                                         </div>
                                     </Col>
                                     <Col xs={6} md={3}>

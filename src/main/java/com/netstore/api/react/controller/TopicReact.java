@@ -3,6 +3,7 @@ package com.netstore.api.react.controller;
 import com.netstore.api.mobile.controller.TopicRest;
 import com.netstore.model.API.mobile.topic.LimitTopicModel;
 import com.netstore.model.API.mobile.topic.TopicIdModel;
+import com.netstore.model.API.mobile.topic.TopicSubbedModel;
 import com.netstore.model.API.mobile.topic.TopicWithAuthor;
 import com.netstore.model.API.react.ReactStatus;
 import com.netstore.model.API.react.topic.TopicToUnSub;
@@ -117,6 +118,32 @@ public class TopicReact {
 
 
     }
+    @RequestMapping(value = "/subTopic", method = RequestMethod.POST)
+    public ResponseEntity<ReactStatus> subscribeTopic(Authentication auth, @RequestBody TopicSubbedModel topicSubbedModel) {
+
+        ReactStatus reactStatus = new ReactStatus();
+            if (topicSubbedModel.isStatus()) {
+                SubscribedTopicEntity subscribedTopicEntity = new SubscribedTopicEntity();
+                subscribedTopicEntity.setUserIdUser(userRepository.findByEmail(auth.getName()).getIdUser());
+                subscribedTopicEntity.setTopicIdTopic(topicSubbedModel.getId());
+                this.addTopicSubscriptionService.saveAndFlush(subscribedTopicEntity);
+                reactStatus.setStatus(true);
+
+                return new ResponseEntity<>(reactStatus, HttpStatus.OK);
+            } else {
+                SubscribedTopicEntity subscribedTopicEntity = new SubscribedTopicEntity();
+                subscribedTopicEntity.setUserIdUser(userRepository.findByEmail(auth.getName()).getIdUser());
+                subscribedTopicEntity.setTopicIdTopic(topicSubbedModel.getId());
+                subscribedTopicRepository.delete(subscribedTopicEntity);
+
+                reactStatus.setStatus(false);
+
+                return new ResponseEntity<>(reactStatus, HttpStatus.OK);
+            }
+
+
+    }
+
     @Transactional
     @RequestMapping(value = "/addTopic", method = RequestMethod.POST)
     public ResponseEntity<?> addTopic(Authentication auth, @RequestBody TopicEntity addingTopic) {

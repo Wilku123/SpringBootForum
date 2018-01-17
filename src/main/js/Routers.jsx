@@ -7,11 +7,11 @@ import Circle from './components/main/Circle';
 import ForgotPassword from './components/login/ForgotPassword';
 import ResetPass from './components/login/ResetPass';
 import MobileApp from './components/user/MobileApp';
-import SubbedEntityList from './components/main/SubbedEntityList'
+import SubbedEntityList from './components/user/SubbedEntityList'
 import Config from './components/main/Config';
 import Topic from './components/main/Topic';
 import Answer from './components/main/Answer';
-import User from './components/main/User';
+import User from './components/user/User';
 
 
 

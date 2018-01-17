@@ -9,5 +9,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface CredentialsRepository extends JpaRepository<CredentialsEntity,Integer>{
     CredentialsEntity findByToken(String token);
     CredentialsEntity findByUserIdUser(int id);
+    CredentialsEntity findByTokenAndPin(String token , String pin);
 
 }

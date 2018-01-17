@@ -2,6 +2,7 @@ package com.netstore.api.react.controller;
 
 import com.netstore.api.mobile.controller.CircleRest;
 import com.netstore.model.API.mobile.circle.CircleIdModel;
+import com.netstore.model.API.mobile.circle.CircleSubbedModel;
 import com.netstore.model.API.mobile.circle.CircleWithAuthor;
 import com.netstore.model.API.react.circle.CircleToUnSub;
 import com.netstore.model.API.react.ReactStatus;
@@ -127,6 +128,27 @@ public class CircleReact {
         reactStatus.setStatus(true);
         return new ResponseEntity<>(reactStatus, HttpStatus.OK);
 
+    }
+
+    @RequestMapping(value = "/subCircle", method = RequestMethod.POST)
+    public ResponseEntity<ReactStatus> subscribeCircle(Authentication auth, @RequestBody CircleSubbedModel subById) {
+        ReactStatus reactStatus = new ReactStatus();
+
+        if (subById.isStatus()) {
+                SubscribedCircleEntity subscribedCircleEntity = new SubscribedCircleEntity();
+                subscribedCircleEntity.setUserIdUser(userRepository.findByEmail(auth.getName()).getIdUser());
+                subscribedCircleEntity.setCircleIdCircle(subById.getId());
+                this.addCircleSubscriptionService.saveAndFlush(subscribedCircleEntity);
+                reactStatus.setStatus(true);
+                return new ResponseEntity<>(reactStatus, HttpStatus.OK);
+            } else {
+                SubscribedCircleEntity subscribedCircleEntity = new SubscribedCircleEntity();
+                subscribedCircleEntity.setUserIdUser(userRepository.findByEmail(auth.getName()).getIdUser());
+                subscribedCircleEntity.setCircleIdCircle(subById.getId());
+                subscribedCircleRepository.delete(subscribedCircleEntity);
+                reactStatus.setStatus(false);
+                return new ResponseEntity<>(reactStatus, HttpStatus.OK);
+            }
 
     }
 
@@ -136,10 +158,10 @@ public class CircleReact {
 
 
         ReactStatus reactStatus = new ReactStatus();
-        if (addingCircle.getName().length() > 3
-                && addingCircle.getDescription().length() > 5
-                && addingCircle.getName().length() < 40
-                && addingCircle.getDescription().length() <120) {
+        if (addingCircle.getName().length() >= 3
+                && addingCircle.getDescription().length() >= 5
+                && addingCircle.getName().length() <= 40
+                && addingCircle.getDescription().length() <=120) {
             CircleEntity circleEntity = new CircleEntity();
 
             circleEntity.setName(addingCircle.getName());

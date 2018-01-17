@@ -1,13 +1,18 @@
 import React, {Component} from 'react';
 import NavBar from './../obligatory/NavBar';
-import {Breadcrumb, Col, Grid, Jumbotron, Panel, Row} from "react-bootstrap";
+import {Breadcrumb, Col, Grid, Image, Jumbotron, Panel, Row} from "react-bootstrap";
 import {
-    Avatar, CircularProgress, Dialog, Divider, FlatButton, FloatingActionButton, List, ListItem,
+    Avatar, CircularProgress, Dialog, Divider, FlatButton, FloatingActionButton, IconButton, List, ListItem,
     MuiThemeProvider, TextField
 } from "material-ui";
+import Checkbox from 'material-ui/Checkbox';
+import ActionFavorite from 'material-ui/svg-icons/action/favorite';
+import ActionFavoriteBorder from 'material-ui/svg-icons/action/favorite-border';
 import ContentAdd from 'material-ui/svg-icons/content/add';
 import {Link} from "react-router-dom";
 import {url} from '../../Constants';
+import ActionInfo from "material-ui/svg-icons/action/info";
+
 
 let header = {
     "Content-Type": "application/json"
@@ -20,13 +25,15 @@ let header = {
 class Circle extends React.Component {
 
 
+
     constructor() {
         super();
         this.saveChanges = this.handleSaveChanges.bind(this);
         this.closeModal = this.handleClose.bind(this);
         this.openDialog = this.handleOpen.bind(this);
+        this.sub = this.handleSub.bind(this);
         this.state = {
-            newCircle:[],
+            newCircle: [],
             circles: [],
             circleName: "",
             circleNameValid: false,
@@ -38,7 +45,6 @@ class Circle extends React.Component {
             open: false,
         };
     }
-
 
     handleUserInput(e) {
         const name = e.target.name;
@@ -103,6 +109,40 @@ class Circle extends React.Component {
         })
     }
 
+    handleSub(checked,subbing) {
+        if (checked){
+            fetch(url + "/react/main/subCircle", {
+                method: 'POST',
+                body: JSON.stringify({
+                    id: subbing,
+                    status: checked
+                }),
+                headers: header,
+                credentials: 'same-origin'
+            }).then((Response) => Response.json()).then((findresponse) => {
+                this.setState({
+
+                })
+            })
+        }
+        else
+        {
+            fetch(url + "/react/main/subCircle", {
+                method: 'POST',
+                body: JSON.stringify({
+                    id: subbing,
+                    status: checked
+                }),
+                headers: header,
+                credentials: 'same-origin'
+            }).then((Response) => Response.json()).then((findresponse) => {
+                this.setState({
+
+                })
+            })
+        }
+    }
+
     handleSaveChanges() {
         var myHeaders = new Headers({"Content-Type": "application/json"});
 
@@ -128,7 +168,7 @@ class Circle extends React.Component {
             let newCircle = this.state.newCircle;
             let newCircles = newCircle.concat(circles);
             this.setState(
-                {circles:newCircles}
+                {circles: newCircles}
             );
         }).then(() => {
             this.setState({
@@ -168,27 +208,46 @@ class Circle extends React.Component {
             />,
         ];
         let content =
+            <MuiThemeProvider>
+                <Jumbotron>
+                    {this.state.circles.map((dynamicData, key) => (
+                        <Panel key={key}>
+                            <Grid>
+                                <Row className="show-grid circle">
+                                    <Col md={1}>
 
-            <Jumbotron>
-                {this.state.circles.map((dynamicData, key) => (
-                    <Panel key={key}>
-                        <Grid>
-                            <Row className="show-grid">
-                                <Col xs={12} md={8}>
-                                    <Link to={"/main/topic?circle=" + dynamicData.idCircle}>
-                                        <h4>
-                                            {dynamicData.name}
-                                        </h4>
-                                    </Link>
+                                        <Checkbox
+                                            checkedIcon={<ActionFavorite/>}
+                                            uncheckedIcon={<ActionFavoriteBorder/>}
+                                            style={{marginBottom: 16}}
+                                            defaultChecked={!!dynamicData.isSub}
+                                            onCheck={(event,isInputChecked) => this.sub(isInputChecked,dynamicData.idCircle)}
+                                        />
+                                        <IconButton
+                                            className={"qrButton"}
+                                            tooltip={<Image src={"/react/main/qrcode/Circle/"+dynamicData.idCircle+"/Red"}/>}
+                                            tooltipPosition="bottom-right"
+                                            disableTouchRipple={true}
+                                        >
+                                            <ActionInfo />
+                                        </IconButton>
+                                    </Col>
+                                    <Col md={7}>
+                                        <Link to={"/main/topic?circle=" + dynamicData.idCircle}>
+                                            <h4>
+                                                {dynamicData.name}
+                                            </h4>
+                                        </Link>
 
-                                    {dynamicData.description}
-                                </Col>
-                                <Col xs={6} md={2}>
-                                    <h4>{dynamicData.countTopic}</h4> Tematów
+                                        {dynamicData.description}
+                                    </Col>
+                                    <Col md={1}>
+                                        <h4>{dynamicData.countTopic}</h4> Tematów
 
-                                </Col>
-                                <Col xs={6} md={2}>
-                                    <MuiThemeProvider>
+                                    </Col>
+
+                                    <Col md={1}>
+
                                         <List>
                                             <ListItem disabled={true}
                                                       leftAvatar={<Avatar src={dynamicData.author.avatar}/>}
@@ -199,14 +258,17 @@ class Circle extends React.Component {
 
                                         </List>
 
-                                    </MuiThemeProvider>
-                                </Col>
-                            </Row>
-                        </Grid>
 
-                    </Panel>
-                ))}
-            </Jumbotron>;
+                                    </Col>
+                                    <Col md={1}></Col>
+                                    <Col md={1}></Col>
+                                </Row>
+                            </Grid>
+
+                        </Panel>
+                    ))}
+                </Jumbotron>
+            </MuiThemeProvider>;
 
         let loader = <MuiThemeProvider>
             <div align="center">
@@ -224,9 +286,9 @@ class Circle extends React.Component {
 
 
                 <Row className="show-grid">
-                    <Col xs={6} md={2}/>
+                    <Col xs={6} md={1}/>
 
-                    <Col xs={6} md={8}>
+                    <Col xs={6} md={10}>
 
                         <Breadcrumb>
                             <Breadcrumb.Item href="/" active>
@@ -245,7 +307,7 @@ class Circle extends React.Component {
 
                     </Col>
 
-                    <Col xsHidden md={2}/>
+                    <Col xsHidden md={1}/>
                 </Row>
                 <MuiThemeProvider>
 

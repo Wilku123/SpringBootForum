@@ -125,7 +125,7 @@ class Home extends React.Component {
     handleSubmit(e) {
         e.preventDefault();
 
-
+        this.setState({formValid:false});
         let checkUser;
         let emailValid = this.state.emailValid;
         let fieldValidationErrors = this.state.formErrors;

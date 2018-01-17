@@ -238,9 +238,9 @@ class Answer extends ReactQueryParams {
 
 
                 <Row className="show-grid">
-                    <Col xs={6} md={2}/>
+                    <Col xs={6} md={1}/>
 
-                    <Col xs={6} md={8}>
+                    <Col xs={6} md={10}>
 
                         <Breadcrumb>
                             <Breadcrumb.Item href="/main/circle">
@@ -263,7 +263,7 @@ class Answer extends ReactQueryParams {
 
                     </Col>
 
-                    <Col xsHidden md={2}/>
+                    <Col xsHidden md={1}/>
                 </Row>
                 <MuiThemeProvider>
 

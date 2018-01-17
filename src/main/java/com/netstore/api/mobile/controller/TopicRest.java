@@ -114,7 +114,10 @@ public class TopicRest {
 
         if (circleRestViewRepository.exists(newTopicModel.getId())) {
 
-            if (newTopicModel.getName().length() > 2 && newTopicModel.getDescription().length() > 5) {
+            if (newTopicModel.getName().length() >= 3
+                    && newTopicModel.getDescription().length() >= 5
+                    && newTopicModel.getName().length() <= 40
+                    && newTopicModel.getDescription().length() <=120) {
                 TopicEntity topicEntity = new TopicEntity();
                 topicEntity.setCircleIdCircle(newTopicModel.getId());
                 topicEntity.setName(newTopicModel.getName());

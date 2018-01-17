@@ -98,7 +98,8 @@ public class AnswerRest {
     public ResponseEntity<SchemaRest> addAnswer(Authentication auth, @RequestBody NewAnswerModel newAnswerModel) {
 
         if (topicRestViewRepository.exists(newAnswerModel.getId())) {
-            if (newAnswerModel.getContent().length() > 5) {
+            if (newAnswerModel.getContent().length() > 2
+                    && newAnswerModel.getContent().length() < 250) {
                 AnswerEntity answerEntity = new AnswerEntity();
                 answerEntity.setTopicIdTopic(newAnswerModel.getId());
                 answerEntity.setContent(newAnswerModel.getContent());

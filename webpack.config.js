@@ -23,8 +23,21 @@ module.exports = {
                 test: /\.jsx$/,
                 loader: "babel-loader",
                 exclude: /(node_modules)/
+            },
+            {
+                test: /\.css$/,
+                use: [
+                    {
+                        loader: 'css-loader',
+                    }
+                ]
+            },
+            {
+                test: /\.svg$/,
+                loader: 'svg-inline-loader'
             }
-        ]
+        ],
+
     },
     plugins: [
         // Set up the notifier plugin - you can remove this (or set alwaysNotify false) if desired

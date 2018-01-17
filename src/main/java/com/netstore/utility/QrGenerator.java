@@ -18,7 +18,7 @@ import java.io.ByteArrayOutputStream;
 @org.springframework.stereotype.Controller
 public class QrGenerator {
 
-    @RequestMapping(value = "/qrcode/{name}/{id}/{action}",method = RequestMethod.GET)
+    @RequestMapping(value = "/react/main/qrcode/{name}/{id}/{action}",method = RequestMethod.GET)
     public ResponseEntity<byte[]> qr(@PathVariable Integer id, @PathVariable String name, @PathVariable String action){
         ByteArrayOutputStream stream = QRCode.from("DMTAPP;"+name+";"+action+";"+id.toString()).stream();
 

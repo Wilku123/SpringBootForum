@@ -2,13 +2,18 @@ import React, {Component} from 'react';
 import NavBar from './../obligatory/NavBar';
 import {Breadcrumb, Col, Grid, Jumbotron, Panel, Row} from "react-bootstrap";
 import {
-    Avatar, CircularProgress, Dialog, Divider, FlatButton, FloatingActionButton, List, ListItem,
+    Avatar, CircularProgress, Dialog, Divider, FlatButton, FloatingActionButton, IconButton, List, ListItem,
     MuiThemeProvider, TextField
 } from "material-ui";
 import ContentAdd from 'material-ui/svg-icons/content/add';
 import {Link} from "react-router-dom";
 import {url} from '../../Constants';
 import ReactQueryParams from 'react-query-params';
+import Checkbox from 'material-ui/Checkbox';
+import ActionFavorite from 'material-ui/svg-icons/action/favorite';
+import ActionFavoriteBorder from 'material-ui/svg-icons/action/favorite-border';
+import Image from "react-bootstrap/es/Image";
+import ActionInfo from "material-ui/svg-icons/action/info";
 
 
 let header = {
@@ -27,8 +32,9 @@ class Topic extends ReactQueryParams {
         this.saveChanges = this.handleSaveChanges.bind(this);
         this.closeModal = this.handleClose.bind(this);
         this.openDialog = this.handleOpen.bind(this);
+        this.sub = this.handleSub.bind(this);
         this.state = {
-            stat:[],
+            stat: [],
             circle: [],
             topics: [],
             topicName: "",
@@ -120,6 +126,36 @@ class Topic extends ReactQueryParams {
         })
     }
 
+    handleSub(checked, subbing) {
+        if (checked) {
+            fetch(url + "/react/main/subTopic", {
+                method: 'POST',
+                body: JSON.stringify({
+                    id: subbing,
+                    status: checked
+                }),
+                headers: header,
+                credentials: 'same-origin'
+            }).then((Response) => Response.json()).then((findresponse) => {
+                this.setState({})
+            })
+        }
+        else {
+            fetch(url + "/react/main/subTopic", {
+                method: 'POST',
+                body: JSON.stringify({
+                    id: subbing,
+                    status: checked
+                }),
+                headers: header,
+                credentials: 'same-origin'
+            }).then((Response) => Response.json()).then((findresponse) => {
+                this.setState({})
+            })
+        }
+    }
+
+
     handleSaveChanges() {
         var myHeaders = new Headers({"Content-Type": "application/json"});
 
@@ -147,7 +183,7 @@ class Topic extends ReactQueryParams {
             let newTopics = newTopic.concat(topics);
             // const topics = this.state.topics.concat(findresponse);
             this.setState(
-                {topics:newTopics}
+                {topics: newTopics}
             );
         }).then(() => {
             this.setState({
@@ -188,26 +224,45 @@ class Topic extends ReactQueryParams {
             />,
         ];
         let content =
-            <Jumbotron>
-                {this.state.topics.map((dynamicData, key) =>
-                    <Panel key={key}>
-                        <Grid>
-                            <Row className="show-grid">
-                                <Col xs={12} md={8}>
-                                    <Link to={"/main/answer?topic=" + dynamicData.idTopic}>
-                                        <h4>
-                                            {dynamicData.name}
-                                        </h4>
-                                    </Link>
+            <MuiThemeProvider>
+                <Jumbotron>
+                    {this.state.topics.map((dynamicData, key) =>
+                        <Panel key={key}>
+                            <Grid>
+                                <Row className="show-grid">
+                                    <Col xs={4} md={1}>
 
-                                    {dynamicData.description}
-                                </Col>
-                                <Col xs={6} md={2}>
-                                    <h4>{dynamicData.countAnswer}</h4> Odpowiedzi
+                                        <Checkbox
+                                            checkedIcon={<ActionFavorite/>}
+                                            uncheckedIcon={<ActionFavoriteBorder/>}
+                                            style={{marginBottom: 16}}
+                                            defaultChecked={!!dynamicData.isSub}
+                                            onCheck={(event, isInputChecked) => this.sub(isInputChecked, dynamicData.idTopic)}
+                                        />
+                                        <IconButton
+                                            className={"qrButton"}
+                                            tooltip={<Image src={"/react/main/qrcode/Topic/"+dynamicData.idTopic+"/Red"}/>}
+                                            tooltipPosition="bottom-right"
+                                            disableTouchRipple={true}
+                                        >
+                                            <ActionInfo />
+                                        </IconButton>
+                                    </Col>
+                                    <Col xs={12} md={7}>
+                                        <Link to={"/main/answer?topic=" + dynamicData.idTopic}>
+                                            <h4>
+                                                {dynamicData.name}
+                                            </h4>
+                                        </Link>
 
-                                </Col>
-                                <Col xs={6} md={2}>
-                                    <MuiThemeProvider>
+                                        {dynamicData.description}
+                                    </Col>
+                                    <Col xs={6} md={2}>
+                                        <h4>{dynamicData.countAnswer}</h4> Odpowiedzi
+
+                                    </Col>
+                                    <Col xs={6} md={2}>
+
                                         <List>
                                             <ListItem disabled={true}
                                                       leftAvatar={<Avatar src={dynamicData.author.avatar}/>}
@@ -218,14 +273,15 @@ class Topic extends ReactQueryParams {
 
                                         </List>
 
-                                    </MuiThemeProvider>
-                                </Col>
-                            </Row>
-                        </Grid>
 
-                    </Panel>
-                )}
-            </Jumbotron>;
+                                    </Col>
+                                </Row>
+                            </Grid>
+
+                        </Panel>
+                    )}
+                </Jumbotron>
+            </MuiThemeProvider>;
         let loader = <MuiThemeProvider>
             <div align="center">
                 <CircularProgress/>
@@ -238,13 +294,13 @@ class Topic extends ReactQueryParams {
 
             <div>
                 <NavBar/>
-                <link rel="stylesheet" href="../../css/answer.css"/>
+                <link rel="stylesheet" href="../../css/topic.css"/>
 
 
                 <Row className="show-grid">
-                    <Col xs={6} md={2}/>
+                    <Col xs={6} md={1}/>
 
-                    <Col xs={6} md={8}>
+                    <Col xs={6} md={10}>
 
                         <Breadcrumb>
                             <Breadcrumb.Item href="/main/circle">
@@ -264,7 +320,7 @@ class Topic extends ReactQueryParams {
 
                     </Col>
 
-                    <Col xsHidden md={2}/>
+                    <Col xsHidden md={1}/>
                 </Row>
                 <MuiThemeProvider>
 

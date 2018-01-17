@@ -65,7 +65,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 //                .antMatchers("/**").permitAll() // TODO USUN TO!
                 .antMatchers("/webjars/**","/css/**","/js/**","/icons/**","/built/**").permitAll()
                 .antMatchers("/react/register","/react/activate","/react/forgotPassword","/react/changePass").permitAll()
-                .antMatchers("/registerrest","/register","/validateToken").permitAll()
+                .antMatchers("/registerrest","/register","/validateToken","/validatePin").permitAll()
                 .antMatchers("/reg","/forgot","/changePass","/activate").permitAll()
                 .antMatchers("/login","/loginReact").permitAll()
                 .antMatchers("/api/**").authenticated()

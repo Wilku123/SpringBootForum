@@ -11,14 +11,11 @@ import java.io.IOException;
 /**
  * Created by Master on 2017-04-26.
  */
-@Component( "restAuthenticationEntryPoint" )
+@Component("restAuthenticationEntryPoint")
 public class RestAuthenticationEntryPoint implements AuthenticationEntryPoint {
 
     @Override
-    public void commence(
-            HttpServletRequest request,
-            HttpServletResponse response,
-            AuthenticationException authException) throws IOException {
+    public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException {
         request.getHeader("token");
         request.getHeader("pin");
         //SchemaRest<CredentialsEntity> credentialsEntitySchemaRest = new SchemaRest<>(false,"Zle Credentialsy",104,null);

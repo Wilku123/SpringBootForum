@@ -8,8 +8,6 @@ body
 }
 
 #mainPanel {
-    background: linear-gradient(to right, #4371ff, #272727, #4371ff, #272727, #4371ff);
-    background-image: url(../img/overlay.png);
     /*background-color: rgba(0, 0, 0, 0.3);*/
     font-weight: bold;
     margin-bottom: 5px;
@@ -27,6 +25,11 @@ body
     /*padding-top: 1px;*/
     /*padding-bottom: 1px;*/
     padding: 1px;
+}
+.circle
+{
+    margin-left: 10px !important;
+    margin-right: 10px !important;
 }
 
 h3 {
@@ -53,4 +56,16 @@ h3 {
 
 .dialog {
     border-Top: 1px solid rgb(90, 90, 90);
+}
+.qrButton
+{
+    padding-left: 0px !important;
+    width: 0 !important;
+}
+.qrImage {
+    padding: 8px 8px 8px 8px !important;
+}
+img
+{
+    padding: 0 !important;
 }

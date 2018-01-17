@@ -102,7 +102,10 @@ public class CircleRest {
     public ResponseEntity<SchemaRest> addCircle(Authentication auth, @RequestBody NewCircleModel newCircleModel) {
 
 
-        if (newCircleModel.getName().length() > 2 && newCircleModel.getDescription().length() > 10) {
+        if (newCircleModel.getName().length() >= 3
+                && newCircleModel.getDescription().length() >= 5
+                && newCircleModel.getName().length() <= 40
+                && newCircleModel.getDescription().length() <=120) {
             CircleEntity circleEntity = new CircleEntity();
 
             circleEntity.setName(newCircleModel.getName());

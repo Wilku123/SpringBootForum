@@ -12,7 +12,7 @@ class NavBar extends React.Component {
 
     constructor() {
         super();
-        this.state = {user: [name=""]};
+        this.state = {user: {name:"", lastName:""}};
     }
 
     componentDidMount() {
@@ -45,7 +45,7 @@ class NavBar extends React.Component {
                             <NavItem href="#">Link</NavItem>
                             <NavItem href="#">Link</NavItem>
                         </Nav>
-                        <Nav pullRight>
+                        <Nav pullRight >
 
 
                             <ListItem disabled={true} leftAvatar={<Avatar

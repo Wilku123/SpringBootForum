@@ -8,6 +8,7 @@ import {
 
 import Timestamp from 'react-timestamp';
 import {url} from '../../Constants';
+import Link from "react-router-dom/es/Link";
 
 let header = {
     "Content-Type": "application/json"
@@ -212,7 +213,7 @@ class SubbedEntityList extends React.Component {
                                 <Checkbox
                                     onCheck={(event, isChecked) => this.handleUnSubTopic(isChecked, dynamicData.idTopic)}/>
                             </td>
-                            <td>{dynamicData.name}</td>
+                            <td> <Link to={"/main/answer?topic=" + dynamicData.idTopic}>{dynamicData.name}</Link></td>
                             <td>{dynamicData.description}</td>
                             <td><Timestamp time={(dynamicData.publishDate) / 1000} format='date'/></td>
                             <td>{dynamicData.author.name + " " + dynamicData.author.lastName}</td>
@@ -246,7 +247,7 @@ class SubbedEntityList extends React.Component {
                                             <Checkbox
                                                 onCheck={(event, isChecked) => this.handleUnSubCircle(isChecked, dynamicData.idCircle)}/>
                                         </td>
-                                        <td>{dynamicData.name}</td>
+                                        <td> <Link to={"/main/topic?circle=" + dynamicData.idCircle}>{dynamicData.name}</Link></td>
                                         <td>{dynamicData.description}</td>
                                         <td><Timestamp time={(dynamicData.publishDate) / 1000} format='date'/></td>
                                         <td>{dynamicData.author.name + " " + dynamicData.author.lastName}</td>
