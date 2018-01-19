@@ -198,7 +198,7 @@ class Home extends React.Component {
         return (
             <div>
                 <MuiThemeProvider>
-                <link rel="stylesheet" type="text/css" href="/../../css/loginPage.css"/>
+                <link rel="stylesheet" type="text/css" href="/css/loginPage.css"/>
 
                 <div className="container-fluid">
                     <div className="row">

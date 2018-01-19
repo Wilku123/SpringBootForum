@@ -35,7 +35,7 @@ public class RegisterQrRest {
     @RequestMapping("/registerrest")
     public ResponseEntity<SchemaRest> registerDevice(@RequestBody RegisterNewQr registerQrRest) {
 
-        if (credentialsRepository.findByToken(registerQrRest.getToken())!=null) {
+        if (credentialsRepository.findByToken(registerQrRest.getToken()) != null) {
             CredentialsEntity credentialsEntity = credentialsRepository.findByToken(registerQrRest.getToken());
             credentialsEntity.setPin(registerQrRest.getPin());
             this.addCredentialsService.saveAndFlush(credentialsEntity);
@@ -44,43 +44,42 @@ public class RegisterQrRest {
             credentialsWithUser.setPin(credentialsEntity.getPin());
             credentialsWithUser.setToken(credentialsEntity.getToken());
             credentialsWithUser.setUser(userRestRepository.findByIdUser(credentialsEntity.getUserIdUser()));
-            SchemaRest<CredentialsWithUser> credentialsEntitySchemaRest = new SchemaRest<>(true,"Registered new device",1337,credentialsWithUser);
-            return new ResponseEntity<>(credentialsEntitySchemaRest,HttpStatus.OK);
-        }
-        else
-        {
-            SchemaRest<CredentialsEntity> credentialsEntitySchemaRest = new SchemaRest<>(false,"User dosnt exists",101,null);
-            return new ResponseEntity<>(credentialsEntitySchemaRest,HttpStatus.BAD_REQUEST);
+            SchemaRest<CredentialsWithUser> credentialsEntitySchemaRest = new SchemaRest<>(true, "Registered new device", 1337, credentialsWithUser);
+            return new ResponseEntity<>(credentialsEntitySchemaRest, HttpStatus.OK);
+        } else {
+            SchemaRest<CredentialsEntity> credentialsEntitySchemaRest = new SchemaRest<>(false, "User dosnt exists", 101, null);
+            return new ResponseEntity<>(credentialsEntitySchemaRest, HttpStatus.BAD_REQUEST);
 
         }
 
     }
+
     @RequestMapping("/validateToken")
-    public ResponseEntity<SchemaRest> validateQr(@RequestBody ValidateQr validateQr)
-    {
-        if (credentialsRepository.findByToken(validateQr.getToken())!= null)
-        {
-            SchemaRest<CredentialsEntity> credentialsEntitySchemaRest = new SchemaRest<>(true,"Qr is git gut",1337,null);
-            return new ResponseEntity<>(credentialsEntitySchemaRest,HttpStatus.OK);
-        }
-        else
-        {
-            SchemaRest<CredentialsEntity> credentialsEntitySchemaRest = new SchemaRest<>(false,"QR taken from lays dafuq",101,null);
-            return new ResponseEntity<>(credentialsEntitySchemaRest,HttpStatus.OK);
+    public ResponseEntity<SchemaRest> validateQr(@RequestBody ValidateQr validateQr) {
+        if (credentialsRepository.findByToken(validateQr.getToken()) != null) {
+            if (credentialsRepository.findByToken(validateQr.getToken()).getPin()==null) {
+                SchemaRest<CredentialsEntity> credentialsEntitySchemaRest = new SchemaRest<>(true, "Qr is git gut", 1337, null);
+                return new ResponseEntity<>(credentialsEntitySchemaRest, HttpStatus.OK);
+            } else {
+                SchemaRest<CredentialsEntity> credentialsEntitySchemaRest = new SchemaRest<>(false, "Device Already registered", 106, null);
+                return new ResponseEntity<>(credentialsEntitySchemaRest, HttpStatus.OK);
+            }
+        } else {
+            SchemaRest<CredentialsEntity> credentialsEntitySchemaRest = new SchemaRest<>(false, "QR taken from lays dafuq", 101, null);
+            return new ResponseEntity<>(credentialsEntitySchemaRest, HttpStatus.OK);
         }
     }
-    @RequestMapping("/validatePin")
-    public ResponseEntity<SchemaRest> validatePin(@RequestBody CredentialsEntity credentialsEntity)
-    {
 
-        if (credentialsRepository.findByTokenAndPin(credentialsEntity.getToken(),credentialsEntity.getPin())!=null)
-        {
-            UserRestViewEntity userRestViewEntity = userRestRepository.findByIdUser(credentialsRepository.findByTokenAndPin(credentialsEntity.getToken(),credentialsEntity.getPin()).getUserIdUser());
-            SchemaRest<UserRestViewEntity> restViewEntitySchemaRest =new SchemaRest<>(true,"Pin poprawny",1337,userRestViewEntity);
-            return new ResponseEntity<>(restViewEntitySchemaRest,HttpStatus.OK);
-        }else {
+    @RequestMapping("/validatePin")
+    public ResponseEntity<SchemaRest> validatePin(@RequestBody CredentialsEntity credentialsEntity) {
+
+        if (credentialsRepository.findByTokenAndPin(credentialsEntity.getToken(), credentialsEntity.getPin()) != null) {
+            UserRestViewEntity userRestViewEntity = userRestRepository.findByIdUser(credentialsRepository.findByTokenAndPin(credentialsEntity.getToken(), credentialsEntity.getPin()).getUserIdUser());
+            SchemaRest<UserRestViewEntity> restViewEntitySchemaRest = new SchemaRest<>(true, "Pin poprawny", 1337, userRestViewEntity);
+            return new ResponseEntity<>(restViewEntitySchemaRest, HttpStatus.OK);
+        } else {
             SchemaRest<UserRestViewEntity> restViewEntitySchemaRest = new SchemaRest<>(false, "Pin nie poprawny", 101, null);
-            return new ResponseEntity<>(restViewEntitySchemaRest,HttpStatus.OK);
+            return new ResponseEntity<>(restViewEntitySchemaRest, HttpStatus.OK);
         }
     }
 }

@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import NavBar from './../obligatory/NavBar';
 import {Breadcrumb, Col, Grid, Image, Jumbotron, Panel, Row} from "react-bootstrap";
-import {Avatar, CircularProgress, List, ListItem, MuiThemeProvider} from "material-ui";
+import {Avatar, CircularProgress, FlatButton, List, ListItem, MuiThemeProvider} from "material-ui";
 import {Link} from "react-router-dom";
 import {url} from '../../Constants';
 
@@ -18,24 +18,46 @@ class MobileApp extends React.Component {
 
     constructor() {
         super();
-        this.state = {qr: [], isLoading: false};
+        this.unRegister = this.handleUnRegister.bind(this);
+        this.state = {exists: false, isLoading: false, buttonVisible: false};
     }
 
     componentDidMount() {
-        // fetch(url + "/react/main/qr", {
-        //     method: 'POST',
-        //     body: "",
-        //     headers: header,
-        //     credentials: 'same-origin'
-        // }).then((Response) => Response.json()).then((findresponse) => {
-        //     this.setState({
-        //         qr: findresponse,
-        //         isLoading: false
-        //     })
-        // })
+        fetch(url + "/react/main/qrRegistered", {
+            method: 'POST',
+            body: "",
+            headers: header,
+            credentials: 'same-origin'
+        }).then((Response) => Response.json()).then((findresponse) => {
+            this.setState({
+                exists: findresponse,
+            });
+        })
+    }
+
+    handleUnRegister() {
+        fetch(url + "/react/main/unRegister", {
+            method: 'POST',
+            body: "",
+            headers: header,
+            credentials: 'same-origin'
+        }).then((Response) => Response.json()).then((findresponse) => {
+            this.setState({
+                exists: findresponse,
+            });
+            return this.state.exists
+        }).then((exists)=> {
+            this.setState({exists});
+        })
     }
 
     render() {
+        let nothing = <FlatButton label={"Brak zarejestrowanego urządzenia moblinego"} disabled={true}/>;
+        let button = <FlatButton
+            label="Wyrejestruj Urządzenie"
+            primary={true}
+            onClick={this.unRegister}
+        />;
         let content =
             <Jumbotron>
                 <Grid>
@@ -45,8 +67,13 @@ class MobileApp extends React.Component {
                         </Col>
                         <Col xs={6} md={8}>
                             <div align={"center"}>
-                            <p>Zeskanuj kod QR by zalogować się na urządzeniu moblinym</p>
-                            <Image  src={"/react/main/qr"}/>
+                                <p>Zeskanuj kod QR by zalogować się na urządzeniu moblinym</p>
+                                <Image src={"/react/main/qr"}/>
+                            </div>
+                            <div align={"center"}>
+                                <MuiThemeProvider>
+                                    {this.state.exists.status ? button : nothing}
+                                </MuiThemeProvider>
                             </div>
                         </Col>
                         <Col xs={6} md={2}>
@@ -54,7 +81,6 @@ class MobileApp extends React.Component {
                         </Col>
                     </Row>
                 </Grid>
-
 
 
             </Jumbotron>;
@@ -68,7 +94,7 @@ class MobileApp extends React.Component {
 
             <div>
                 <NavBar/>
-                <link rel="stylesheet" href="../../css/mobileApp.css"/>
+                <link rel="stylesheet" href="/css/mobileApp.css"/>
 
 
                 <Row className="show-grid">
@@ -85,7 +111,7 @@ class MobileApp extends React.Component {
                             </Breadcrumb.Item>
                         </Breadcrumb>
 
-                        {this.state.isLoading ? loader : content}
+                        {content}
 
 
                     </Col>

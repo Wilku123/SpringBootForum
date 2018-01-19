@@ -101,7 +101,7 @@ class Home extends React.Component {
     render() {
         return (
             <div>
-                <link rel="stylesheet" type="text/css" href="/../../css/loginPage.css"/>
+                <link rel="stylesheet" type="text/css" href="/css/loginPage.css"/>
 
                 <div className="container-fluid">
                     <div className="row">

@@ -276,7 +276,7 @@ class SubbedEntityList extends React.Component {
             <div>
                 <MuiThemeProvider>
                 <NavBar/>
-                <link rel="stylesheet" href="../../css/circle.css"/>
+                <link rel="stylesheet" href="/css/circle.css"/>
 
 
                 <Row className="show-grid">

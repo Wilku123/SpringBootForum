@@ -294,7 +294,7 @@ class Topic extends ReactQueryParams {
 
             <div>
                 <NavBar/>
-                <link rel="stylesheet" href="../../css/topic.css"/>
+                <link rel="stylesheet" href="/css/topic.css"/>
 
 
                 <Row className="show-grid">

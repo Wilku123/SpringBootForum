@@ -2,10 +2,12 @@ package com.netstore.api.react.controller;
 
 import com.netstore.model.API.react.ReactStatus;
 import com.netstore.model.API.react.user.OldAndNewPassword;
+import com.netstore.model.entity.CredentialsEntity;
 import com.netstore.model.entity.UserEntity;
 import com.netstore.model.repository.CredentialsRepository;
 import com.netstore.model.repository.UserRepository;
 import com.netstore.model.repository.rest.UserRestRepository;
+import com.netstore.model.service.AddCredentialsService;
 import com.netstore.model.service.AddUserService;
 import net.glxn.qrgen.javase.QRCode;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +36,8 @@ public class UserActionsReact {
     private AddUserService addUserService;
     @Autowired
     private BCryptPasswordEncoder bCryptPasswordEncoder;
+    @Autowired
+    private AddCredentialsService addCredentialsService;
 
 
 
@@ -49,6 +53,28 @@ public class UserActionsReact {
 
         return new ResponseEntity<>(bytes, headers, HttpStatus.CREATED);
 //        return new ResponseEntity<>(credentialsRepository.findByUserIdUser(userRestRepository.findByEmail(authentication.getName()).getIdUser()), HttpStatus.OK);
+    }
+    @RequestMapping("/qrRegistered")
+    public ResponseEntity<ReactStatus> checkIfRegistered(Authentication authentication){
+        ReactStatus reactStatus = new ReactStatus();
+        if (credentialsRepository.findByUserIdUser(userRepository.findByEmail(authentication.getName()).getIdUser()).getPin()!=null) {
+            reactStatus.setStatus(true);
+            return new ResponseEntity<>(reactStatus, HttpStatus.OK);
+        }else
+        {
+            reactStatus.setStatus(false);
+            return new ResponseEntity<>(reactStatus,HttpStatus.OK);
+        }
+    }
+    @RequestMapping("/unRegister")
+    public ResponseEntity<ReactStatus> unRegisterDevice(Authentication authentication){
+        ReactStatus reactStatus = new ReactStatus();
+        CredentialsEntity credentialsEntity = credentialsRepository.findByUserIdUser(userRepository.findByEmail(authentication.getName()).getIdUser());
+        credentialsEntity.setPin(null);
+        this.addCredentialsService.saveAndFlush(credentialsEntity);
+        reactStatus.setStatus(false);
+        return new ResponseEntity<>(reactStatus,HttpStatus.OK);
+
     }
 
     @RequestMapping(value = "/saveAvatar",method = RequestMethod.POST)

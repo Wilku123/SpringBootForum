@@ -144,11 +144,10 @@ class Circle extends React.Component {
     }
 
     handleSaveChanges() {
-        var myHeaders = new Headers({"Content-Type": "application/json"});
 
         fetch(url + '/react/main/addCircle', {
             method: 'POST',
-            headers: myHeaders,
+            headers: header,
             credentials: 'same-origin',
             body: JSON.stringify({
                 name: this.state.circleName,
@@ -282,7 +281,7 @@ class Circle extends React.Component {
 
             <div>
                 <NavBar/>
-                <link rel="stylesheet" href="../../css/circle.css"/>
+                <link rel="stylesheet" href="/css/circle.css"/>
 
 
                 <Row className="show-grid">

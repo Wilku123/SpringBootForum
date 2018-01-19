@@ -361,7 +361,7 @@ class Config extends React.Component {
 
             <div>
                 <NavBar/>
-                <link rel="stylesheet" href="../../css/circle.css"/>
+                <link rel="stylesheet" href="/css/circle.css"/>
 
 
                 <Row className="show-grid">

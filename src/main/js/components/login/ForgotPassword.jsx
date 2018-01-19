@@ -93,7 +93,7 @@ class ForgotPassword extends React.Component {
             />;
         return (
             <div>
-                <link rel="stylesheet" type="text/css" href="/../../css/loginPage.css"/>
+                <link rel="stylesheet" type="text/css" href="/css/loginPage.css"/>
 
                 <div className="container-fluid">
                     <div className="row">
@@ -119,7 +119,7 @@ class ForgotPassword extends React.Component {
                                             </button>
 
                                         </div>
-                                        <Link to={"/"}><span className="text-left btn btn-link">Powrót</span></Link>
+                                        <Link to={"/login"}><span className="text-left btn btn-link">Powrót</span></Link>
                                     </form>
                                 </div>
                             </div>

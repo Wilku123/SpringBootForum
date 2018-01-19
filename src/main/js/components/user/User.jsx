@@ -94,7 +94,7 @@ class User extends ReactQueryParams {
 
             <div>
                 <NavBar/>
-                <link rel="stylesheet" href="../../css/answer.css"/>
+                <link rel="stylesheet" href="/css/answer.css"/>
 
 
                 <Row className="show-grid">
