@@ -1,11 +1,20 @@
 import React from 'react';
 import {BrowserRouter as Router, Route, Link} from 'react-router-dom';
-
+import ReactQueryParams from 'react-query-params';
 import {url} from '../../Constants'
-class Home extends React.Component {
+import {MuiThemeProvider, Snackbar} from "material-ui";
+
+let header = {
+    "Content-Type": "application/json"
+};
+
+class Home extends ReactQueryParams {
+
+
     constructor(props) {
         super(props);
         this.onSubmit = this.handleSubmit.bind(this);
+        this.closeSnack = this.handleRequestClose.bind(this);
         this.state = {
             stat: {status: ""},
             username: '',
@@ -13,8 +22,56 @@ class Home extends React.Component {
             formErrors: {username: '', password: ''},
             usernameValid: false,
             passwordValid: false,
-            formValid: false
+            formValid: false,
+            activated: [],
+            open: false,
+            openError: false,
+            token:[],
+            intel: "Konto Było aktywne, jest już gotowe do zalogowania"
         }
+    }
+
+    componentDidMount() {
+
+        let token = this.queryParams.token;
+
+        if (token !== undefined) {
+            fetch(url + "/react/activate", {
+                method: 'POST',
+                body: JSON.stringify({
+                    activeToken: token
+                }),
+                headers: header
+
+            }).then((Response) => Response.json()).then((findresponse) => {
+                this.setState({
+                    activated: findresponse
+                })
+            }).then(() => {
+                if (this.state.activated.status)
+                {
+                    this.setState({
+                        intel: "Konto zostało aktywowane"
+
+                    })
+                }
+                this.setState({
+                    open:true
+                });
+
+            })
+        }
+
+
+        let error = this.queryParams.error;
+
+        if (error === true) {
+            this.setState({
+                openError: true,
+            })
+        }
+
+
     }
 
     validateField(fieldName, value) {
@@ -66,9 +123,11 @@ class Home extends React.Component {
         let checkUser;
         let usernameValid = this.state.usernameValid;
         let fieldValidationErrors = this.state.formErrors;
-        var myHeaders = new Headers({"Content-Type": "application/json",
-        "username":this.state.username,
-        "password":this.state.password});
+        var myHeaders = new Headers({
+            "Content-Type": "application/json",
+            "username": this.state.username,
+            "password": this.state.password
+        });
 
         fetch(url + "/login", {
 
@@ -98,6 +157,12 @@ class Home extends React.Component {
         });
     }
 
+    handleRequestClose() {
+        this.setState({
+            open: false
+        })
+    }
+
     render() {
         return (
             <div>
@@ -110,7 +175,7 @@ class Home extends React.Component {
                         <div className="col-md-8">
                             <div id="octagonWrap">
                                 <div id="octagon">
-                                    <form role="form" method="post" className="jumbotron" >
+                                    <form role="form" method="post" className="jumbotron">
                                         <div
                                             className={`form-group has-feedback ${this.errorClass(this.state.formErrors.username)}`}>
 
@@ -147,9 +212,9 @@ class Home extends React.Component {
 
                                         <div className="text-center button">
                                             {/*<Link to={"/main/circle"}>*/}
-                                                <button type="submit" className="btn btn-default">
-                                                    Zaloguj
-                                                </button>
+                                            <button type="submit" className="btn btn-default">
+                                                Zaloguj
+                                            </button>
                                             {/*</Link>*/}
                                         </div>
                                     </form>
@@ -160,7 +225,21 @@ class Home extends React.Component {
                         </div>
                     </div>
                 </div>
-
+                <MuiThemeProvider>
+                    <Snackbar
+                        open={this.state.open}
+                        message={this.state.intel}
+                        autoHideDuration={4000}
+                        onRequestClose={this.closeSnack}
+                    />
+                    <Snackbar
+                        open={this.state.openError}
+                        message="Błąd logowania"
+                        autoHideDuration={4000}
+                        bodyStyle={{ backgroundColor: 'red', color: 'black' }}
+                        onRequestClose={this.closeSnack}
+                    />
+                </MuiThemeProvider>
             </div>
         );
     }

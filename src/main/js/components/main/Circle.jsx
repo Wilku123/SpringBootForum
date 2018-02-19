@@ -12,8 +12,9 @@ import ContentAdd from 'material-ui/svg-icons/content/add';
 import {Link} from "react-router-dom";
 import {url} from '../../Constants';
 import ActionInfo from "material-ui/svg-icons/action/info";
-
-
+// import "./../../../resources/static/css/circle";
+// import "./../../../resources/static/css/circle.css";
+// import styles from "./../../"
 let header = {
     "Content-Type": "application/json"
 };
@@ -21,6 +22,8 @@ let header = {
 // /*{this.state.circles.map((dynamicData,key)=>*/
 // /*{dynamicData.name}:*/
 // /*{dynamicData.lastName}*/
+
+
 
 class Circle extends React.Component {
 
@@ -173,7 +176,8 @@ class Circle extends React.Component {
             this.setState({
                 open: false,
                 circleName: "",
-                circleDescription: ""
+                circleDescription: "",
+                formValid: false
             });
         });
 
@@ -213,7 +217,7 @@ class Circle extends React.Component {
                         <Panel key={key}>
                             <Grid>
                                 <Row className="show-grid circle">
-                                    <Col md={1}>
+                                    <Col xs={1} md={1}>
 
                                         <Checkbox
                                             checkedIcon={<ActionFavorite/>}
@@ -231,7 +235,7 @@ class Circle extends React.Component {
                                             <ActionInfo />
                                         </IconButton>
                                     </Col>
-                                    <Col md={7}>
+                                    <Col xs={7} md={7}>
                                         <Link to={"/main/topic?circle=" + dynamicData.idCircle}>
                                             <h4>
                                                 {dynamicData.name}
@@ -240,12 +244,12 @@ class Circle extends React.Component {
 
                                         {dynamicData.description}
                                     </Col>
-                                    <Col md={1}>
+                                    <Col xs={1} md={1}>
                                         <h4>{dynamicData.countTopic}</h4> Tematów
 
                                     </Col>
 
-                                    <Col md={1}>
+                                    <Col xs={1} md={1}>
 
                                         <List>
                                             <ListItem disabled={true}
@@ -279,15 +283,16 @@ class Circle extends React.Component {
 
 
 
-            <div>
+            <div >
                 <NavBar/>
-                <link rel="stylesheet" href="/css/circle.css"/>
+                <link rel="stylesheet" href={"/css/circle.css"}/>
+                {/*<link href="../../../resources/static/css/circle.css"/>*/}
 
 
                 <Row className="show-grid">
-                    <Col xs={6} md={1}/>
+                    <Col md={1}/>
 
-                    <Col xs={6} md={10}>
+                    <Col md={10}>
 
                         <Breadcrumb>
                             <Breadcrumb.Item href="/" active>
@@ -306,7 +311,7 @@ class Circle extends React.Component {
 
                     </Col>
 
-                    <Col xsHidden md={1}/>
+                    <Col md={1}/>
                 </Row>
                 <MuiThemeProvider>
 

@@ -82,4 +82,23 @@ public class RegisterQrRest {
             return new ResponseEntity<>(restViewEntitySchemaRest, HttpStatus.OK);
         }
     }
+    @RequestMapping("/unRegister")
+    public ResponseEntity<SchemaRest> unregisterDevice(@RequestBody CredentialsEntity credentialsEntity)
+    {
+        if (credentialsRepository.findByTokenAndPin(credentialsEntity.getToken(),credentialsEntity.getPin())!=null)
+        {
+            SchemaRest<CredentialsEntity> schemaRest = new SchemaRest<>(true,"Urządzenie usuniete",1337,null);
+
+            CredentialsEntity credentials = credentialsRepository.findByToken(credentialsEntity.getToken());
+            credentials.setPin(null);
+            this.addCredentialsService.saveAndFlush(credentials);
+            return new ResponseEntity<>(schemaRest,HttpStatus.OK);
+
+        }
+        else{
+            SchemaRest<CredentialsEntity> schemaRest = new SchemaRest<>(false,"Zły QR albo Pin",101,null);
+
+            return new ResponseEntity<>(schemaRest,HttpStatus.OK);
+        }
+    }
 }

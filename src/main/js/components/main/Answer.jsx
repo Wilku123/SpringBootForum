@@ -151,7 +151,8 @@ class Answer extends ReactQueryParams {
         }).then(() => {
             this.setState({
                 open: false,
-                answerName: ""
+                answerName: "",
+                formValid:false
             });
         });
 
@@ -190,19 +191,19 @@ class Answer extends ReactQueryParams {
                     <Panel key={key}>
                         <Grid>
                             <Row className="show-grid">
-                                <Col xs={12} md={8}>
+                                <Col xs={8} md={8}>
 
-                                    <h4>
+
                                         {dynamicData.content}
-                                    </h4>
 
 
-                                </Col>
-                                <Col xs={6} md={2}>
-                                    <h4><Timestamp time={(dynamicData.publishDate) / 1000} format='full'/></h4> Data publikacji
 
                                 </Col>
-                                <Col xs={6} md={2}>
+                                <Col xs={2} md={2}>
+                                    <h5><Timestamp time={(dynamicData.publishDate) / 1000} format='full'/> </h5>Data publikacji
+
+                                </Col>
+                                <Col xs={1}  md={1}>
                                     <MuiThemeProvider>
                                         <List>
                                             <ListItem disabled={true}
@@ -216,6 +217,7 @@ class Answer extends ReactQueryParams {
 
                                     </MuiThemeProvider>
                                 </Col>
+                                <Col md={1}></Col>
                             </Row>
                         </Grid>
 
@@ -238,9 +240,9 @@ class Answer extends ReactQueryParams {
 
 
                 <Row className="show-grid">
-                    <Col xs={6} md={1}/>
+                    <Col md={1}/>
 
-                    <Col xs={6} md={10}>
+                    <Col md={10}>
 
                         <Breadcrumb>
                             <Breadcrumb.Item href="/main/circle">
@@ -263,7 +265,7 @@ class Answer extends ReactQueryParams {
 
                     </Col>
 
-                    <Col xsHidden md={1}/>
+                    <Col md={1}/>
                 </Row>
                 <MuiThemeProvider>
 

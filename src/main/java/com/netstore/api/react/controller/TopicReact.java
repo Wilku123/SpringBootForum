@@ -57,10 +57,10 @@ public class TopicReact {
 
 
     @RequestMapping(value = "/getTopic", method = RequestMethod.POST)
-    public ResponseEntity<List<TopicWithAuthor>> getTopic(Authentication auth, @RequestBody TopicEntity TopicEntity) {
+    public ResponseEntity<List<TopicWithAuthor>> getTopic(Authentication auth, @RequestBody TopicEntity topicEntity) {
 
 
-        List<TopicRestViewEntity> topicRestViewEntitiesList = topicRestViewRepository.findAllByCircleIdCircleAndPublishDateIsLessThanOrderByPublishDateDesc(TopicEntity.getCircleIdCircle(), new Timestamp(System.currentTimeMillis()));
+        List<TopicRestViewEntity> topicRestViewEntitiesList = topicRestViewRepository.findAllByCircleIdCircleAndPublishDateIsLessThanOrderByPublishDateDesc(topicEntity.getCircleIdCircle(), new Timestamp(System.currentTimeMillis()));
         List<TopicWithAuthor> topicWithAuthorList = new ArrayList<>();
 
         for (TopicRestViewEntity i : topicRestViewEntitiesList) {

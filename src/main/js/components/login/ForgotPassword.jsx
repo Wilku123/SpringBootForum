@@ -14,7 +14,8 @@ class ForgotPassword extends React.Component {
             email: '',
             formErrors: {email: ''},
             emailValid: false,
-            open:false
+            open:false,
+            buttonDisable:true
         }
     }
     handleClose () {
@@ -50,13 +51,14 @@ class ForgotPassword extends React.Component {
         }, this.validateForm);
     }
     validateForm() {
-        this.setState({formValid: this.state.emailValid});
+        this.setState({formValid: this.state.emailValid && this.state.buttonDisable});
     }
     handleSubmit(e) {
         e.preventDefault();
-        console.log(JSON.stringify({
-            email: this.state.email
-        }));
+        this.setState({
+           formValid:false,
+            buttonDisable:false
+        });
 
         let checkUser;
         var myHeaders = new Headers({"Content-Type": "application/json"});
@@ -112,9 +114,10 @@ class ForgotPassword extends React.Component {
                                                    id="email" name="email" value={this.state.email}
                                                    autoComplete="new-email"
                                                    onChange={(event) => this.handleUserInput(event)} ref="email"/>
+                                            <span className="errorSpan">{this.state.formErrors.email}</span>
                                         </div>
                                         <div className="text-center button">
-                                            <button type="submit" className="btn btn-default">
+                                            <button type="submit" className="btn btn-default" disabled={!this.state.formValid}>
                                                 Zresetuj
                                             </button>
 

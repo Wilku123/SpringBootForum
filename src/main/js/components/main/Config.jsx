@@ -254,7 +254,7 @@ class Config extends React.Component {
                         <Panel>
                             <Grid>
                                 <Row className="show-grid">
-                                    <Col xs={12} md={3}>
+                                    <Col xs={3} md={3}>
                                     </Col>
                                     <Col xs={6} md={6}>
 
@@ -339,7 +339,7 @@ class Config extends React.Component {
                                                           disabled={!this.state.formValid} onClick={this.saveChanges}/>
                                         </div>
                                     </Col>
-                                    <Col xs={6} md={3}>
+                                    <Col xs={3} md={3}>
 
                                     </Col>
                                 </Row>
@@ -365,9 +365,9 @@ class Config extends React.Component {
 
 
                 <Row className="show-grid">
-                    <Col xs={6} md={1}/>
+                    <Col xs={1} md={1}/>
 
-                    <Col xs={6} md={10}>
+                    <Col xs={10} md={10}>
 
 
                         <Breadcrumb>
@@ -383,7 +383,7 @@ class Config extends React.Component {
 
                     </Col>
 
-                    <Col xsHidden md={1}/>
+                    <Col xs={1} md={1}/>
                 </Row>
 
                 <MuiThemeProvider>

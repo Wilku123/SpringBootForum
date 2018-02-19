@@ -20,9 +20,5 @@ public interface CircleRestViewRepository extends JpaRepository<CircleRestViewEn
     List<CircleRestViewEntity> findAllByNameContaining(String name);
     List<CircleRestViewEntity> findAllByDescriptionContaining(String name);
     List<CircleRestViewEntity> findAllByNameContainingOrDescriptionContaining(String name,String description);
-
-
-
-
 }
 

@@ -14,7 +14,7 @@ class ResetPass extends ReactQueryParams {
             formErrors: {password: ''},
             passwordValid: false,
             formValid: false,
-
+            buttonDisable:true
         }
     }
 
@@ -27,7 +27,7 @@ class ResetPass extends ReactQueryParams {
             });
     }
     validateForm() {
-        this.setState({formValid: this.state.passwordValid});
+        this.setState({formValid: this.state.passwordValid && this.state.buttonDisable});
     }
 
     validateField(fieldName, value) {
@@ -57,7 +57,10 @@ class ResetPass extends ReactQueryParams {
 
     handleSubmit(e) {
         e.preventDefault();
-
+        this.setState({
+            formValid:false,
+            buttonDisable:false
+        });
 
 
         let checkUser;
@@ -80,7 +83,7 @@ class ResetPass extends ReactQueryParams {
         }).then(() => {
             checkUser = this.state.stat.status;
             if (checkUser === true) {
-                window.location.assign("/");
+                window.location.assign("/login");
             }
         });
     }

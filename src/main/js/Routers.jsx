@@ -12,7 +12,7 @@ import Config from './components/main/Config';
 import Topic from './components/main/Topic';
 import Answer from './components/main/Answer';
 import User from './components/user/User';
-
+import Searching from './components/main/Searching'
 
 
 class Routers extends React.Component {
@@ -30,24 +30,27 @@ class Routers extends React.Component {
                     {/*</ul>*/}
 
                     {/*<hr />*/}
+
                     <Switch>
 
                         <Route exact path='/login' component={Login}/>
+                        <Route path='/reg' component={Register}/>
+                        <Route path='/forgot' component={ForgotPassword}/>
+                        <Route path="/changePass" component={ResetPass}/>
+
 
                         <Route path="/main/circle" component={Circle}/>
                         <Route path="/main/topic" component={Topic}/>
                         <Route path="/main/answer" component={Answer}/>
                         <Route path="/main/profile" component={User}/>
-
-
                         <Route path="/main/app" component={MobileApp}/>
                         <Route path="/main/subbed" component={SubbedEntityList}/>
                         <Route path="/main/config" component={Config}/>
+                        <Route path="/main/search" component={Searching}/>
 
 
-                        <Route path='/reg' component={Register}/>
-                        <Route path='/forgot' component={ForgotPassword}/>
-                        <Route path="/changePass" component={ResetPass}/>
+
+
                         {/*<Route path='/contact' component={Contact} />*/}
                     </Switch>
 

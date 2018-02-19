@@ -38,27 +38,37 @@ class SubbedEntityList extends React.Component {
             unSubListTopic: [],
             openCircle: false,
             openTopic: false,
-            status: []
+            status: [],
+            circleKeys:[],
+            topicKeys:[],
+            uncheckBoxCircle:false,
+            uncheckBoxTopic:false,
         };
 
     }
 
-    handleUnSubCircle(checked, id) {
+    handleUnSubCircle(checked, id,key) {
 
         if (checked) {
             this.state.unSubListCircle.push(id);
+            this.state.circleKeys.push(key);
         } else {
             this.state.unSubListCircle.splice(this.state.unSubListCircle.indexOf(id), 1);
+            this.state.circleKeys.splice(this.state.circleKeys.indexOf(key),1);
+
         }
 
     }
 
-    handleUnSubTopic(checked, id) {
+    handleUnSubTopic(checked, id,key) {
 
         if (checked) {
             this.state.unSubListTopic.push(id);
+            this.state.topicKeys.push(key);
         } else {
             this.state.unSubListTopic.splice(this.state.unSubListTopic.indexOf(id), 1);
+            this.state.topicKeys.splice(this.state.topicKeys.indexOf(key),1);
+
         }
 
     }
@@ -88,9 +98,34 @@ class SubbedEntityList extends React.Component {
             }).then((Response) => Response.json()).then((findresponse) => {
                 this.setState({
                     status: findresponse,
-                    openCircle: false
+                    openCircle: false,
                 });
-                window.location.replace(url + "/main/subbed");
+                // window.location.replace(url + "/main/subbed");
+            }).then(()=>{
+                let newCircleList = [];
+                let reversedSubbedList=[];
+                let i;
+                for (i=0;i<this.state.circleKeys.length;i++)
+                {
+                    newCircleList.push(this.state.subbedCircle[this.state.circleKeys[i]]);
+                }
+                for (i=0;i<this.state.subbedCircle.length; i++)
+                {
+                    if(!newCircleList.includes(this.state.subbedCircle[i])) {
+                        reversedSubbedList.push(this.state.subbedCircle[i]);
+                    }
+                }
+                // let intersection = newCircleList.filter(x => this.state.unSubListCircle.includes(x));
+                this.setState({
+                    subbedCircle:reversedSubbedList,
+                    uncheckBoxCircle:false,
+                    isLoadingCircle:true,
+                })
+            }).then(()=> {
+                this.setState({
+                    circleKeys: [],
+                    isLoadingCircle:false
+                })
             });
         } else {
             this.handleClose();
@@ -112,8 +147,33 @@ class SubbedEntityList extends React.Component {
                     status: findresponse,
                     openTopic: false
                 });
-                window.location.replace(url + "/main/subbed");
-            });
+                // window.location.replace(url + "/main/subbed");
+            }).then(()=> {
+                let newTopicList = [];
+                let reversedSubbedList = [];
+                let i;
+                for (i = 0; i < this.state.topicKeys.length; i++) {
+                    newTopicList.push(this.state.subbedTopic[this.state.topicKeys[i]]);
+                }
+                for (i = 0; i < this.state.subbedTopic.length; i++) {
+                    if (!newTopicList.includes(this.state.subbedTopic[i])) {
+                        reversedSubbedList.push(this.state.subbedTopic[i]);
+                    }
+                }
+                // let intersection = newCircleList.filter(x => this.state.unSubListCircle.includes(x));
+                this.setState({
+                    subbedTopic: reversedSubbedList,
+                    uncheckBoxTopic:false,
+                    isLoadingTopic:true,
+                })
+            }).then(()=>{
+                this.setState({
+                    topicKeys: [],
+                    isLoadingTopic:false,
+
+
+                })
+            })
         } else {
             this.handleClose();
         }
@@ -141,6 +201,7 @@ class SubbedEntityList extends React.Component {
             this.setState({
                 subbedTopic: findresponse,
                 isLoadingTopic: false
+
             })
         })
     }
@@ -211,7 +272,8 @@ class SubbedEntityList extends React.Component {
                         <tr>
                             <td>
                                 <Checkbox
-                                    onCheck={(event, isChecked) => this.handleUnSubTopic(isChecked, dynamicData.idTopic)}/>
+                                    defaultChecked={this.state.uncheckBox}
+                                    onCheck={(event, isChecked) => this.handleUnSubTopic(isChecked, dynamicData.idTopic,key)}/>
                             </td>
                             <td> <Link to={"/main/answer?topic=" + dynamicData.idTopic}>{dynamicData.name}</Link></td>
                             <td>{dynamicData.description}</td>
@@ -245,7 +307,8 @@ class SubbedEntityList extends React.Component {
                                     <tr>
                                         <td>
                                             <Checkbox
-                                                onCheck={(event, isChecked) => this.handleUnSubCircle(isChecked, dynamicData.idCircle)}/>
+                                                defaultChecked={this.state.uncheckBoxTopic}
+                                                onCheck={(event, isChecked) => this.handleUnSubCircle(isChecked, dynamicData.idCircle,key)}/>
                                         </td>
                                         <td> <Link to={"/main/topic?circle=" + dynamicData.idCircle}>{dynamicData.name}</Link></td>
                                         <td>{dynamicData.description}</td>
@@ -280,9 +343,9 @@ class SubbedEntityList extends React.Component {
 
 
                 <Row className="show-grid">
-                    <Col xs={6} md={1}/>
+                    <Col xs={1} md={1}/>
 
-                    <Col xs={6} md={10}>
+                    <Col xs={10} md={10}>
 
 
                         <Breadcrumb>
@@ -307,7 +370,7 @@ class SubbedEntityList extends React.Component {
 
                     </Col>
 
-                    <Col xsHidden md={1}/>
+                    <Col xs={1} md={1}/>
                 </Row>
 
 

@@ -1,6 +1,7 @@
 const WebpackNotifierPlugin = require('webpack-notifier');
 const webpack = require('webpack');
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
+const ExtractTextPlugin = require("extract-text-webpack-plugin");
 
 module.exports = {
     entry: {
@@ -26,10 +27,10 @@ module.exports = {
             },
             {
                 test: /\.css$/,
-                use: [
-                    { loader: "style-loader" },
-                    { loader: "css-loader" }
-                ]
+                use: ExtractTextPlugin.extract({
+                    fallback: "style-loader",
+                    use: "css-loader?importLoader=1&modules&localIdentName=[path]___[name]__[local]___[hash:base64:5]"
+                })
             },
             {
                 test: /\.svg$/,
@@ -39,6 +40,7 @@ module.exports = {
 
     },
     plugins: [
+        new ExtractTextPlugin("./src/main/resources/static/built/styles.css"),
         // Set up the notifier plugin - you can remove this (or set alwaysNotify false) if desired
         new WebpackNotifierPlugin({alwaysNotify: true}),
         //TODO usun to pozniej kiedys tam

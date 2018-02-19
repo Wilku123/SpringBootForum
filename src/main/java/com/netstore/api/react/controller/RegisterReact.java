@@ -94,7 +94,7 @@ public class RegisterReact {
                         .to((userEntity.getName() + " " + userEntity.getLastName()), (userEntity.getEmail()))// (userEntity.getEmail()+"@us.edu.pl")
                         .cc("Halo halo", "dejmitogroup@gmail.com")
                         .subject("Rejestracja na forum DejMiTo")
-                        .text("no halo czymaj linksa http://37.233.102.142:8080/activate?token=" + token)
+                        .text("no halo czymaj linksa http://37.233.102.142:8080/login?token=" + token)
                         .build();
                 new Mailer("smtp.gmail.com", 587, "dejmitogroup@gmail.com", "haslo123", TransportStrategy.SMTP_TLS).sendMail(email);
 
@@ -110,16 +110,20 @@ public class RegisterReact {
 
     }
 
-    @GetMapping("/activate")
-    public String activate(@RequestParam(value = "token") String token) {
-        if (userRepository.findByActiveToken(token) != null && userRepository.findByActiveToken(token).getActive() != 1) {
-            UserEntity userEntity = new UserEntity();
-            userEntity = userRepository.findByActiveToken(token);
+    @RequestMapping(value = "/react/activate",method = RequestMethod.POST)
+    public ResponseEntity<ReactStatus> activate(@RequestBody UserEntity user) {
+        ReactStatus reactStatus = new ReactStatus();
+        if (userRepository.findByActiveToken(user.getActiveToken()) != null && userRepository.findByActiveToken(user.getActiveToken()).getActive() != 1) {
+
+            UserEntity userEntity;
+            userEntity = userRepository.findByActiveToken(user.getActiveToken());
             userEntity.setActive((byte) 1);
             this.userService.saveAndFlush(userEntity);
-            return "redirect:/login?activate=true";
+            reactStatus.setStatus(true);
+            return new ResponseEntity<>(reactStatus,HttpStatus.OK);
         } else {
-            return "redirect:/login?activate=false";
+            reactStatus.setStatus(false);
+            return new ResponseEntity<>(reactStatus,HttpStatus.OK);
         }
     }
 //    @PostMapping("/userExists")

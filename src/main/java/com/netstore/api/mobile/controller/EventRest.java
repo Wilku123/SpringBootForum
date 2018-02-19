@@ -47,44 +47,44 @@ public class EventRest {
     @Autowired
     private CredentialsRepository credentialsRepository;
 
-    private EventWithEntityAndUser fillEventEntityAuthor(EventEntity i, Authentication auth)
-    {
+    private EventWithEntityAndUser fillEventEntityAuthor(EventEntity i, Authentication auth) {
         Integer idEvent = i.getIdEvent();
-        String type= i.getType();
-        Integer idEntity= i.getEntityId();
+        String type = i.getType();
+        Integer idEntity = i.getEntityId();
         Integer idAuthor = i.getAuthorId();
         Timestamp timestamp = i.getPublishDate();
         UserRestViewEntity userRestViewEntity;
         userRestViewEntity = userRestRepository.findByIdUser(idAuthor);
 
 
-        if (type.equals("Answer")) {
-            EventWithEntityAndUser<AnswerWithAuthor> entityAndUser =new EventWithEntityAndUser<>();
-            AnswerRestViewEntity answerRestViewEntity=answerRestRepository.findByIdAnswer(idEntity);
-            AnswerWithAuthor answerWithAuthor = new AnswerWithAuthor();
-            answerWithAuthor.setIdAnswer(answerRestViewEntity.getIdAnswer());
-            answerWithAuthor.setContent(answerRestViewEntity.getContent());
-            answerWithAuthor.setPublishDate(answerRestViewEntity.getPublishDate());
-            answerWithAuthor.setUserIdUser(answerRestViewEntity.getUserIdUser());
-            answerWithAuthor.setTopicIdTopic(answerRestViewEntity.getTopicIdTopic());
-            answerWithAuthor.setUuid(answerRestViewEntity.getUuid());
-            answerWithAuthor.setAuthor(userRestViewEntity);
-
-            if (i.getAuthorId() == credentialsRepository.findByToken(auth.getName()).getUserIdUser()) {
-                answerWithAuthor.setYours(1);
-            } else {
-                answerWithAuthor.setYours(0);
-            }
-
-            entityAndUser.setData(answerWithAuthor);
-
-            entityAndUser.setIdEvent(idEvent);
-            entityAndUser.setType(type);
-            entityAndUser.setIdAuthor(idAuthor);
-            entityAndUser.setPublishDate(timestamp);
-            return entityAndUser;
-
-        }else if(type.equals("Topic")){
+//        if (type.equals("Answer")) {
+//            EventWithEntityAndUser<AnswerWithAuthor> entityAndUser =new EventWithEntityAndUser<>();
+//            AnswerRestViewEntity answerRestViewEntity=answerRestRepository.findByIdAnswer(idEntity);
+//            AnswerWithAuthor answerWithAuthor = new AnswerWithAuthor();
+//            answerWithAuthor.setIdAnswer(answerRestViewEntity.getIdAnswer());
+//            answerWithAuthor.setContent(answerRestViewEntity.getContent());
+//            answerWithAuthor.setPublishDate(answerRestViewEntity.getPublishDate());
+//            answerWithAuthor.setUserIdUser(answerRestViewEntity.getUserIdUser());
+//            answerWithAuthor.setTopicIdTopic(answerRestViewEntity.getTopicIdTopic());
+//            answerWithAuthor.setUuid(answerRestViewEntity.getUuid());
+//            answerWithAuthor.setAuthor(userRestViewEntity);
+//
+//            if (i.getAuthorId() == credentialsRepository.findByToken(auth.getName()).getUserIdUser()) {
+//                answerWithAuthor.setYours(1);
+//            } else {
+//                answerWithAuthor.setYours(0);
+//            }
+//
+//            entityAndUser.setData(answerWithAuthor);
+//
+//            entityAndUser.setIdEvent(idEvent);
+//            entityAndUser.setType(type);
+//            entityAndUser.setIdAuthor(idAuthor);
+//            entityAndUser.setPublishDate(timestamp);
+//            return entityAndUser;
+//
+//        }else
+        if (type.equals("Topic")) {
             EventWithEntityAndUser<TopicWithAuthor> entityAndUser = new EventWithEntityAndUser<>();
             TopicRestViewEntity topicRestViewEntity = topicRestViewRepository.findByIdTopic(idEntity);
 
@@ -112,7 +112,7 @@ public class EventRest {
             entityAndUser.setIdAuthor(idAuthor);
             entityAndUser.setPublishDate(timestamp);
             return entityAndUser;
-        }else{
+        } if(type.equals("Circle")) {
             EventWithEntityAndUser<CircleWithAuthor> entityAndUser = new EventWithEntityAndUser<>();
             CircleRestViewEntity circleRestViewEntity = circleRestViewRepository.findByIdCircle(idEntity);
 
@@ -143,20 +143,23 @@ public class EventRest {
             entityAndUser.setIdAuthor(idAuthor);
             return entityAndUser;
         }
-
+        else {
+            return null;
+        }
 
 
     }
+
     @RequestMapping(value = "/events", method = RequestMethod.GET)
-    public ResponseEntity<SchemaRestList<EventWithEntityAndUser>> getEvents(Authentication authentication)
-    {
+    public ResponseEntity<SchemaRestList<EventWithEntityAndUser>> getEvents(Authentication authentication) {
         List<EventEntity> eventList = eventRestRepository.findTop30ByOrderByPublishDateDesc();
         List<EventWithEntityAndUser> eventWithEntityAndUserList = new ArrayList<>();
-        for (EventEntity i:eventList) {
-            eventWithEntityAndUserList.add(fillEventEntityAuthor(i,authentication));
+        for (EventEntity i : eventList) {
+            if(!i.getType().equals("Answer"))
+            eventWithEntityAndUserList.add(fillEventEntityAuthor(i, authentication));
         }
 
-        SchemaRestList<EventWithEntityAndUser> schemaRestList = new SchemaRestList<>(true,"Wydarzenia",1337,eventWithEntityAndUserList) ;
+        SchemaRestList<EventWithEntityAndUser> schemaRestList = new SchemaRestList<>(true, "Wydarzenia", 1337, eventWithEntityAndUserList);
         return new ResponseEntity<>(schemaRestList, HttpStatus.OK);
     }
 }

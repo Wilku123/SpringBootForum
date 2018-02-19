@@ -190,7 +190,8 @@ class Topic extends ReactQueryParams {
                 open: false,
                 // isLoading: true,
                 topicName: "",
-                topicDescription: ""
+                topicDescription: "",
+                formValid: false
             });
 
         });
@@ -230,7 +231,7 @@ class Topic extends ReactQueryParams {
                         <Panel key={key}>
                             <Grid>
                                 <Row className="show-grid">
-                                    <Col xs={4} md={1}>
+                                    <Col xs={1} md={1}>
 
                                         <Checkbox
                                             checkedIcon={<ActionFavorite/>}
@@ -248,7 +249,7 @@ class Topic extends ReactQueryParams {
                                             <ActionInfo />
                                         </IconButton>
                                     </Col>
-                                    <Col xs={12} md={7}>
+                                    <Col xs={7} md={7}>
                                         <Link to={"/main/answer?topic=" + dynamicData.idTopic}>
                                             <h4>
                                                 {dynamicData.name}
@@ -257,11 +258,11 @@ class Topic extends ReactQueryParams {
 
                                         {dynamicData.description}
                                     </Col>
-                                    <Col xs={6} md={2}>
+                                    <Col xs={1} md={1}>
                                         <h4>{dynamicData.countAnswer}</h4> Odpowiedzi
 
                                     </Col>
-                                    <Col xs={6} md={2}>
+                                    <Col xs={1} md={1}>
 
                                         <List>
                                             <ListItem disabled={true}
@@ -275,6 +276,8 @@ class Topic extends ReactQueryParams {
 
 
                                     </Col>
+                                    <Col md={1}></Col>
+                                    <Col md={1}></Col>
                                 </Row>
                             </Grid>
 
@@ -298,9 +301,9 @@ class Topic extends ReactQueryParams {
 
 
                 <Row className="show-grid">
-                    <Col xs={6} md={1}/>
+                    <Col  md={1}/>
 
-                    <Col xs={6} md={10}>
+                    <Col  md={10}>
 
                         <Breadcrumb>
                             <Breadcrumb.Item href="/main/circle">
@@ -320,7 +323,7 @@ class Topic extends ReactQueryParams {
 
                     </Col>
 
-                    <Col xsHidden md={1}/>
+                    <Col md={1}/>
                 </Row>
                 <MuiThemeProvider>
 

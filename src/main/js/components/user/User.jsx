@@ -58,7 +58,7 @@ class User extends ReactQueryParams {
                         <Paper style={"paper"} zDepth={3}>
                             <Grid>
                                 <Row className="show-grid">
-                                    <Col xs={12} md={3}>
+                                    <Col xs={3} md={3}>
                                         <Paper style={"paper"} zDepth={1}>
                                             <div align={"center"}>
                                                 <Avatar src={this.state.user.avatar} size={120}/>
@@ -71,7 +71,7 @@ class User extends ReactQueryParams {
                                             <strong>Adres e-mail:</strong> {this.state.user.email}
                                         </Paper>
                                     </Col>
-                                    <Col xs={12} md={9}>
+                                    <Col xs={9} md={9}>
                                         <Paper style={"paper"} zDepth={1}>
 
                                         </Paper>
@@ -98,9 +98,9 @@ class User extends ReactQueryParams {
 
 
                 <Row className="show-grid">
-                    <Col xs={6} md={2}/>
+                    <Col xs={2} md={2}/>
 
-                    <Col xs={6} md={8}>
+                    <Col xs={8} md={8}>
 
                         <Breadcrumb>
                             <Breadcrumb.Item href="/main/circle">
@@ -120,7 +120,7 @@ class User extends ReactQueryParams {
 
                     </Col>
 
-                    <Col xsHidden md={2}/>
+                    <Col xs={2} md={2}/>
                 </Row>
             </div>
 

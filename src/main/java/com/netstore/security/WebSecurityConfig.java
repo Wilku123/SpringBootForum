@@ -66,24 +66,25 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/webjars/**","/css/**","/js/**","/icons/**","/built/**").permitAll()
                 .antMatchers("/react/register","/react/activate","/react/forgotPassword","/react/changePass").permitAll()
                 .antMatchers("/registerrest","/register","/validateToken","/validatePin").permitAll()
-                .antMatchers("/reg","/forgot","/changePass","/activate").permitAll()
+                .antMatchers("/reg","/forgot","/changePass","/activate","/unRegister").permitAll()
                 .antMatchers("/login","/loginReact").permitAll()
                 .antMatchers("/api/**").authenticated()
                 .antMatchers("/react/main/**","/main/**").authenticated()
                 .antMatchers("/admin/**").hasAuthority("ADMIN").anyRequest()
                 .authenticated().and().csrf().disable()
                 .formLogin()
-                .loginPage("/login").failureUrl("/login")
+                .loginPage("/login")
+                .failureUrl("/login?error=true")
 //                .loginProcessingUrl("/loginReact")
                 .successHandler(successHandler())
-                .failureHandler(myFailureHandler())
+//                .failureHandler(myFailureHandler())
                 .defaultSuccessUrl("/main/circle",true)
                 .usernameParameter("username")
                 .passwordParameter("password")
                 .permitAll()
                 .and().logout()
                 .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
-                .logoutSuccessUrl("/")
+                .logoutSuccessUrl("/login")
                 .invalidateHttpSession(true)
                 .deleteCookies("JSESSIONID")
                 .and().exceptionHandling()
@@ -153,26 +154,17 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
     public void configureGlobal(AuthenticationManagerBuilder auth, AuthenticationManagerBuilder rest) throws Exception {
-//        auth
-//                .inMemoryAuthentication()
-//                .withUser("1").password("1").roles("USER");
-
         auth
                 .jdbcAuthentication()
                 .usersByUsernameQuery(usersQuery)
                 .authoritiesByUsernameQuery(rolesQuery)
                 .dataSource(dataSource)
                 .passwordEncoder(bCryptPasswordEncoder);
-
         rest
                 .jdbcAuthentication()
                 .usersByUsernameQuery(credentialsQuery)
                 .authoritiesByUsernameQuery(restRolesQuery)
                 .dataSource(dataSource);
-
-//        rest
-//                .userDetailsService(userDetailsService)
-//                .passwordEncoder(bCryptPasswordEncoder);
     }
 
 

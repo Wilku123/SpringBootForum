@@ -62,10 +62,10 @@ class MobileApp extends React.Component {
             <Jumbotron>
                 <Grid>
                     <Row className="show-grid">
-                        <Col xs={12} md={2}>
+                        <Col xs={2} md={2}>
 
                         </Col>
-                        <Col xs={6} md={8}>
+                        <Col xs={8} md={8}>
                             <div align={"center"}>
                                 <p>Zeskanuj kod QR by zalogować się na urządzeniu moblinym</p>
                                 <Image src={"/react/main/qr"}/>
@@ -76,7 +76,7 @@ class MobileApp extends React.Component {
                                 </MuiThemeProvider>
                             </div>
                         </Col>
-                        <Col xs={6} md={2}>
+                        <Col xs={2} md={2}>
 
                         </Col>
                     </Row>
@@ -98,9 +98,9 @@ class MobileApp extends React.Component {
 
 
                 <Row className="show-grid">
-                    <Col xs={6} md={2}/>
+                    <Col xs={2} md={2}/>
 
-                    <Col xs={6} md={8}>
+                    <Col xs={8} md={8}>
 
                         <Breadcrumb>
                             <Breadcrumb.Item>
@@ -116,7 +116,7 @@ class MobileApp extends React.Component {
 
                     </Col>
 
-                    <Col xsHidden md={2}/>
+                    <Col xs={2} md={2}/>
                 </Row>
 
             </div>

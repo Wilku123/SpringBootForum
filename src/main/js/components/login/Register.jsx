@@ -29,7 +29,8 @@ class Home extends React.Component {
             passwordValid: false,
             formValid: false,
             confirmPasswordValid: false,
-            open:false
+            open:false,
+            buttonDisable:true
         }
     }
     handleOpen(){
@@ -110,7 +111,7 @@ class Home extends React.Component {
     }
 
     validateForm() {
-        this.setState({formValid: this.state.emailValid && this.state.passwordValid && this.state.confirmPasswordValid && this.state.nameValid && this.state.lastNameValid});
+        this.setState({formValid: this.state.emailValid && this.state.passwordValid && this.state.confirmPasswordValid && this.state.nameValid && this.state.lastNameValid && this.state.buttonDisable});
     }
 
     handleUserInput(e) {
@@ -125,7 +126,10 @@ class Home extends React.Component {
     handleSubmit(e) {
         e.preventDefault();
 
-        this.setState({formValid:false});
+        this.setState({
+            formValid:false,
+            buttonDisable:false
+        });
         let checkUser;
         let emailValid = this.state.emailValid;
         let fieldValidationErrors = this.state.formErrors;
@@ -145,7 +149,8 @@ class Home extends React.Component {
                 return response.json()
             }).then((findresponse) => {
             this.setState({
-                stat: findresponse
+                stat: findresponse,
+                buttonDisable:true
             })
         }).then(() =>{
             checkUser = this.state.stat.status;
