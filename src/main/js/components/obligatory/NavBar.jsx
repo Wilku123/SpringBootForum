@@ -87,6 +87,8 @@ class NavBar extends React.Component {
                                     <MenuItem href={"/main/app"}>Aplikacja Moblina</MenuItem>
                                     <MenuItem href={"/main/subbed"}>Subskrybowane</MenuItem>
                                     <MenuItem href={"/main/config"}>Ustawienia</MenuItem>
+                                    <MenuItem href={"/main/hashTable"}>Ukryta opcja niemiecka</MenuItem>
+
                                     <MenuItem divider/>
                                     <MenuItem href={"/logout"}>Wyloguj</MenuItem>
                                 </NavDropdown>

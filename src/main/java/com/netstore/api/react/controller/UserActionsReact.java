@@ -40,7 +40,6 @@ public class UserActionsReact {
     private AddCredentialsService addCredentialsService;
 
 
-
     @RequestMapping("/qr")
     public ResponseEntity<byte[]> getTokenForQr(Authentication authentication) {
         String token = credentialsRepository.findByUserIdUser(userRestRepository.findByEmail(authentication.getName()).getIdUser()).getToken();
@@ -54,62 +53,67 @@ public class UserActionsReact {
         return new ResponseEntity<>(bytes, headers, HttpStatus.CREATED);
 //        return new ResponseEntity<>(credentialsRepository.findByUserIdUser(userRestRepository.findByEmail(authentication.getName()).getIdUser()), HttpStatus.OK);
     }
+
     @RequestMapping("/qrRegistered")
-    public ResponseEntity<ReactStatus> checkIfRegistered(Authentication authentication){
+    public ResponseEntity<ReactStatus> checkIfRegistered(Authentication authentication) {
         ReactStatus reactStatus = new ReactStatus();
-        if (credentialsRepository.findByUserIdUser(userRepository.findByEmail(authentication.getName()).getIdUser()).getPin()!=null) {
+        if (credentialsRepository.findByUserIdUser(userRepository.findByEmail(authentication.getName()).getIdUser()).getPin() != null) {
             reactStatus.setStatus(true);
             return new ResponseEntity<>(reactStatus, HttpStatus.OK);
-        }else
-        {
+        } else {
             reactStatus.setStatus(false);
-            return new ResponseEntity<>(reactStatus,HttpStatus.OK);
+            return new ResponseEntity<>(reactStatus, HttpStatus.OK);
         }
     }
+
     @RequestMapping("/unRegister")
-    public ResponseEntity<ReactStatus> unRegisterDevice(Authentication authentication){
+    public ResponseEntity<ReactStatus> unRegisterDevice(Authentication authentication) {
         ReactStatus reactStatus = new ReactStatus();
         CredentialsEntity credentialsEntity = credentialsRepository.findByUserIdUser(userRepository.findByEmail(authentication.getName()).getIdUser());
         credentialsEntity.setPin(null);
         this.addCredentialsService.saveAndFlush(credentialsEntity);
         reactStatus.setStatus(false);
-        return new ResponseEntity<>(reactStatus,HttpStatus.OK);
+        return new ResponseEntity<>(reactStatus, HttpStatus.OK);
 
     }
 
-    @RequestMapping(value = "/saveAvatar",method = RequestMethod.POST)
+    @RequestMapping(value = "/saveAvatar", method = RequestMethod.POST)
     public ResponseEntity<ReactStatus> saveAvatar(Authentication authentication, @RequestBody UserEntity userEntity) {
-        if (userEntity.getAvatar()==(null)){
+        if (userEntity.getAvatar() == (null)) {
             userEntity.setAvatar("nops");
         }
 
-        UserEntity user =userRepository.findByEmail(authentication.getName());
+        UserEntity user = userRepository.findByEmail(authentication.getName());
         user.setAvatar(userEntity.getAvatar());
         this.addUserService.saveAndFlush(user);
 
         ReactStatus reactStatus = new ReactStatus();
         reactStatus.setStatus(true);
-        return new ResponseEntity<>(reactStatus,HttpStatus.OK);
+        return new ResponseEntity<>(reactStatus, HttpStatus.OK);
 //        return new ResponseEntity<>(credentialsRepository.findByUserIdUser(userRestRepository.findByEmail(authentication.getName()).getIdUser()), HttpStatus.OK);
     }
+
     @PostMapping("/changePass")
     @Transactional
-    public ResponseEntity<ReactStatus> changePass(Authentication authentication ,@RequestBody OldAndNewPassword oldAndNewPassword) {
+    public ResponseEntity<ReactStatus> changePass(Authentication authentication, @RequestBody OldAndNewPassword oldAndNewPassword) {
 
-        String oldPass = bCryptPasswordEncoder.encode(oldAndNewPassword.getOldPass());
+        String oldPass = oldAndNewPassword.getOldPass();
         ReactStatus reactStatus = new ReactStatus();
 
-        if (userRepository.findByEmailAndPassword(authentication.getName(), oldPass) != null) {
+
+        if (bCryptPasswordEncoder.matches(oldPass, userRepository.findByEmail(authentication.getName()).getPassword())) {
+
             UserEntity userEntity = userRepository.findByEmail(authentication.getName());
             userEntity.setPassword(bCryptPasswordEncoder.encode(oldAndNewPassword.getNewPass()));
             this.addUserService.saveAndFlush(userEntity);
 
             reactStatus.setStatus(true);
             return new ResponseEntity<>(reactStatus, HttpStatus.OK);
-        }else{
+        } else {
             reactStatus.setStatus(false);
-            return new ResponseEntity<>(reactStatus,HttpStatus.OK);
+            return new ResponseEntity<>(reactStatus, HttpStatus.OK);
         }
     }
+
 
 }

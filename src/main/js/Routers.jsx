@@ -12,7 +12,8 @@ import Config from './components/main/Config';
 import Topic from './components/main/Topic';
 import Answer from './components/main/Answer';
 import User from './components/user/User';
-import Searching from './components/main/Searching'
+import Searching from './components/main/Searching';
+import HashTable from './components/user/HashTable';
 
 
 class Routers extends React.Component {
@@ -47,6 +48,8 @@ class Routers extends React.Component {
                         <Route path="/main/subbed" component={SubbedEntityList}/>
                         <Route path="/main/config" component={Config}/>
                         <Route path="/main/search" component={Searching}/>
+                        <Route path="/main/hashTable" component={HashTable}/>
+
 
 
 
