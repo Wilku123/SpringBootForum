@@ -3,7 +3,7 @@ package com.netstore.model.API.react;
 public class HashTableUniSearch {
     String search;
     String[] tab;
-
+    int k;
     public String getSearch() {
         return search;
     }
@@ -28,5 +28,5 @@ public class HashTableUniSearch {
         this.k = k;
     }
 
-    int k;
+
 }

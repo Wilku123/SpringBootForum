@@ -41,14 +41,16 @@ class HashTable extends React.Component {
     constructor() {
         super();
         this.lookFor = this.handleLookFor.bind(this);
+        this.deleteThis = this.handleDeleteThis.bind(this);
+        this.addThis= this.handleAddThis.bind(this);
         this.saveChanges = this.handleSaveChanges.bind(this);
         this.closeModal = this.handleClose.bind(this);
         this.openDialog = this.handleOpen.bind(this);
         this.state = {
-            resultOfSearching:"",
-            toSearch:'',
-            toSearchValid:"",
-            hashArray:[],
+            resultOfSearching: "",
+            toSearch: '',
+            toSearchValid: "",
+            hashArray: [],
             hashTable: "",
             hashTableValid: false,
             formErrors: {hashTable: '',},
@@ -56,26 +58,29 @@ class HashTable extends React.Component {
             isLoading: true,
             open: false,
             hashType: "",
-            primeNumber:""
+            primeNumber: "",
+            removeBtnVisible:true,
+            addBtnVisible:true,
         };
     }
+
     isPrime(num) {
         var prime = num != 1;
-        for(var i=2; i<num; i++) {
-            if(num % i == 0) {
+        for (var i = 2; i < num; i++) {
+            if (num % i == 0) {
                 prime = false;
                 break;
             }
         }
         return prime;
     }
+
     handleSaveChanges() {
 
-        let words =this.state.hashTable;
-        let countWords = (words.split(" ").length +1);
+        let words = this.state.hashTable;
+        let countWords = (words.split(" ").length + 1);
         // let countWords=100;
-        if(this.state.hashType==="hashMultiply")
-        {
+        if (this.state.hashType === "hashMultiply") {
             fetch(url + "/react/main/hashTable/hashMultiply", {
                 method: 'POST',
                 body: JSON.stringify({
@@ -90,8 +95,7 @@ class HashTable extends React.Component {
                 })
             });
         }
-        else if(this.state.hashType==="hashMod")
-        {
+        else if (this.state.hashType === "hashMod") {
             fetch(url + "/react/main/hashTable/hashMod", {
                 method: 'POST',
                 body: JSON.stringify({
@@ -106,22 +110,20 @@ class HashTable extends React.Component {
                 })
             })
         }
-        else if(this.state.hashType==="hashUni")
-        {
-            let r =4;
-            while(!this.isPrime(r))
-            {
-                r = Math.floor(Math.random() * (10000 - 1 + 1)) + 1;
+        else if (this.state.hashType === "hashUni") {
+            let r = 4;
+            while (!this.isPrime(r)) {
+                r = Math.floor(Math.random() * (2000 - 1 + 1)) + 1;
             }
             this.setState({
-                primeNumber:r
+                primeNumber: r
             });
             fetch(url + "/react/main/hashTable/hashUni", {
                 method: 'POST',
                 body: JSON.stringify({
                     data: this.state.hashTable,
                     countW: countWords,
-                    k:r
+                    k: r
                 }),
                 headers: header,
                 credentials: 'same-origin'
@@ -131,9 +133,8 @@ class HashTable extends React.Component {
                 })
             })
         }
-        else
-        {
-            console.log("Tak wim ni zabezpieczon #JSna100%");
+        else {
+
         }
         this.setState({
             open: false,
@@ -143,52 +144,64 @@ class HashTable extends React.Component {
 
 
     }
+
     handleLookFor() {
 
-        let word =this.state.toSearch;
+        let word = this.state.toSearch;
         let array = this.state.hashArray;
         console.log(this.state.hashType);
-        if(this.state.hashType==="hashMultiply")
-        {
+        if (this.state.hashType === "hashMultiply") {
             fetch(url + "/react/main/hashTable/searchMultiply", {
                 method: 'POST',
                 body: JSON.stringify({
-                    search:word,
-                    tab:array
+                    search: word,
+                    tab: array
                 }),
                 headers: header,
                 credentials: 'same-origin'
             }).then((Response) => Response.json()).then((findresponse) => {
                 this.setState({
                     resultOfSearching: findresponse,
-                })
+                });
+                if(this.state.resultOfSearching !== -1){
+                    this.setState({
+
+                        removeBtnVisible:false
+
+                    })
+                }
             });
         }
-        else if(this.state.hashType==="hashMod")
-        {
+        else if (this.state.hashType === "hashMod") {
             fetch(url + "/react/main/hashTable/searchMod", {
                 method: 'POST',
                 body: JSON.stringify({
-                    search:word,
-                    tab:array
+                    search: word,
+                    tab: array
                 }),
                 headers: header,
                 credentials: 'same-origin'
             }).then((Response) => Response.json()).then((findresponse) => {
                 this.setState({
                     resultOfSearching: findresponse,
-                })
+                });
+                if(this.state.resultOfSearching !== -1){
+                    this.setState({
+
+                        removeBtnVisible:false
+
+                    })
+                }
             })
         }
-        else if(this.state.hashType==="hashUni")
-        {
+        else if (this.state.hashType === "hashUni") {
             let random = this.state.primeNumber;
             fetch(url + "/react/main/hashTable/searchUni", {
                 method: 'POST',
                 body: JSON.stringify({
-                    search:word,
-                    tab:array,
-                    k:random
+                    search: word,
+                    tab: array,
+                    k: random
 
                 }),
                 headers: header,
@@ -196,20 +209,159 @@ class HashTable extends React.Component {
             }).then((Response) => Response.json()).then((findresponse) => {
                 this.setState({
                     resultOfSearching: findresponse,
-                })
+                });
+                if(this.state.resultOfSearching !== -1){
+                    this.setState({
+
+                        removeBtnVisible:false
+
+                    })
+                }
             })
         }
-        else
-        {
-            console.log("Tak wim ni zabezpieczon #JJSna100%");
+        else {
         }
         this.setState({
             open: false,
             hashTable: "",
             formValid: false,
+            addBtnVisible:false,
+
+
+
         });
 
 
+
+    }
+    handleDeleteThis(){
+        let word = this.state.toSearch;
+        let array = this.state.hashArray;
+        console.log(this.state.hashType);
+        if (this.state.hashType === "hashMultiply"&& !word.isEmpty) {
+            fetch(url + "/react/main/hashTable/delMultiply", {
+                method: 'POST',
+                body: JSON.stringify({
+                    search: word,
+                    tab: array
+                }),
+                headers: header,
+                credentials: 'same-origin'
+            }).then((Response) => Response.json()).then((findresponse) => {
+                this.setState({
+                    hashArray: findresponse,
+                })
+            });
+        }
+        else if (this.state.hashType === "hashMod") {
+            fetch(url + "/react/main/hashTable/delMod", {
+                method: 'POST',
+                body: JSON.stringify({
+                    search: word,
+                    tab: array
+                }),
+                headers: header,
+                credentials: 'same-origin'
+            }).then((Response) => Response.json()).then((findresponse) => {
+                this.setState({
+                    hashArray: findresponse,
+                })
+            })
+        }
+        else if (this.state.hashType === "hashUni") {
+            let random = this.state.primeNumber;
+            fetch(url + "/react/main/hashTable/delUni", {
+                method: 'POST',
+                body: JSON.stringify({
+                    search: word,
+                    tab: array,
+                    k: random
+
+                }),
+                headers: header,
+                credentials: 'same-origin'
+            }).then((Response) => Response.json()).then((findresponse) => {
+                this.setState({
+                    hashArray: findresponse,
+                })
+            })
+        }
+        else {
+        }
+        this.setState({
+            open: false,
+            hashTable: "",
+            formValid: false,
+            removeBtnVisible:true,
+            toSearch: "",
+            addBtnVisible: true,
+
+
+        });
+
+    }
+    handleAddThis(){
+
+        let word = this.state.toSearch;
+        let array = this.state.hashArray;
+        console.log(this.state.hashType);
+        if (this.state.hashType === "hashMultiply" && !word.isEmpty) {
+            fetch(url + "/react/main/hashTable/addMultiply", {
+                method: 'POST',
+                body: JSON.stringify({
+                    search: word,
+                    tab: array
+                }),
+                headers: header,
+                credentials: 'same-origin'
+            }).then((Response) => Response.json()).then((findresponse) => {
+                this.setState({
+                    hashArray: findresponse,
+                })
+            });
+        }
+        else if (this.state.hashType === "hashMod") {
+            fetch(url + "/react/main/hashTable/addMod", {
+                method: 'POST',
+                body: JSON.stringify({
+                    search: word,
+                    tab: array
+                }),
+                headers: header,
+                credentials: 'same-origin'
+            }).then((Response) => Response.json()).then((findresponse) => {
+                this.setState({
+                    hashArray: findresponse,
+                })
+            })
+        }
+        else if (this.state.hashType === "hashUni") {
+            let random = this.state.primeNumber;
+            fetch(url + "/react/main/hashTable/addUni", {
+                method: 'POST',
+                body: JSON.stringify({
+                    search: word,
+                    tab: array,
+                    k: random
+
+                }),
+                headers: header,
+                credentials: 'same-origin'
+            }).then((Response) => Response.json()).then((findresponse) => {
+                this.setState({
+                    hashArray: findresponse,
+                })
+            })
+        }
+        else {
+        }
+        this.setState({
+            open: false,
+            hashTable: "",
+            formValid: false,
+            removeBtnVisible:true,
+            addBtnVisible:true
+        });
     }
 
     handleUserInput(e) {
@@ -252,12 +404,12 @@ class HashTable extends React.Component {
 
             formErrors: fieldValidationErrors,
             hashTableValid: hashTableValid,
-            toSearchValid:toSearchValid,
+            toSearchValid: toSearchValid,
         }, this.validateForm);
     }
 
     validateForm() {
-        this.setState({formValid: this.state.hashTableValid });
+        this.setState({formValid: this.state.hashTableValid});
     }
 
     handleOpen() {
@@ -325,10 +477,10 @@ class HashTable extends React.Component {
                                             displayRowCheckbox={false}>
                                             {this.state.hashArray.map((dynamicData, key) => (
 
-                                            <TableRow>
-                                                <TableRowColumn>{key}</TableRowColumn>
-                                                <TableRowColumn>{dynamicData}</TableRowColumn>
-                                            </TableRow>
+                                                <TableRow>
+                                                    <TableRowColumn>{key}</TableRowColumn>
+                                                    <TableRowColumn>{dynamicData}</TableRowColumn>
+                                                </TableRow>
                                             ))}
                                         </TableBody>
                                     </Table>
@@ -340,10 +492,17 @@ class HashTable extends React.Component {
                                         id="toSearch" value={this.state.toSearch}
                                         onChange={(event) => this.handleUserInput(event)}
                                     />
-                                    <RaisedButton label="Primary" primary={true}
+                                    <RaisedButton label="Niuchaj" primary={true}
                                                   onClick={this.lookFor}
-                                    /><br/>
-                                    <div>{this.state.resultOfSearching}</div>
+                                    />
+                                    <RaisedButton label="USUN TO!" primary={true}
+                                                  onClick={this.deleteThis}
+                                                  disabled={this.state.removeBtnVisible}
+                                    /><RaisedButton label="Dodej to!" primary={true}
+                                                    onClick={this.addThis}
+                                                    disabled={this.state.addBtnVisible}
+                                /><br/>
+                                    <div>{this.state.resultOfSearching === (-1) ? "Niema takiego numeru" : this.state.resultOfSearching}</div>
 
 
                                 </Col>
@@ -421,7 +580,9 @@ class HashTable extends React.Component {
                         <div className={"dialog"}>
                             <TextField
                                 floatingLabelText="Przykładowy tekst"
-
+                                multiLine={true}
+                                rows={4}
+                                rowsMax={8}
                                 name="hashTable"
                                 id="hashTable" value={this.state.hashTable}
 
